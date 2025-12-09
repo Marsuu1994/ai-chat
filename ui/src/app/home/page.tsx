@@ -4,7 +4,7 @@ import { ChatInput } from "@/components/chat/ChatInput";
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-base-300 text-base-content">
-      <div className="flex min-h-screen flex-col bg-gradient-to-b from-neutral to-base-300">
+      <div className="flex min-h-screen flex-col bg-gradient-to-b from-neutral to-base-100">
         <Header />
 
         <section className="flex-1">
