@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Chat UI
+
+A Next.js chat application with daisyUI Forest theme.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Backlog
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### High Priority
+- [ ] ChatInput - add support for send message by enter, shift enter to second line
+- [ ] ChatArea - add max height so we dont have to scroll the whole page
+- [ ] Implement Zustand for state management
+- [ ] Build custom `useChat` hook with streaming support using mock server
+- [ ] Create Route Handler for LLM API (`/api/chat`)
 
-## Learn More
+### Medium Priority
+- [ ] ChatInput - add text validation, send button should disable when no input
+- [ ] ChatInput - size should be adjustable, adding more line should change the height
+- [ ] Wire up actual LLM API (OpenAI/Anthropic)
+- [ ] Design to make it more job search focused
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Low Priority
+- [ ] Refactor header
+- [ ] Add SSE streaming support
+- [ ] Add authentication
+- [ ] Support adding multiple chat and save chat history
+- [ ] Support uploading pictures
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### UI design
+- [ ] Redesign the theme
+- [ ] Tokenize common patterns
 
-## Deploy on Vercel
+## Update Log
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2024-12-09
+- Refactored state to use callback pattern, added loading state
+- Added welcome screen and loading skeleton
+- Glassmorphism + neon border styling for chat components
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Earlier
+- Basic layout with Header, ChatArea, ChatInput
+- daisyUI Forest theme integration
