@@ -45,6 +45,7 @@ yarn-error.log*
 .idea/
 .vscode/
 .claude/
+CLAUDE.md
 *.swp
 *.swo
 
