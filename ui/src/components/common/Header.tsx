@@ -1,6 +1,6 @@
 export const Header = () => {
   return (
-    <header className="navbar border-b border-base-200 bg-base-100/80">
+    <header className="navbar shrink-0 border-b border-base-200 bg-base-100/80">
       <div className="flex-1">
         <a className="btn btn-ghost text-lg font-semibold tracking-tight">
           <span className="text-success">AI</span> Chat Lab

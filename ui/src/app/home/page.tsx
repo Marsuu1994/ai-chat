@@ -27,11 +27,11 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-screen bg-base-300 text-base-content">
-      <div className="flex min-h-screen flex-col bg-gradient-to-b from-neutral to-base-100">
+    <main className="h-screen bg-base-300 text-base-content overflow-hidden">
+      <div className="flex h-full flex-col bg-gradient-to-b from-neutral to-base-100">
         <Header/>
-        <ChatArea messages={messages} isLoading={isLoading} />
-        <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+        <ChatArea messages={messages} isLoading={isLoading}/>
+        <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading}/>
       </div>
     </main>
   );
