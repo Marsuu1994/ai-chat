@@ -12,6 +12,12 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ## Update Log
 
+### 2025-12-13
+- Set up PostgreSQL database with Prisma ORM
+- Created `chats` and `messages` tables with proper relations
+- Implemented 7 REST API endpoints for chat/message CRUD
+- Refactored `/api/chat` to `/api/llm` for better separation
+
 ### 2025-12-12
 - Integrated OpenAI API with streaming responses (gpt-5-nano)
 - Added conversation history support
