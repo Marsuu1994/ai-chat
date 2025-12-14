@@ -25,6 +25,12 @@ body {
   background: transparent;
 }
 
+/* Chat input - command bar style textarea */
+.chat-input {
+  min-height: unset;
+  height: auto;
+}
+
 @keyframes shimmer {
   0% {
     background-position: 200% center;

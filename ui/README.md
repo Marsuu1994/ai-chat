@@ -12,6 +12,9 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ## Update Log
 
+### 2025-12-14
+- ChatInput auto-resize: 1 row default, max 3 rows, then scroll
+
 ### 2025-12-13
 - Set up PostgreSQL database with Prisma ORM
 - Created `chats` and `messages` tables with proper relations
