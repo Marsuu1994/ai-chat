@@ -17,6 +17,10 @@ Open [http://localhost:3000](http://localhost:3000)
 - Created `chats` and `messages` tables with proper relations
 - Implemented 7 REST API endpoints for chat/message CRUD
 - Refactored `/api/chat` to `/api/llm` for better separation
+- Added multi-chat support with sidebar navigation (SSR)
+- Created `/chat` and `/chat/[chatId]` route structure
+- Messages persist to database on send
+- Created data access layer (`lib/db/`) for centralized queries
 
 ### 2025-12-12
 - Integrated OpenAI API with streaming responses (gpt-5-nano)
