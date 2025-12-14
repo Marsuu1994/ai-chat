@@ -1,19 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { getChats, createChat } from "@/lib/db/chats";
 
 // GET /api/chats - List all chats
 export async function GET() {
-  const chats = await prisma.chat.findMany({
-    orderBy: { updatedAt: "desc" },
-    select: {
-      id: true,
-      title: true,
-      metadata: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
-
+  const chats = await getChats();
   return NextResponse.json(chats);
 }
 
@@ -29,12 +19,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const chat = await prisma.chat.create({
-    data: {
-      title,
-      metadata: metadata ?? null,
-    },
-  });
-
+  const chat = await createChat(title, metadata);
   return NextResponse.json(chat, { status: 201 });
 }

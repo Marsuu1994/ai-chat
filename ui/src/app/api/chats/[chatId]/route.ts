@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { getChatById, updateChat, deleteChat, chatExists } from "@/lib/db/chats";
 
 interface RouteParams {
   params: Promise<{ chatId: string }>;
@@ -9,16 +9,7 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { chatId } = await params;
 
-  const chat = await prisma.chat.findUnique({
-    where: { id: chatId },
-    select: {
-      id: true,
-      title: true,
-      metadata: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
+  const chat = await getChatById(chatId);
 
   if (!chat) {
     return NextResponse.json(
@@ -36,25 +27,14 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   const body = await request.json();
   const { title, metadata } = body;
 
-  const existingChat = await prisma.chat.findUnique({
-    where: { id: chatId },
-  });
-
-  if (!existingChat) {
+  if (!(await chatExists(chatId))) {
     return NextResponse.json(
       { error: "Chat not found" },
       { status: 404 }
     );
   }
 
-  const chat = await prisma.chat.update({
-    where: { id: chatId },
-    data: {
-      ...(title !== undefined && { title }),
-      ...(metadata !== undefined && { metadata }),
-    },
-  });
-
+  const chat = await updateChat(chatId, { title, metadata });
   return NextResponse.json(chat);
 }
 
@@ -62,20 +42,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   const { chatId } = await params;
 
-  const existingChat = await prisma.chat.findUnique({
-    where: { id: chatId },
-  });
-
-  if (!existingChat) {
+  if (!(await chatExists(chatId))) {
     return NextResponse.json(
       { error: "Chat not found" },
       { status: 404 }
     );
   }
 
-  await prisma.chat.delete({
-    where: { id: chatId },
-  });
-
+  await deleteChat(chatId);
   return new NextResponse(null, { status: 204 });
 }

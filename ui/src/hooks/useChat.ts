@@ -1,8 +1,28 @@
 import { useChatStore, Message } from '@/store/chatStore';
 
+// Helper to persist message to database
+async function persistMessage(
+  chatId: string,
+  role: 'user' | 'assistant',
+  content: string
+) {
+  const response = await fetch(`/api/chats/${chatId}/messages`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role, content }),
+  });
+
+  if (!response.ok) {
+    console.error('Failed to persist message');
+  }
+
+  return response.json();
+}
+
 export function useChat() {
   const messages = useChatStore((state) => state.messages);
   const isLoading = useChatStore((state) => state.isLoading);
+  const currentChatId = useChatStore((state) => state.currentChatId);
   const addMessage = useChatStore((state) => state.addMessage);
   const updateLastMessage = useChatStore((state) => state.updateLastMessage);
   const finishStreaming = useChatStore((state) => state.finishStreaming);
@@ -11,9 +31,14 @@ export function useChat() {
   const sendMessage = async (content: string) => {
     if (!content.trim() || isLoading) return;
 
-    // Add user message
+    // Add user message to UI immediately (optimistic update)
     addMessage({ content, role: 'user' });
     setLoading(true);
+
+    // Persist user message to DB (fire and forget for now)
+    if (currentChatId) {
+      persistMessage(currentChatId, 'user', content);
+    }
 
     // Add empty assistant message placeholder with streaming flag
     addMessage({ content: '', role: 'assistant', isStreaming: true });
@@ -53,6 +78,11 @@ export function useChat() {
       }
 
       finishStreaming();
+
+      // Persist assistant response to DB after streaming completes
+      if (currentChatId && accumulated) {
+        persistMessage(currentChatId, 'assistant', accumulated);
+      }
     } catch (error) {
       console.error('Error streaming response:', error);
       updateLastMessage('Sorry, something went wrong.');
@@ -62,5 +92,5 @@ export function useChat() {
     }
   };
 
-  return { messages, sendMessage, isLoading };
+  return { messages, sendMessage, isLoading, currentChatId };
 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { MessageRole } from "@/generated/prisma/client";
+import { chatExists } from "@/lib/db/chats";
+import { getMessagesByChatId, createMessage, isValidRole } from "@/lib/db/messages";
 
 interface RouteParams {
   params: Promise<{ chatId: string }>;
@@ -10,35 +10,15 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { chatId } = await params;
 
-  const chat = await prisma.chat.findUnique({
-    where: { id: chatId },
-  });
-
-  if (!chat) {
+  if (!(await chatExists(chatId))) {
     return NextResponse.json(
       { error: "Chat not found" },
       { status: 404 }
     );
   }
 
-  const messages = await prisma.message.findMany({
-    where: { chatId },
-    orderBy: { createdAt: "asc" },
-    select: {
-      id: true,
-      role: true,
-      content: true,
-      createdAt: true,
-    },
-  });
-
-  // Convert BigInt id to string for JSON serialization
-  const serializedMessages = messages.map((msg) => ({
-    ...msg,
-    id: msg.id.toString(),
-  }));
-
-  return NextResponse.json(serializedMessages);
+  const messages = await getMessagesByChatId(chatId);
+  return NextResponse.json(messages);
 }
 
 // POST /api/chats/{chatId}/messages - Add message to chat
@@ -48,8 +28,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   const { role, content } = body;
 
   // Validate role
-  const validRoles: MessageRole[] = ["user", "assistant", "system"];
-  if (!role || !validRoles.includes(role)) {
+  if (!role || !isValidRole(role)) {
     return NextResponse.json(
       { error: "Invalid role. Must be 'user', 'assistant', or 'system'" },
       { status: 400 }
@@ -63,36 +42,13 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     );
   }
 
-  const chat = await prisma.chat.findUnique({
-    where: { id: chatId },
-  });
-
-  if (!chat) {
+  if (!(await chatExists(chatId))) {
     return NextResponse.json(
       { error: "Chat not found" },
       { status: 404 }
     );
   }
 
-  const message = await prisma.message.create({
-    data: {
-      chatId,
-      role,
-      content,
-    },
-  });
-
-  // Update chat's updatedAt timestamp
-  await prisma.chat.update({
-    where: { id: chatId },
-    data: { updatedAt: new Date() },
-  });
-
-  return NextResponse.json(
-    {
-      ...message,
-      id: message.id.toString(),
-    },
-    { status: 201 }
-  );
+  const message = await createMessage(chatId, role, content);
+  return NextResponse.json(message, { status: 201 });
 }

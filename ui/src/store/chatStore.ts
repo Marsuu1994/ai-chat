@@ -7,8 +7,15 @@ export interface Message {
 }
 
 interface ChatState {
+  // Current chat context
+  currentChatId: string | null;
   messages: Message[];
   isLoading: boolean;
+
+  // Actions
+  setCurrentChat: (chatId: string | null) => void;
+  setMessages: (messages: Message[]) => void;
+  clearMessages: () => void;
   addMessage: (message: Message) => void;
   updateLastMessage: (content: string) => void;
   finishStreaming: () => void;
@@ -16,13 +23,29 @@ interface ChatState {
 }
 
 export const useChatStore = create<ChatState>((set) => ({
+  currentChatId: null,
   messages: [],
   isLoading: false,
+
+  setCurrentChat: (chatId: string | null) => {
+    set({ currentChatId: chatId });
+  },
+
+  // Hydrate messages from server
+  setMessages: (messages: Message[]) => {
+    set({ messages });
+  },
+
+  clearMessages: () => {
+    set({ messages: [], currentChatId: null });
+  },
+
   addMessage: (message: Message) => {
     set((state) => ({
       messages: [...state.messages, message],
     }));
   },
+
   updateLastMessage: (content: string) => {
     set((state) => ({
       messages: state.messages.map((msg, i) =>
@@ -30,6 +53,7 @@ export const useChatStore = create<ChatState>((set) => ({
       ),
     }));
   },
+
   finishStreaming: () => {
     set((state) => ({
       messages: state.messages.map((msg, i) =>
@@ -37,6 +61,7 @@ export const useChatStore = create<ChatState>((set) => ({
       ),
     }));
   },
+
   setLoading: (loading: boolean) => {
     set({ isLoading: loading });
   },
