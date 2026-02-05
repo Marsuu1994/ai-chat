@@ -36,6 +36,23 @@ async function createNewChat(title: string): Promise<string> {
   return chat.id;
 }
 
+// Helper to generate and update chat title via LLM
+async function summarizeChatTitle(chatId: string, message: string): Promise<string> {
+  const response = await fetch('/api/llm/summarizeTitle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chatId, message }),
+  });
+
+  if (!response.ok) {
+    console.error('Failed to generate title');
+    return 'New Chat';
+  }
+
+  const { title } = await response.json();
+  return title;
+}
+
 export function useChat() {
   const router = useRouter();
   const messages = useChatStore((state) => state.messages);
@@ -57,12 +74,15 @@ export function useChat() {
     // Track whether this is a new chat so we can update URL after streaming
     let chatId = currentChatId;
     const isNewChat = !chatId;
+    let titlePromise: Promise<string> | null = null;
 
     try {
       // If no current chat, create one first
       if (!chatId) {
-        chatId = await createNewChat('New Chat 123');
+        chatId = await createNewChat('New Chat');
         setCurrentChat(chatId);
+        // Start title generation in parallel (don't await yet)
+        titlePromise = summarizeChatTitle(chatId, content);
       }
 
       // Persist user message to DB (fire and forget)
@@ -111,10 +131,11 @@ export function useChat() {
         persistMessage(chatId, 'assistant', accumulated);
       }
 
-      // For new chats: update URL then force server components to re-execute
+      // For new chats: wait for title generation, then update URL and refresh sidebar
       // router.replace updates the route, router.refresh re-runs the layout (fetches fresh chat list)
       // Zustand state is preserved because ChatContainer skips hydration when currentChatId matches
-      if (isNewChat) {
+      if (isNewChat && titlePromise) {
+        await titlePromise; // Title is already saved to DB by the endpoint
         router.replace(`/chat/${chatId}`);
         router.refresh();
       }

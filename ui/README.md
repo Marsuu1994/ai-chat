@@ -13,9 +13,8 @@ Open [http://localhost:3000](http://localhost:3000)
 ## Update Log
 
 ### 2026-02-04
-- New chat flow: first message on `/chat` creates a chat, persists messages, streams LLM response, then navigates to `/chat/[chatId]` with sidebar refresh
-- Converted `/chat` page to client component with full chat UI (ChatArea + ChatInput)
-- `useChat` hook handles chat creation when no current chat exists
+- New chat flow: first message on `/chat` creates a chat, generates title via LLM, streams response, then navigates to `/chat/[chatId]` with sidebar refresh
+- Auto-generated chat titles using `/api/llm/summarizeTitle` (runs in parallel with streaming for minimal latency)
 
 ### 2025-12-14
 - ChatInput auto-resize: 1 row default, max 3 rows, then scroll
