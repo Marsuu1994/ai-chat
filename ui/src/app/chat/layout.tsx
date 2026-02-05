@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getChats } from "@/lib/db/chats";
+import ChatListItem from "@/components/chat/ChatListItem";
 
 export default async function ChatLayout({
   children,
@@ -11,7 +12,7 @@ export default async function ChatLayout({
   return (
     <div className="flex h-screen bg-base-300 text-base-content overflow-hidden">
       {/* Sidebar - will be extracted to component */}
-      <aside className="flex w-40 flex-col border-r border-base-200 bg-base-100">
+      <aside className="flex w-65 flex-col border-r border-base-200 bg-base-300">
         {/* Toggle button */}
         <div className="flex items-center px-1.5 py-1 border-b border-base-200">
           <button className="btn btn-ghost btn-square btn-xs">
@@ -34,13 +35,9 @@ export default async function ChatLayout({
           <div className="text-xs font-semibold text-base-content/60 px-1.5 py-0.5">
             Your chats
           </div>
-          <ul className="menu menu-xs p-0 gap-0.5">
+          <ul className="menu menu-xs p-0 gap-0.5 w-full">
             {chats.map((chat) => (
-              <li key={chat.id}>
-                <Link href={`/chat/${chat.id}`} className="truncate px-1.5 py-1 text-xs rounded">
-                  {chat.title}
-                </Link>
-              </li>
+              <ChatListItem key={chat.id} chat={chat} />
             ))}
             {chats.length === 0 && (
               <li className="text-base-content/50 text-xs px-1.5 py-1">
