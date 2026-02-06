@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { useChatStore, Message } from '@/store/chatStore';
+import { useChatStore, Message } from '@/features/chat/store/chatStore';
 
 // Helper to persist message to database
 async function persistMessage(

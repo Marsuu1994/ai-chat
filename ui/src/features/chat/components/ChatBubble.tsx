@@ -1,4 +1,4 @@
-import { Message } from "@/store/chatStore";
+import { Message } from "@/features/chat/store/chatStore";
 import { JSX } from "react";
 
 export interface ChatBubbleType {

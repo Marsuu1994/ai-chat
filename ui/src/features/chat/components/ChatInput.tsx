@@ -2,7 +2,7 @@
 
 import { ArrowRightIcon, PaperClipIcon } from "@heroicons/react/16/solid";
 import { useState, useRef, useEffect } from "react";
-import { useChat } from "@/hooks/useChat";
+import { useChat } from "@/features/chat/hooks/useChat";
 
 export function ChatInput() {
   const [messageContent, setMessageContent] = useState('');

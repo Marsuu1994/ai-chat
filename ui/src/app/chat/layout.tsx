@@ -1,6 +1,6 @@
 import { getChats } from "@/lib/db/chats";
-import Sidebar from "@/components/chat/Sidebar";
-import ChatHeader from "@/components/chat/ChatHeader";
+import Sidebar from "@/features/chat/components/Sidebar";
+import ChatHeader from "@/features/chat/components/ChatHeader";
 
 export default async function ChatLayout({
   children,

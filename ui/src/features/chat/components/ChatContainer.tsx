@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useChatStore, Message } from '@/store/chatStore';
+import { useChatStore, Message } from '@/features/chat/store/chatStore';
 import { ChatArea } from './ChatArea';
 import { ChatInput } from './ChatInput';
 

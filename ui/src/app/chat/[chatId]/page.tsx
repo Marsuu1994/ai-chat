@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getChatWithMessages } from "@/lib/db/chats";
-import { ChatContainer } from "@/components/chat/ChatContainer";
-import { Message } from "@/store/chatStore";
+import { ChatContainer } from "@/features/chat/components/ChatContainer";
+import { Message } from "@/features/chat/store/chatStore";
 
 type ChatPageProps = {
   params: Promise<{ chatId: string }>;

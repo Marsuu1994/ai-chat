@@ -1,10 +1,10 @@
 'use client'
 
 import { JSX, useEffect, useRef } from "react";
-import { ChatBubble } from "@/components/chat/ChatBubble";
-import { LoadingIndicator } from "@/components/chat/LoadingIndicator";
-import { WelcomeMessage } from "@/components/chat/WelcomeMessage";
-import { useChat } from "@/hooks/useChat";
+import { ChatBubble } from "@/features/chat/components/ChatBubble";
+import { LoadingIndicator } from "@/features/chat/components/LoadingIndicator";
+import { WelcomeMessage } from "@/features/chat/components/WelcomeMessage";
+import { useChat } from "@/features/chat/hooks/useChat";
 
 export function ChatArea(): JSX.Element {
   const { messages, isLoading } = useChat();
