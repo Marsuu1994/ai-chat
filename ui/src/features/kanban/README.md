@@ -4,11 +4,10 @@ A drag-and-drop kanban board for planning and tracking tasks within weekly perio
 
 ## Current State
 
-Backend complete (schema, DAL, server actions, board sync). Full board UI implemented — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards showing title, description, type badge, and points. Columns and cards use glassmorphism styling (frosted-glass translucency). Cards have hover lift+shadow effects. Layout is responsive full-height with independently scrollable columns. Empty state and create plan flow available when no active plan exists. Drag-and-drop not yet implemented.
+Backend complete (schema, DAL, server actions, board sync). Full board UI with drag-and-drop — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards that can be dragged between columns. Moves use optimistic UI with server-side persistence and automatic rollback on failure. Task cards show title, description, type badge, and points. Cards have hover lift+shadow effects. Layout is responsive full-height with independently scrollable columns. Empty state and create plan flow available when no active plan exists.
 
 ## Backlog
 ### High Priority
-- [ ] Drag and drop task cards between columns with optimistic UI
 - [ ] Create/edit task template modal — title, description, type, points, frequency
 
 ### MVP
@@ -33,13 +32,13 @@ Backend complete (schema, DAL, server actions, board sync). Full board UI implem
 ## Update Log
 
 ### 2026-02-13
-- Implemented three-column kanban board (Todo, In Progress, Done) with `KanbanBoard`, `BoardColumn`, and `TaskCard` components
-- Task cards display title, description, type badge (Daily/Weekly), and star-rated points
-- Added glassmorphism styling on columns (`bg-base-200/60 backdrop-blur-xl`) and cards (`bg-base-100/70 backdrop-blur-md`)
-- Card hover effect with lift, shadow increase, and brighter border
-- Responsive full-height layout — columns stretch to fill viewport, task lists scroll independently
-- Added task sorting utility (`taskSort.ts`) and `TaskStatus` enum
-- Added styled empty state and create plan flow (`EmptyBoard`, `/kanban/plans/new`)
+- Added drag-and-drop between columns using `@hello-pangea/dnd` with optimistic UI and server rollback
+- Dragging cards shows lifted style (shadow, ring, scale); drop targets highlight on hover
+- Fixed post-drop reshuffle animation by scoping CSS transitions to exclude `transform`
+- Added deterministic sort tiebreaker (`id`) to prevent card order jumps after server revalidation
+- Merged `taskSort.ts` and `taskGroup.ts` into `taskUtils.ts`
+- Board UI with glassmorphism columns, task cards showing title, description, type badge, and points
+- Empty state and create plan flow (`EmptyBoard`, `/kanban/plans/new`)
 
 ### 2026-02-12
 - Refactored `syncAndFetchBoard()` into `runDailySync()` + `fetchBoard()` — sync logic is now standalone and reusable by future cron job
@@ -70,3 +69,4 @@ Backend complete (schema, DAL, server actions, board sync). Full board UI implem
 - [x] Board sync utility: expire stale tasks, generate daily tasks (idempotent)
 - [x] Kanban page Server Component with board data fetching
 - [x] Refactor board sync: separate `runDailySync()` from `fetchBoard()`, add `lastSyncDate` to skip redundant syncs
+- [x] Drag and drop task cards between columns with optimistic UI

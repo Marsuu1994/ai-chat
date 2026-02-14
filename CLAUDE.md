@@ -58,6 +58,7 @@ ui/
 - Prefer batch operations (e.g., `createMany`, `updateMany`) over loops with individual database calls unless unavoidable.
 - Extract large chunks of UI JSX into separate components to improve readability and modularity.
 - Use Heroicons as JSX imports (e.g., `<PlusIcon />`) instead of inline SVG.
+- Group logically related utility functions into a single file (e.g., `taskUtils.ts` for sorting and grouping tasks) rather than splitting each function into its own file.
 
 ## Commands
 

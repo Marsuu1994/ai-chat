@@ -39,7 +39,7 @@ const taskSelect = {
 export async function getTasksByPlanId(planId: string): Promise<TaskItem[]> {
   return prisma.task.findMany({
     where: { planId },
-    orderBy: { createdAt: "asc" },
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
     select: taskSelect,
   });
 }
@@ -53,7 +53,7 @@ export async function getTasksByPlanIdAndStatus(
 ): Promise<TaskItem[]> {
   return prisma.task.findMany({
     where: { planId, status: { in: statuses } },
-    orderBy: { createdAt: "asc" },
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
     select: taskSelect,
   });
 }
