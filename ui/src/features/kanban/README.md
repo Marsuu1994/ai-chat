@@ -4,16 +4,17 @@ A drag-and-drop kanban board for planning and tracking tasks within weekly perio
 
 ## Current State
 
-Backend complete (schema, DAL, server actions, board sync). Full board UI with drag-and-drop — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards that can be dragged between columns. Moves use optimistic UI with server-side persistence and automatic rollback on failure. Task cards show title, description, type badge, and points. Cards have hover lift+shadow effects. Layout is responsive full-height with independently scrollable columns. Board header shows "Kanban Planner" title with a week date-range badge and Edit Plan button linking to the edit plan page. Create plan flow at `/kanban/plans/new` and edit plan flow at `/kanban/plans/[id]` share a unified `PlanForm` component and layout. Edit plan prefills description and preselects linked templates. Points calculation includes both daily and weekly templates.
+Backend complete (schema, DAL, server actions, board sync). Full board UI with drag-and-drop — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards that can be dragged between columns. Moves use optimistic UI with server-side persistence and automatic rollback on failure. Task cards show title, description, type badge, and points. Cards have hover lift+shadow effects. Layout is responsive full-height with independently scrollable columns. Board header shows "Kanban Planner" title with a week date-range badge and Edit Plan button linking to the edit plan page. Create plan flow at `/kanban/plans/new` and edit plan flow at `/kanban/plans/[id]` share a unified `PlanForm` component and layout. Edit plan prefills description and preselects linked templates. Points calculation includes both daily and weekly templates. Create/edit task template modal available from the plan form — supports title, description, type (Daily/Weekly), points, frequency with live preview. Type is immutable on edit. Edit icon reveals on template row hover.
 
 ## Backlog
 ### High Priority
-- [ ] Create/edit task template modal — title, description, type, points, frequency
 
 ### MVP
 - [ ] Score bar — today's points, tasks done count, week progress
 - [ ] Add end of period sync flow
 - [ ] Add preselect task template from pending_update plan
+- [ ] Redesign task preview and actual task showing on the kanban to make it visually consistent
+- [ ] Disable create/edit task template modal close by clicking outside, also extract it into separate small components 
 
 ### Future
 - [ ] When remove a task template during edit plan, add modal to check if user want to delete existing tasks on board
@@ -35,11 +36,15 @@ Backend complete (schema, DAL, server actions, board sync). Full board UI with d
 ## Update Log
 
 ### 2026-02-14
+- Added create/edit task template modal with title, description, type selector (Daily/Weekly), points, frequency, and live preview
+- Type is immutable when editing an existing template
+- Edit icon on template rows reveals on hover; "+ New Template" button enabled with border styling
+- Extracted `TaskPreview` component for reuse
+- Unified star/points icon color to `text-warning` across all components
 - Added edit plan flow at `/kanban/plans/[id]` with prefilled description and preselected templates
 - Unified create/edit into shared `PlanForm` component with mode-based header and submit label
 - Extracted shared plans layout (`/kanban/plans/layout.tsx`) for create and edit pages
 - Edit Plan button in board header now links to the current plan's edit page
-- Points calculation now includes both daily and weekly template points
 - Added board header with "Kanban Planner" title, week date-range badge, and Edit Plan button
 
 ### 2026-02-13
@@ -65,6 +70,7 @@ Backend complete (schema, DAL, server actions, board sync). Full board UI with d
 - UI mockups created (board, empty state, create plan, create/edit template)
 
 ## Done
+- [x] Create/edit task template modal — title, description, type, points, frequency, live preview
 - [x] Edit plan flow with prefilled description and preselected templates
 - [x] Board header with title, week date-range badge, and Edit Plan button
 - [x] Kanban board page (`/kanban`) — three columns (Todo, In Progress, Done) with glassmorphism styling

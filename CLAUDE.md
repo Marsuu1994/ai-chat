@@ -59,6 +59,7 @@ ui/
 - Extract large chunks of UI JSX into separate components to improve readability and modularity.
 - Use Heroicons as JSX imports (e.g., `<PlusIcon />`) instead of inline SVG.
 - Group logically related utility functions into a single file (e.g., `taskUtils.ts` for sorting and grouping tasks) rather than splitting each function into its own file.
+- Use `text-warning` for all star/points icons to maintain visual consistency across the app.
 
 ## Commands
 

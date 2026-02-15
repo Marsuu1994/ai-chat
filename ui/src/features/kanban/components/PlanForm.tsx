@@ -8,6 +8,7 @@ import { TaskType, PeriodType } from "@/features/kanban/utils/enums";
 import type { TaskTemplateItem } from "@/lib/db/taskTemplates";
 import { createPlanAction, updatePlanAction } from "@/features/kanban/actions/planActions";
 import TemplateItem from "./TemplateItem";
+import TemplateModal from "./TemplateModal";
 
 interface PlanFormProps {
   templates: TaskTemplateItem[];
@@ -31,6 +32,8 @@ export default function PlanForm({
   const [description, setDescription] = useState(initialDescription);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState<TaskTemplateItem | null>(null);
 
   const dailyTemplates = templates.filter((t) => t.type === TaskType.DAILY);
   const weeklyTemplates = templates.filter((t) => t.type === TaskType.WEEKLY);
@@ -105,6 +108,10 @@ export default function PlanForm({
             template={t}
             isSelected={selectedIds.has(t.id)}
             onToggle={() => toggleTemplate(t.id)}
+            onEdit={() => {
+              setEditingTemplate(t);
+              setIsModalOpen(true);
+            }}
           />
         ))}
       </>
@@ -147,8 +154,11 @@ export default function PlanForm({
           </span>
           <button
             type="button"
-            className="btn btn-ghost btn-xs"
-            disabled
+            className="btn btn-ghost btn-xs border border-base-content/15 hover:bg-base-content/5"
+            onClick={() => {
+              setEditingTemplate(null);
+              setIsModalOpen(true);
+            }}
           >
             + New Template
           </button>
@@ -203,6 +213,12 @@ export default function PlanForm({
         </div>
       </div>
     </form>
+    <TemplateModal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      onSaved={() => router.refresh()}
+      template={editingTemplate}
+    />
     </>
   );
 }

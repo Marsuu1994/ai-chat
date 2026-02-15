@@ -8,12 +8,14 @@ interface TemplateItemProps {
   template: TaskTemplateItem;
   isSelected: boolean;
   onToggle: () => void;
+  onEdit: () => void;
 }
 
 export default function TemplateItem({
   template,
   isSelected,
   onToggle,
+  onEdit,
 }: TemplateItemProps) {
   const periodLabel = template.type === TaskType.DAILY ? "day" : "week";
 
@@ -28,7 +30,7 @@ export default function TemplateItem({
           onToggle();
         }
       }}
-      className={`flex items-center gap-3 rounded-lg border p-3 cursor-pointer transition-colors ${
+      className={`group flex items-center gap-3 rounded-lg border p-3 cursor-pointer transition-colors ${
         isSelected
           ? "border-success/50 bg-success/10"
           : "border-base-content/10 bg-base-200"
@@ -53,12 +55,14 @@ export default function TemplateItem({
         </div>
       </div>
 
-      {/* Edit icon (placeholder) */}
+      {/* Edit icon */}
       <button
         type="button"
-        className="btn btn-ghost btn-xs btn-square shrink-0"
-        onClick={(e) => e.stopPropagation()}
-        disabled
+        className="btn btn-ghost btn-xs btn-square shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+        onClick={(e) => {
+          e.stopPropagation();
+          onEdit();
+        }}
       >
         <PencilSquareIcon className="size-4" />
       </button>
