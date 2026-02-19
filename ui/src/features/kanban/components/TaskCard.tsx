@@ -10,7 +10,8 @@
 import { Draggable } from "@hello-pangea/dnd";
 import { StarIcon } from "@heroicons/react/24/solid";
 import type { TaskItem } from "@/lib/db/tasks";
-import { TaskStatus, TaskType } from "../utils/enums";
+import { TaskStatus } from "../utils/enums";
+import TaskTypeBadge from "./TaskTypeBadge";
 
 type TaskCardProps = {
   task: TaskItem;
@@ -21,7 +22,6 @@ type TaskCardProps = {
 
 export default function TaskCard({ task, taskType, index }: TaskCardProps) {
   const isDone = task.status === TaskStatus.DONE;
-  const isDaily = taskType === TaskType.DAILY;
 
   return (
     // `draggableId` must be unique across the entire board.
@@ -59,13 +59,7 @@ export default function TaskCard({ task, taskType, index }: TaskCardProps) {
             )}
 
             <div className="flex items-center gap-2 mt-2">
-              <span
-                className={`badge badge-xs font-bold uppercase ${
-                  isDaily ? "badge-info" : "badge-secondary"
-                }`}
-              >
-                {isDaily ? "DAILY" : "WEEKLY"}
-              </span>
+              <TaskTypeBadge type={taskType} />
 
               <span className="flex gap-0.5 text-xs ml-auto">
                 <StarIcon className="size-4 text-warning" />

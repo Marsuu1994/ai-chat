@@ -8,7 +8,7 @@ import { TaskType, PeriodType } from "@/features/kanban/utils/enums";
 import type { TaskTemplateItem } from "@/lib/db/taskTemplates";
 import { createPlanAction, updatePlanAction } from "@/features/kanban/actions/planActions";
 import TemplateItem from "./TemplateItem";
-import TemplateModal from "./TemplateModal";
+import TemplateModal from "./template-modal/TemplateModal";
 
 interface PlanFormProps {
   templates: TaskTemplateItem[];

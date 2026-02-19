@@ -1,5 +1,6 @@
 import { StarIcon } from "@heroicons/react/24/solid";
 import { TaskType } from "@/features/kanban/utils/enums";
+import TaskTypeBadge from "../TaskTypeBadge";
 
 interface TaskPreviewProps {
   title: string;
@@ -29,15 +30,7 @@ export default function TaskPreview({
         Preview
       </div>
       <div className="flex items-center gap-2">
-        <span
-          className={`text-[11px] font-semibold px-2 py-0.5 rounded ${
-            isDaily
-              ? "bg-info/15 text-info"
-              : "bg-secondary/15 text-secondary"
-          }`}
-        >
-          {isDaily ? "DAILY" : "WEEKLY"}
-        </span>
+        <TaskTypeBadge type={type} />
         <span className="text-sm font-medium truncate">
           {previewTitle}
         </span>

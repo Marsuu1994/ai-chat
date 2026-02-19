@@ -56,7 +56,9 @@ ui/
 - Always reference enums via their named constant (e.g., `TaskType.WEEKLY`) instead of raw strings (`"WEEKLY"`).
 - Use `switch/case/default` instead of `if/else if` when branching on enum values.
 - Prefer batch operations (e.g., `createMany`, `updateMany`) over loops with individual database calls unless unavoidable.
-- Extract large chunks of UI JSX into separate components to improve readability and modularity.
+- When a UI component exceeds ~100 lines of JSX (e.g., a large form or modal), break it into logically grouped sub-components in a directory named after the parent (e.g., `template-modal/TemplateModal.tsx` with sub-components alongside it). Keep the parent as a slim orchestrator.
+  - Bad: a single 300-line `TemplateModal.tsx` with header, form fields, type selector, preview, and footer all inline
+  - Good: `template-modal/TemplateModal.tsx` (shell + state) importing `TemplateModalHeader`, `TemplateModalFooter`, `TypeSelector`, `IconNumberField`
 - Use Heroicons as JSX imports (e.g., `<PlusIcon />`) instead of inline SVG.
 - Group logically related utility functions into a single file (e.g., `taskUtils.ts` for sorting and grouping tasks) rather than splitting each function into its own file.
 - Use `text-warning` for all star/points icons to maintain visual consistency across the app.

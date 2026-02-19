@@ -4,18 +4,16 @@ A drag-and-drop kanban board for planning and tracking tasks within weekly perio
 
 ## Current State
 
-Backend complete (schema, DAL, server actions, board sync). Full board UI with drag-and-drop — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards that can be dragged between columns. Moves use optimistic UI with server-side persistence and automatic rollback on failure. Task cards show title, description, type badge, and points. Cards have hover lift+shadow effects. Layout is responsive full-height with independently scrollable columns. Board header shows "Kanban Planner" title with a week date-range badge and Edit Plan button linking to the edit plan page. Progress dashboard sits between the header and board columns showing: Today progress ring (SVG circle with percentage), three stat metrics (Today Points, Week Points, Daily Avg), and a Week Progress Bar with gradient fill. All metrics are computed server-side from a single DB query. End-of-period sync automatically detects when a new week starts, expires all undone tasks, and transitions the plan to `PENDING_UPDATE`. Create plan flow at `/kanban/plans/new` preselects templates from the previous plan; on submission the old plan is archived to `COMPLETED`. Edit plan flow at `/kanban/plans/[id]` shares a unified `PlanForm` component and layout with create. Edit plan prefills description and preselects linked templates. Points calculation includes both daily and weekly templates. Create/edit task template modal available from the plan form — supports title, description, type (Daily/Weekly), points, frequency with live preview. Type is immutable on edit. Edit icon reveals on template row hover.
+Backend complete (schema, DAL, server actions, board sync). Full board UI with drag-and-drop — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards that can be dragged between columns. Moves use optimistic UI with server-side persistence and automatic rollback on failure. Task cards show title, description, unified type badge (`TaskTypeBadge`), and points. Cards have hover lift+shadow effects. Layout is responsive full-height with independently scrollable columns. Board header shows "Kanban Planner" title with a week date-range badge and Edit Plan button linking to the edit plan page. Plans pages show a "Planning Mode" header. Progress dashboard sits between the header and board columns showing: Today progress ring (SVG circle with percentage), three stat metrics (Today Points, Week Points, Daily Avg), and a Week Progress Bar with gradient fill. All metrics are computed server-side from a single DB query. End-of-period sync automatically detects when a new week starts, expires all undone tasks, and transitions the plan to `PENDING_UPDATE`. Create plan flow at `/kanban/plans/new` preselects templates from the previous plan; on submission the old plan is archived to `COMPLETED`. Edit plan flow at `/kanban/plans/[id]` shares a unified `PlanForm` component and layout with create. Edit plan prefills description and preselects linked templates. Points calculation includes both daily and weekly templates. Create/edit task template modal (refactored into `template-modal/` directory with sub-components) available from the plan form — supports title, description, type (Daily/Weekly), points, frequency with live preview. Modal cannot be dismissed by clicking outside. Type is immutable on edit. Edit icon reveals on template row hover.
 
 ## Backlog
 ### High Priority
-- [] Redesign task preview and actual task showing on the kanban to make it visually consistent
-
-### MVP
-- [ ] Disable create/edit task template modal close by clicking outside, also extract it into separate small components 
 - [ ] Add uniform loading state between pages
 
-### Future
+### MVP V2
 - [ ] Design the AI generated task instance flow
+
+### Future
 - [ ] Carefully redesign the progress dashboard, consider edge cases like if user not started from Monday
 - [ ] When remove a task template during edit plan, add modal to check if user want to delete existing tasks on board
 - [ ] Support same group ordering for drag and drop within same column
@@ -36,9 +34,13 @@ Backend complete (schema, DAL, server actions, board sync). Full board UI with d
 ## Update Log
 
 ### 2026-02-15
-- Added progress dashboard between board header and kanban columns with Today ring, stat metrics (Today Points, Week Points, Daily Avg), and Week Progress Bar with gradient fill
-- Added end-of-period sync — automatically detects new week, expires all undone tasks, and moves plan to PENDING_UPDATE
-- Create plan page now preselects templates from the previous plan; old plan is archived to COMPLETED on submission
+- Added progress dashboard with Today ring, stat metrics (Today Points, Week Points, Daily Avg), and Week Progress Bar
+- Added end-of-period sync — auto-detects new week, expires undone tasks, moves plan to PENDING_UPDATE
+- Create plan page preselects templates from previous plan; old plan archived to COMPLETED on submission
+- Unified task type badge (`TaskTypeBadge`) shared by TaskCard and TaskPreview
+- Added "Planning Mode" header to plan create/edit pages
+- Refactored TemplateModal into `template-modal/` directory with sub-components (header, footer, TypeSelector, IconNumberField)
+- Disabled template modal close on backdrop click
 
 ### 2026-02-14
 - Added create/edit task template modal with title, description, type selector (Daily/Weekly), points, frequency, and live preview
@@ -75,6 +77,7 @@ Backend complete (schema, DAL, server actions, board sync). Full board UI with d
 - UI mockups created (board, empty state, create plan, create/edit template)
 
 ## Done
+- [x] Unified task type badge, planning mode header, refactored template modal into sub-components, disabled backdrop close
 - [x] End-of-period sync — auto-detect new week, expire undone tasks, transition plan to PENDING_UPDATE
 - [x] Preselect task templates from previous plan when creating a new plan; archive old plan to COMPLETED
 - [x] Score bar — today's points, tasks done count, week progress
