@@ -66,9 +66,17 @@ Sync logic lives in `runDailySync(planId, today)` — a standalone function reus
 **Status recompute (inside `runDailySync`):**
 - Daily tasks where `forDate < today` and status is not `done` -> move to `expired`.
 
-**End of period:**
-- All remaining non-done tasks (daily and weekly) -> move to `expired`.
+**End of period (automatic detection in `fetchBoard()`):**
+- Before running daily sync, `fetchBoard()` checks `getISOWeekKey(today) !== plan.periodKey`.
+- If the period has ended, calls `runEndOfPeriodSync(planId)` — a standalone function reusable by a future cron job.
+- `runEndOfPeriodSync` expires all remaining non-done tasks (daily and weekly) via `expireAllNonDoneTasks()`.
 - Plan status changes from `active` to `pending_update` (available as template for next plan).
+- `fetchBoard()` returns null → EmptyBoard renders with "Create Plan" prompt.
+
+**Returning user (create plan with preselection):**
+- The create plan page (`/kanban/plans/new`) fetches the `PENDING_UPDATE` plan and preselects its templates via `initialSelectedIds`.
+- User can add/remove/edit templates before submitting.
+- After new plan creation, `createPlanAction` archives the old `PENDING_UPDATE` plan to `COMPLETED`.
 
 **Task generation (inside `runDailySync`):**
 - Sets `lastSyncDate` first to prevent concurrent re-runs.
@@ -214,9 +222,10 @@ Uses **Server Actions** for mutations and **direct DAL calls from Server Compone
 ### Data Fetching (Server Component)
 
 The `/kanban` page is a Server Component that calls `fetchBoard()` directly — no API route needed. This function:
-1. Fetches the active plan via DAL
-2. Checks `plan.lastSyncDate` vs today — only runs `runDailySync()` if stale
-3. Returns `BoardData | null` as props to client components
+1. Fetches the active plan via DAL. If none, returns null → EmptyBoard.
+2. Checks if the period has ended (`getISOWeekKey(today) !== plan.periodKey`). If so, runs `runEndOfPeriodSync()` and returns null.
+3. Checks `plan.lastSyncDate` vs today — only runs `runDailySync()` if stale.
+4. Returns `BoardData | null` as props to client components.
 
 ```
 BoardData {
@@ -274,7 +283,7 @@ dailyAvg = weekDonePoints / daysElapsed
 All mutations follow the pattern: validate input with Zod → call DAL → `revalidatePath('/kanban')` to trigger page re-render. The page re-render re-runs `fetchBoard()`, so actions don't need to return board data.
 
 #### `createPlanAction(input)`
-Validates, checks no existing active plan, creates plan + links templates, generates initial tasks (weekly immediately, daily for today).
+Validates, checks no existing active plan, creates plan + links templates, generates initial tasks (weekly immediately, daily for today). Archives any `PENDING_UPDATE` plan to `COMPLETED`.
 ```
 Input {
   periodType:   PeriodType        // "WEEKLY"

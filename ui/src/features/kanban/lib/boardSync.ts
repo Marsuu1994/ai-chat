@@ -2,16 +2,18 @@ import {
   getActivePlan,
   getPlanWithTemplates,
   updateLastSyncDate,
+  updatePlanStatus,
 } from "@/lib/db/plans";
 import {
   expireStaleDailyTasks,
+  expireAllNonDoneTasks,
   createManyTasks,
   getTasksByPlanId,
 } from "@/lib/db/tasks";
 import type { PlanWithTemplates } from "@/lib/db/plans";
 import type { TaskItem } from "@/lib/db/tasks";
-import { TaskType, TaskStatus } from "@/generated/prisma/client";
-import { getTodayDate, sameDay, getMondayFromPeriodKey } from "../utils/dateUtils";
+import { TaskType, TaskStatus, PlanStatus } from "@/generated/prisma/client";
+import { getTodayDate, getISOWeekKey, sameDay, getMondayFromPeriodKey } from "../utils/dateUtils";
 
 export type BoardData = {
   plan: PlanWithTemplates;
@@ -68,8 +70,17 @@ export async function runDailySync(planId: string, today: Date): Promise<void> {
 }
 
 /**
+ * Run end-of-period sync: expire all undone tasks and move plan to PENDING_UPDATE.
+ * Standalone and reusable (e.g., by a future cron job).
+ */
+export async function runEndOfPeriodSync(planId: string): Promise<void> {
+  await expireAllNonDoneTasks(planId);
+  await updatePlanStatus(planId, PlanStatus.PENDING_UPDATE);
+}
+
+/**
  * Fetch the board for the kanban page.
- * Checks if daily sync is needed before running it.
+ * Checks if period has ended or daily sync is needed before running.
  */
 export async function fetchBoard(): Promise<BoardData | null> {
   const activePlan = await getActivePlan();
@@ -77,7 +88,13 @@ export async function fetchBoard(): Promise<BoardData | null> {
 
   const today = getTodayDate();
 
-  // Only run sync if it hasn't been done today
+  // Check if the plan's period has ended (new week started)
+  if (getISOWeekKey(today) !== activePlan.periodKey) {
+    await runEndOfPeriodSync(activePlan.id);
+    return null;
+  }
+
+  // Only run daily sync if it hasn't been done today
   const needsSync =
     !activePlan.lastSyncDate ||
     activePlan.lastSyncDate.getTime() !== today.getTime();

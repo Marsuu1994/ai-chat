@@ -4,9 +4,11 @@ import { revalidatePath } from "next/cache";
 import { createPlanSchema, updatePlanSchema } from "../schemas";
 import {
   getActivePlan,
+  getPlanByStatus,
   createPlan,
   updatePlan,
   updateLastSyncDate,
+  updatePlanStatus,
 } from "@/lib/db/plans";
 import {
   createManyPlanTemplates,
@@ -14,7 +16,7 @@ import {
 } from "@/lib/db/planTemplates";
 import { getTaskTemplateById } from "@/lib/db/taskTemplates";
 import { createManyTasks } from "@/lib/db/tasks";
-import { TaskType, TaskStatus } from "@/generated/prisma/client";
+import { TaskType, TaskStatus, PlanStatus } from "@/generated/prisma/client";
 import { getTodayDate, getISOWeekKey } from "../utils/dateUtils";
 
 export async function createPlanAction(input: unknown) {
@@ -43,6 +45,12 @@ export async function createPlanAction(input: unknown) {
 
   // Mark sync as done — prevents redundant sync on first page load
   await updateLastSyncDate(plan.id, today);
+
+  // Archive any PENDING_UPDATE plan → COMPLETED
+  const pendingPlan = await getPlanByStatus(PlanStatus.PENDING_UPDATE);
+  if (pendingPlan) {
+    await updatePlanStatus(pendingPlan.id, PlanStatus.COMPLETED);
+  }
 
   revalidatePath("/kanban");
   return { data: plan };
