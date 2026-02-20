@@ -24,6 +24,9 @@ ui/
 │   │   │   ├── llm/               # LLM streaming + title summarization
 │   │   │   └── chats/             # Chat CRUD + messages endpoints
 │   │   ├── chat/                  # Chat pages (layout, new, [chatId])
+│   │   ├── kanban/                # Kanban pages
+│   │   │   ├── page.tsx           # Board page
+│   │   │   └── plans/             # Plan create/edit pages ([id], new)
 │   │   ├── layout.tsx             # Root layout
 │   │   └── globals.css            # Global styles
 │   ├── generated/prisma/          # Generated Prisma client (gitignored)
@@ -41,7 +44,7 @@ ui/
 │   │       ├── components/        # UI components
 │   │       ├── utils/             # dateUtils, taskUtils, enums
 │   │       ├── schemas.ts         # Zod validation schemas
-│   │       └── design-doc/        # Design docs (baseline, flows, api, mockup)
+│   │       └── design/            # Design docs (baseline, flows, api, mockup)
 │   └── components/
 │       └── common/
 │           └── Header.tsx         # Shared header component
