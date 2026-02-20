@@ -16,7 +16,7 @@ export default function BoardHeader({ periodKey, planId }: BoardHeaderProps) {
         <h1 className="text-xl font-bold">
           <span className="text-success">Kanban</span> Planner
         </h1>
-        <span className="bg-success/15 text-success text-xs font-medium px-3 py-1 rounded-full">
+        <span className="bg-success/15 text-success text-xs font-medium px-3 py-1 rounded-full font-semibold">
           {dateRange}
         </span>
       </div>

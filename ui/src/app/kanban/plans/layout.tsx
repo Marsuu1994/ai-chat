@@ -15,7 +15,7 @@ export default function PlansLayout({ children }: { children: React.ReactNode })
           <h1 className="text-xl font-bold">
             <span className="text-success">Kanban</span> Planner
           </h1>
-          <span className="bg-error/15 text-error text-xs font-medium px-3 py-1 rounded-full">
+          <span className="bg-error/15 text-error text-xs font-medium px-3 py-1 rounded-full font-semibold">
             Planning Mode
           </span>
         </div>

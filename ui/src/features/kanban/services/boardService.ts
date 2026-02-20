@@ -1,3 +1,4 @@
+import prisma from "@/lib/prisma";
 import {
   getActivePlan,
   getPlanWithTemplates,
@@ -34,13 +35,7 @@ export type BoardData = {
  * Standalone and reusable (e.g., by a future cron job).
  */
 export async function runDailySync(planId: string, today: Date): Promise<void> {
-  // Mark sync date first to prevent concurrent re-runs
-  await updateLastSyncDate(planId, today);
-
-  // Expire stale daily tasks (forDate < today, not DONE)
-  await expireStaleDailyTasks(planId, today);
-
-  // Fetch plan with templates to generate today's daily tasks
+  // Read before transaction — template data doesn't change during sync
   const planWithTemplates = await getPlanWithTemplates(planId);
   if (!planWithTemplates) return;
 
@@ -64,9 +59,13 @@ export async function runDailySync(planId: string, today: Date): Promise<void> {
     }
   }
 
-  if (dailyTaskData.length > 0) {
-    await createManyTasks(dailyTaskData);
-  }
+  await prisma.$transaction(async (tx) => {
+    await updateLastSyncDate(planId, today, tx);
+    await expireStaleDailyTasks(planId, today, tx);
+    if (dailyTaskData.length > 0) {
+      await createManyTasks(dailyTaskData, tx);
+    }
+  });
 }
 
 /**
@@ -74,8 +73,10 @@ export async function runDailySync(planId: string, today: Date): Promise<void> {
  * Standalone and reusable (e.g., by a future cron job).
  */
 export async function runEndOfPeriodSync(planId: string): Promise<void> {
-  await expireAllNonDoneTasks(planId);
-  await updatePlanStatus(planId, PlanStatus.PENDING_UPDATE);
+  await prisma.$transaction(async (tx) => {
+    await expireAllNonDoneTasks(planId, tx);
+    await updatePlanStatus(planId, PlanStatus.PENDING_UPDATE, tx);
+  });
 }
 
 /**

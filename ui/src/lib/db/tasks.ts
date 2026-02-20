@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { TaskStatus } from "@/generated/prisma/client";
+import { Prisma, TaskStatus } from "@/generated/prisma/client";
 
 export type TaskItem = {
   id: string;
@@ -92,9 +92,11 @@ export async function createManyTasks(
     forDate?: Date;
     periodKey?: string;
     instanceIndex: number;
-  }[]
+  }[],
+  tx?: Prisma.TransactionClient
 ): Promise<{ count: number }> {
-  return prisma.task.createMany({
+  const db = tx ?? prisma;
+  return db.task.createMany({
     data,
     skipDuplicates: true,
   });
@@ -123,9 +125,11 @@ export async function updateTaskStatus(
  */
 export async function expireStaleDailyTasks(
   planId: string,
-  today: Date
+  today: Date,
+  tx?: Prisma.TransactionClient
 ): Promise<{ count: number }> {
-  return prisma.task.updateMany({
+  const db = tx ?? prisma;
+  return db.task.updateMany({
     where: {
       planId,
       forDate: { lt: today },
@@ -139,9 +143,11 @@ export async function expireStaleDailyTasks(
  * Expire all non-done tasks for a plan (end-of-period cleanup)
  */
 export async function expireAllNonDoneTasks(
-  planId: string
+  planId: string,
+  tx?: Prisma.TransactionClient
 ): Promise<{ count: number }> {
-  return prisma.task.updateMany({
+  const db = tx ?? prisma;
+  return db.task.updateMany({
     where: {
       planId,
       status: { not: "DONE" },
@@ -180,9 +186,11 @@ export async function taskExists(taskId: string): Promise<boolean> {
  */
 export async function deleteIncompleteTasksByTemplateIds(
   planId: string,
-  templateIds: string[]
+  templateIds: string[],
+  tx?: Prisma.TransactionClient
 ): Promise<{ count: number }> {
-  return prisma.task.deleteMany({
+  const db = tx ?? prisma;
+  return db.task.deleteMany({
     where: {
       planId,
       templateId: { in: templateIds },

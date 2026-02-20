@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma/client";
 
 export type PlanTemplateItem = {
   id: string;
@@ -42,9 +43,11 @@ export async function createPlanTemplate(
  */
 export async function createManyPlanTemplates(
   planId: string,
-  templateIds: string[]
+  templateIds: string[],
+  tx?: Prisma.TransactionClient
 ): Promise<{ count: number }> {
-  return prisma.planTemplate.createMany({
+  const db = tx ?? prisma;
+  return db.planTemplate.createMany({
     data: templateIds.map((templateId) => ({ planId, templateId })),
     skipDuplicates: true,
   });
@@ -53,8 +56,12 @@ export async function createManyPlanTemplates(
 /**
  * Bulk delete all plan-template links for a plan (used for plan rebuild)
  */
-export async function deletePlanTemplatesByPlanId(planId: string): Promise<void> {
-  await prisma.planTemplate.deleteMany({
+export async function deletePlanTemplatesByPlanId(
+  planId: string,
+  tx?: Prisma.TransactionClient
+): Promise<void> {
+  const db = tx ?? prisma;
+  await db.planTemplate.deleteMany({
     where: { planId },
   });
 }

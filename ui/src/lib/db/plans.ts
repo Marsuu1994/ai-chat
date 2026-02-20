@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { PlanStatus } from "@/generated/prisma/client";
+import { Prisma, PlanStatus } from "@/generated/prisma/client";
 
 export type PlanItem = {
   id: string;
@@ -93,12 +93,12 @@ export async function getPlanWithTemplates(planId: string): Promise<PlanWithTemp
 /**
  * Create a new plan with ACTIVE status
  */
-export async function createPlan(data: {
-  periodType: "WEEKLY";
-  periodKey: string;
-  description?: string;
-}): Promise<PlanItem> {
-  return prisma.plan.create({
+export async function createPlan(
+  data: { periodType: "WEEKLY"; periodKey: string; description?: string },
+  tx?: Prisma.TransactionClient
+): Promise<PlanItem> {
+  const db = tx ?? prisma;
+  return db.plan.create({
     data: {
       periodType: data.periodType,
       periodKey: data.periodKey,
@@ -114,9 +114,11 @@ export async function createPlan(data: {
  */
 export async function updatePlan(
   planId: string,
-  data: { description?: string }
+  data: { description?: string },
+  tx?: Prisma.TransactionClient
 ): Promise<PlanItem> {
-  return prisma.plan.update({
+  const db = tx ?? prisma;
+  return db.plan.update({
     where: { id: planId },
     data,
     select: planSelect,
@@ -128,9 +130,11 @@ export async function updatePlan(
  */
 export async function updatePlanStatus(
   planId: string,
-  status: PlanStatus
+  status: PlanStatus,
+  tx?: Prisma.TransactionClient
 ): Promise<PlanItem> {
-  return prisma.plan.update({
+  const db = tx ?? prisma;
+  return db.plan.update({
     where: { id: planId },
     data: { status },
     select: planSelect,
@@ -142,9 +146,11 @@ export async function updatePlanStatus(
  */
 export async function updateLastSyncDate(
   planId: string,
-  date: Date
+  date: Date,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.plan.update({
+  const db = tx ?? prisma;
+  await db.plan.update({
     where: { id: planId },
     data: { lastSyncDate: date },
   });

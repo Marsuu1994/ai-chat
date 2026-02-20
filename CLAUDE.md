@@ -128,6 +128,9 @@ Each file should be self-contained (link to `./styles.css`) and represent only t
 - When you need both a full dataset and a filtered subset, fetch once from the DB and filter in-memory on the server side. Do not issue multiple DB queries for overlapping data.
   - Bad: `boardTasks = getTasksByStatus([TODO, DOING, DONE])` + `allTasks = getTasksByStatus([TODO, DOING, DONE, EXPIRED])`
   - Good: `allTasks = getTasksByPlanId(planId)` then `boardTasks = allTasks.filter(t => t.status !== EXPIRED)`
+- When a service function performs a series of DB mutations that must succeed or fail together, wrap them in `prisma.$transaction()` to guarantee ACID atomicity. Add `tx?: Prisma.TransactionClient` to each participating DAL write function and use `const db = tx ?? prisma` inside. Place any guard reads before the transaction to keep the connection hold time short.
+  - Bad: sequential `createPlan()` → `createManyPlanTemplates()` → `createManyTasks()` with no transaction — a failure mid-way leaves orphaned records
+  - Good: `prisma.$transaction(async (tx) => { await createPlan(..., tx); await createManyPlanTemplates(..., tx); await createManyTasks(..., tx); })`
 
 ## Code Style
 
