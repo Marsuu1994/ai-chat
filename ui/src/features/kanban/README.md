@@ -17,7 +17,6 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - [ ] Design better way to handle task templates
 - [ ] Add subtitle field to task template to support different titles
 - [ ] Create common landing page for Mars workbench to navigate between features
-- [ ] Make all DB actions using transactions
 - [ ] Task overlap visualization (stacked cards)
 - [ ] Rollover badge for daily tasks
 - [ ] Risk indicators (red/yellow) for at-risk tasks
@@ -96,6 +95,7 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - UI mockups created (board, empty state, create plan, create/edit template)
 
 ## Done
+- [x] Make all DB actions using transactions
 - [x] Adjust look and feel for both modals, the x button should look same, and modal header should have a underline
 - [x] Adjust weekly total point tasks calculation flow (Option C projected calculation)
 - [x] When remove a task template during edit plan, add modal to check if user want to delete existing undone tasks on board
