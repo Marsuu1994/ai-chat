@@ -1,11 +1,11 @@
-import { fetchBoard } from "@/features/kanban/lib/boardSync";
+import { fetchBoardAction } from "@/features/kanban/actions/boardActions";
 import EmptyBoard from "@/features/kanban/components/EmptyBoard";
 import KanbanBoard from "@/features/kanban/components/KanbanBoard";
 import BoardHeader from "@/features/kanban/components/BoardHeader";
 import ProgressDashboard from "@/features/kanban/components/ProgressDashboard";
 
 export default async function KanbanPage() {
-  const board = await fetchBoard();
+  const board = await fetchBoardAction();
 
   if (!board) {
     return <EmptyBoard />;
