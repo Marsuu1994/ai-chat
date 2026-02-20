@@ -8,13 +8,11 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 
 ## Backlog
 ### High Priority
-- [ ] Adjust look and feel for both modals, the x button should look same, and modal header should have a underline
 
 ### MVP V2
 - [ ] Design the AI generated task instance flow
 
 ### Future
-- [ ] Carefully redesign the progress dashboard, consider edge cases like if user not started from Monday
 - [ ] Support same group ordering for drag and drop within same column
 - [ ] Design better way to handle task templates
 - [ ] Add subtitle field to task template to support different titles
@@ -40,6 +38,7 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - Added back chevron (←) to the plan form header for one-click navigation back to the board
 - Split monolithic `mockup.html` into per-flow files under `design/mockup/` with a shared `styles.css`
 - Added "no direct service/DAL calls from UI" and "split mockups by flow" rules to CLAUDE.md
+- Unified modal header styling: full-width underline (via negative-margin bleed) and matching X button (`XMarkIcon` + `btn-square`) across `TemplateModal` and `RemoveInstancesModal`
 
 ### 2026-02-19
 - Added skeleton loading states for board page (`/kanban`) and plan form pages (`/kanban/plans/*`) using Next.js `loading.tsx`
@@ -95,6 +94,7 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - UI mockups created (board, empty state, create plan, create/edit template)
 
 ## Done
+- [x] Adjust look and feel for both modals, the x button should look same, and modal header should have a underline
 - [x] Adjust weekly total point tasks calculation flow (Option C projected calculation)
 - [x] When remove a task template during edit plan, add modal to check if user want to delete existing undone tasks on board
 - [x] Uniform loading states for board and plan pages

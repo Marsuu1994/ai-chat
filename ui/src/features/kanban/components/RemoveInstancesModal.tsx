@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ExclamationTriangleIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid";
 import type { TaskTemplateItem } from "@/lib/db/taskTemplates";
 import TaskTypeBadge from "./TaskTypeBadge";
@@ -40,14 +40,14 @@ export default function RemoveInstancesModal({
     <dialog ref={dialogRef} className="modal" onClose={onClose}>
       <div className="modal-box max-w-md">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between -mx-6 px-6 pb-4 mb-4 border-b border-base-content/10">
           <h3 className="text-lg font-semibold">Remove tasks from board?</h3>
           <button
             type="button"
-            className="btn btn-ghost btn-sm btn-circle"
+            className="btn btn-ghost btn-sm btn-square"
             onClick={onClose}
           >
-            &times;
+            <XMarkIcon className="size-5" />
           </button>
         </div>
 
