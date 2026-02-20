@@ -13,9 +13,14 @@ import {
 import {
   createManyPlanTemplates,
   deletePlanTemplatesByPlanId,
+  getPlanTemplatesByPlanId,
 } from "@/lib/db/planTemplates";
 import { getTaskTemplateById } from "@/lib/db/taskTemplates";
-import { createManyTasks } from "@/lib/db/tasks";
+import {
+  createManyTasks,
+  deleteIncompleteTasksByTemplateIds,
+  countTasksByTemplateIds,
+} from "@/lib/db/tasks";
 import { TaskType, TaskStatus, PlanStatus } from "@/generated/prisma/client";
 import { getTodayDate, getISOWeekKey } from "../utils/dateUtils";
 
@@ -60,7 +65,7 @@ export async function updatePlanAction(planId: string, input: unknown) {
   const parsed = updatePlanSchema.safeParse(input);
   if (!parsed.success) return { error: parsed.error.flatten() };
 
-  const { description, templateIds } = parsed.data;
+  const { description, templateIds, removeInstances } = parsed.data;
 
   // Update description if provided
   if (description !== undefined) {
@@ -69,6 +74,17 @@ export async function updatePlanAction(planId: string, input: unknown) {
 
   // Rebuild template links if templateIds changed
   if (templateIds) {
+    // Delete incomplete tasks for removed templates if requested
+    if (removeInstances) {
+      const oldLinks = await getPlanTemplatesByPlanId(planId);
+      const oldTemplateIds = new Set(oldLinks.map((l) => l.templateId));
+      const newTemplateIds = new Set(templateIds);
+      const removedIds = [...oldTemplateIds].filter((id) => !newTemplateIds.has(id));
+      if (removedIds.length > 0) {
+        await deleteIncompleteTasksByTemplateIds(planId, removedIds);
+      }
+    }
+
     await deletePlanTemplatesByPlanId(planId);
     await createManyPlanTemplates(planId, templateIds);
 
@@ -132,4 +148,11 @@ async function generateTasksForPlan(
   if (taskData.length > 0) {
     await createManyTasks(taskData);
   }
+}
+
+export async function countRemovedTasksAction(
+  planId: string,
+  removedTemplateIds: string[]
+) {
+  return countTasksByTemplateIds(planId, removedTemplateIds);
 }

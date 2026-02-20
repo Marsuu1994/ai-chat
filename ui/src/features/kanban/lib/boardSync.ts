@@ -13,7 +13,7 @@ import {
 import type { PlanWithTemplates } from "@/lib/db/plans";
 import type { TaskItem } from "@/lib/db/tasks";
 import { TaskType, TaskStatus, PlanStatus } from "@/generated/prisma/client";
-import { getTodayDate, getISOWeekKey, sameDay, getMondayFromPeriodKey } from "../utils/dateUtils";
+import { getTodayDate, getISOWeekKey, sameDay, getMondayFromPeriodKey, getSundayFromPeriodKey } from "../utils/dateUtils";
 
 export type BoardData = {
   plan: PlanWithTemplates;
@@ -23,9 +23,9 @@ export type BoardData = {
   todayDonePoints: number;
   todayTotalPoints: number;
   weekDoneCount: number;
-  weekTotalCount: number;
+  weekProjectedCount: number;
   weekDonePoints: number;
-  weekTotalPoints: number;
+  weekProjectedPoints: number;
   daysElapsed: number;
 };
 
@@ -122,12 +122,39 @@ export async function fetchBoard(): Promise<BoardData | null> {
   const todayDonePoints = todayDone.reduce((sum, t) => sum + t.points, 0);
   const todayTotalPoints = boardTasks.reduce((sum, t) => sum + t.points, 0);
 
-  // — Week metrics (from all tasks including expired) —
+  // — Week Projected (Option C: past instances + future projection + weekly instances) —
+  const dailyPastTasks = allTasks.filter(
+    (t) => t.forDate && t.forDate < today
+  );
+  const dailyPastPoints = dailyPastTasks.reduce((s, t) => s + t.points, 0);
+  const dailyPastCount = dailyPastTasks.length;
+
+  const weekEnd = getSundayFromPeriodKey(planWithTemplates.periodKey);
+  const remainingMs = weekEnd.getTime() - today.getTime();
+  const remainingDays = Math.max(1, Math.floor(remainingMs / 86400000) + 1);
+
+  const currentDailyTemplates = planWithTemplates.planTemplates.filter(
+    (pt) => pt.template.type === TaskType.DAILY
+  );
+  const dailyFuturePoints =
+    currentDailyTemplates.reduce(
+      (s, pt) => s + pt.template.points * pt.template.frequency,
+      0
+    ) * remainingDays;
+  const dailyFutureCount =
+    currentDailyTemplates.reduce((s, pt) => s + pt.template.frequency, 0) *
+    remainingDays;
+
+  const weeklyTasks = allTasks.filter((t) => t.periodKey !== null);
+  const weeklyPoints = weeklyTasks.reduce((s, t) => s + t.points, 0);
+  const weeklyCount = weeklyTasks.length;
+
+  const weekProjectedPoints = dailyPastPoints + dailyFuturePoints + weeklyPoints;
+  const weekProjectedCount = dailyPastCount + dailyFutureCount + weeklyCount;
+
   const weekDone = allTasks.filter((t) => t.status === TaskStatus.DONE);
   const weekDoneCount = weekDone.length;
-  const weekTotalCount = allTasks.length;
-  const weekDonePoints = weekDone.reduce((sum, t) => sum + t.points, 0);
-  const weekTotalPoints = allTasks.reduce((sum, t) => sum + t.points, 0);
+  const weekDonePoints = weekDone.reduce((s, t) => s + t.points, 0);
 
   // — Days elapsed (1–7) —
   const weekStart = getMondayFromPeriodKey(planWithTemplates.periodKey);
@@ -142,9 +169,9 @@ export async function fetchBoard(): Promise<BoardData | null> {
     todayDonePoints,
     todayTotalPoints,
     weekDoneCount,
-    weekTotalCount,
+    weekProjectedCount,
     weekDonePoints,
-    weekTotalPoints,
+    weekProjectedPoints,
     daysElapsed,
   };
 }

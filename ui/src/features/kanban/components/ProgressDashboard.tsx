@@ -4,9 +4,9 @@ interface ProgressDashboardProps {
   todayDonePoints: number;
   todayTotalPoints: number;
   weekDoneCount: number;
-  weekTotalCount: number;
+  weekProjectedCount: number;
   weekDonePoints: number;
-  weekTotalPoints: number;
+  weekProjectedPoints: number;
   daysElapsed: number;
 }
 
@@ -19,15 +19,15 @@ export default function ProgressDashboard({
   todayDonePoints,
   todayTotalPoints,
   weekDoneCount,
-  weekTotalCount,
+  weekProjectedCount,
   weekDonePoints,
-  weekTotalPoints,
+  weekProjectedPoints,
   daysElapsed,
 }: ProgressDashboardProps) {
   const todayPct = todayTotalCount > 0 ? Math.round((todayDoneCount / todayTotalCount) * 100) : 0;
   const todayOffset = CIRCUMFERENCE * (1 - todayPct / 100);
 
-  const weekPct = weekTotalCount > 0 ? Math.round((weekDoneCount / weekTotalCount) * 100) : 0;
+  const weekPct = weekProjectedCount > 0 ? Math.round((weekDoneCount / weekProjectedCount) * 100) : 0;
 
   const dailyAvg = daysElapsed > 0 ? (weekDonePoints / daysElapsed).toFixed(1) : "0.0";
 
@@ -83,7 +83,7 @@ export default function ProgressDashboard({
       {/* Week Points */}
       <div className="flex flex-col gap-px">
         <div className="text-lg font-bold text-info">
-          {weekDonePoints} / {weekTotalPoints}
+          {weekDonePoints} / {weekProjectedPoints}
         </div>
         <div className="text-xs text-base-content/50">Week Points</div>
       </div>
@@ -110,7 +110,7 @@ export default function ProgressDashboard({
           />
         </div>
         <span className="text-xs text-base-content/50">
-          {weekDoneCount} of {weekTotalCount} tasks
+          {weekDoneCount} of {weekProjectedCount} tasks
         </span>
       </div>
     </div>

@@ -53,6 +53,16 @@ export function getWeekDateRange(periodKey: string): string {
 }
 
 /**
+ * Parses a periodKey like "2026-W06" and returns the Sunday of that ISO week.
+ */
+export function getSundayFromPeriodKey(periodKey: string): Date {
+  const monday = getMondayFromPeriodKey(periodKey);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  return sunday;
+}
+
+/**
  * Returns the ISO week key for a given date, e.g. "2026-W07".
  */
 export function getISOWeekKey(date: Date): string {

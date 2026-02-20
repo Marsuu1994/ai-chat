@@ -176,6 +176,39 @@ export async function taskExists(taskId: string): Promise<boolean> {
 }
 
 /**
+ * Delete incomplete tasks (TODO, DOING) for specific templates in a plan
+ */
+export async function deleteIncompleteTasksByTemplateIds(
+  planId: string,
+  templateIds: string[]
+): Promise<{ count: number }> {
+  return prisma.task.deleteMany({
+    where: {
+      planId,
+      templateId: { in: templateIds },
+      status: { in: ["TODO", "DOING"] },
+    },
+  });
+}
+
+/**
+ * Count incomplete (removable) and completed (kept) tasks for specific templates
+ */
+export async function countTasksByTemplateIds(
+  planId: string,
+  templateIds: string[]
+): Promise<{ removeCount: number }> {
+  const removeCount = await prisma.task.count({
+    where: {
+      planId,
+      templateId: { in: templateIds },
+      status: { in: ["TODO", "DOING"] },
+    },
+  });
+  return { removeCount };
+}
+
+/**
  * Valid task statuses for validation
  */
 export const VALID_TASK_STATUSES: TaskStatus[] = ["TODO", "DOING", "DONE", "EXPIRED"];

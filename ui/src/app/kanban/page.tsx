@@ -12,8 +12,10 @@ export default async function KanbanPage() {
   }
 
   const templateTypeMap: Record<string, string> = {};
-  for (const pt of board.plan.planTemplates) {
-    templateTypeMap[pt.templateId] = pt.template.type;
+  for (const task of board.tasks) {
+    if (!templateTypeMap[task.templateId]) {
+      templateTypeMap[task.templateId] = task.forDate !== null ? "DAILY" : "WEEKLY";
+    }
   }
 
   return (
@@ -25,9 +27,9 @@ export default async function KanbanPage() {
         todayDonePoints={board.todayDonePoints}
         todayTotalPoints={board.todayTotalPoints}
         weekDoneCount={board.weekDoneCount}
-        weekTotalCount={board.weekTotalCount}
+        weekProjectedCount={board.weekProjectedCount}
         weekDonePoints={board.weekDonePoints}
-        weekTotalPoints={board.weekTotalPoints}
+        weekProjectedPoints={board.weekProjectedPoints}
         daysElapsed={board.daysElapsed}
       />
       <div className="flex-1 min-h-0 p-4">

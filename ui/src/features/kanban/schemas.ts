@@ -13,6 +13,7 @@ export type CreatePlanInput = z.infer<typeof createPlanSchema>;
 export const updatePlanSchema = z.object({
   description: z.string().optional(),
   templateIds: z.array(z.string().uuid()).optional(),
+  removeInstances: z.boolean().optional(),
 });
 export type UpdatePlanInput = z.infer<typeof updatePlanSchema>;
 

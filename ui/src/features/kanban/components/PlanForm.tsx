@@ -6,9 +6,10 @@ import Link from "next/link";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { TaskType, PeriodType } from "@/features/kanban/utils/enums";
 import type { TaskTemplateItem } from "@/lib/db/taskTemplates";
-import { createPlanAction, updatePlanAction } from "@/features/kanban/actions/planActions";
+import { createPlanAction, updatePlanAction, countRemovedTasksAction } from "@/features/kanban/actions/planActions";
 import TemplateItem from "./TemplateItem";
 import TemplateModal from "./template-modal/TemplateModal";
+import RemoveInstancesModal from "./RemoveInstancesModal";
 
 interface PlanFormProps {
   templates: TaskTemplateItem[];
@@ -34,6 +35,9 @@ export default function PlanForm({
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<TaskTemplateItem | null>(null);
+  const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
+  const [removedTemplates, setRemovedTemplates] = useState<TaskTemplateItem[]>([]);
+  const [removeCount, setRemoveCount] = useState(0);
 
   const dailyTemplates = templates.filter((t) => t.type === TaskType.DAILY);
   const weeklyTemplates = templates.filter((t) => t.type === TaskType.WEEKLY);
@@ -61,6 +65,33 @@ export default function PlanForm({
 
     const templateIds = Array.from(selectedIds);
 
+    // In edit mode, check if templates were removed
+    if (mode === "edit") {
+      const removedIds = initialSelectedIds.filter((id) => !selectedIds.has(id));
+      if (removedIds.length > 0) {
+        const counts = await countRemovedTasksAction(planId!, removedIds);
+        if (counts.removeCount > 0) {
+          // Show confirmation modal
+          setRemovedTemplates(
+            templates.filter((t) => removedIds.includes(t.id))
+          );
+          setRemoveCount(counts.removeCount);
+          setIsSubmitting(false);
+          setIsRemoveModalOpen(true);
+          return;
+        }
+      }
+    }
+
+    await submitPlan(templateIds, false);
+  }
+
+  async function handleRemoveConfirm(removeFromBoard: boolean) {
+    setIsSubmitting(true);
+    await submitPlan(Array.from(selectedIds), removeFromBoard);
+  }
+
+  async function submitPlan(templateIds: string[], removeInstances: boolean) {
     let result;
     switch (mode) {
       case "create":
@@ -74,6 +105,7 @@ export default function PlanForm({
         result = await updatePlanAction(planId!, {
           description: description.trim() || undefined,
           templateIds,
+          removeInstances,
         });
         break;
     }
@@ -86,6 +118,7 @@ export default function PlanForm({
           : JSON.stringify(err);
       setError(message);
       setIsSubmitting(false);
+      setIsRemoveModalOpen(false);
       return;
     }
 
@@ -218,6 +251,17 @@ export default function PlanForm({
       onClose={() => setIsModalOpen(false)}
       onSaved={() => router.refresh()}
       template={editingTemplate}
+    />
+    <RemoveInstancesModal
+      isOpen={isRemoveModalOpen}
+      onClose={() => {
+        setIsRemoveModalOpen(false);
+        setIsSubmitting(false);
+      }}
+      onConfirm={handleRemoveConfirm}
+      removedTemplates={removedTemplates}
+      removeCount={removeCount}
+      isSubmitting={isSubmitting}
     />
     </>
   );
