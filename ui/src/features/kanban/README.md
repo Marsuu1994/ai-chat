@@ -8,7 +8,7 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 
 ## Backlog
 ### High Priority
-- (none)
+- [ ] Design evidence submit feature when user move task to done
 
 ### MVP V2
 - [ ] Design the AI generated task instance flow
@@ -18,7 +18,7 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - [ ] Design better way to handle task templates
 - [ ] Add subtitle field to task template to support different titles
 - [ ] Create common landing page for Mars workbench to navigate between features
-- [ ] Task overlap visualization (stacked cards)
+- [ ] Backlog drawer for staging template-generated task instances (mockup approved)
 - [ ] Phone notifications for unfinished tasks
 - [ ] LLM-generated motivational messages
 - [ ] End-of-period summary before new plan
@@ -26,6 +26,7 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - [ ] Biweekly and custom period types
 - [ ] Design way to manage UI effect when there are too many task templates
 - [ ] Refactor to use constant for all UI static text fields
+- [ ] Design weekend/vacation flow
 
 ## Update Log
 
@@ -50,6 +51,8 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - Updated `baseline.md`: moved daily task rollover and risk level visualization from Planned V2 to Implemented
 - Added plan form ad-hoc integration (Phase 3): create/edit plan pages fetch and display non-done ad-hoc tasks with checkboxes; `ReviewChangesModal` shows added/removed ad-hoc task sections with lightning bolt icons
 - Ad-hoc task initial status now matches source column: clicking "Add ad-hoc task" from In Progress creates with DOING status; added optional `status` field to schema and action
+- Explored board card UX redesign to reduce visual clutter from duplicate template-generated cards; rejected grouped-stack and differentiated-card approaches in favor of a backlog drawer concept
+- Designed backlog drawer mockup: expandable side panel (collapsed strip / open panel) for staging template instances before dragging to Todo; archived to `future-work/mockup-board-backlog-drawer-v2.html`
 
 ### 2026-02-23
 - Moved `type` and `frequency` from `TaskTemplate` (global, immutable) to `PlanTemplate` (per-plan, reconfigurable each week) — the same blueprint can now be DAILY one week and WEEKLY the next

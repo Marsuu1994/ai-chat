@@ -26,7 +26,7 @@ A tool to plan and track tasks within defined periods (e.g., weekly). It visuali
 
 ### Planned: Future
 
-- Task overlap visualization (stacked cards for multiple instances)
+- Backlog drawer — Expandable side panel for staging template-generated task instances before moving them to the board via drag-and-drop. Reduces visual clutter from duplicate cards. Mockup in `design/mockup/future-work/mockup-board-backlog-drawer-v2.html`.
 - Support Ad-hoc task deletion and auto clear logic.
 - Phone notifications for unfinished tasks
 - LLM-generated motivational messages
@@ -34,6 +34,7 @@ A tool to plan and track tasks within defined periods (e.g., weekly). It visuali
 - Weekly task rollover across periods
 - Biweekly and custom period types
 - Priority matrix for managing and promoting ad-hoc tasks onto the board
+- Template categories — Add optional `category` field to TaskTemplate for grouping templates in the plan form. Collapsible groups + search for scalability. Mockups in `design/mockup/future-work/`.
 
 ## Entities
 

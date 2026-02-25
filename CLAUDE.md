@@ -105,6 +105,27 @@ Each file should be self-contained (link to `./styles.css`) and represent only t
    - Update the relevant `mockup/mockup-[flow].html` to reflect the new UI state
    - Delete the temporary mockup file
 
+### Design Exploration (Future Work)
+
+Use this workflow when the user identifies a UX pain point or wants to explore a redesign that won't be implemented immediately. Use the `/frontend-design` skill to generate high-quality mockups.
+
+1. **Identify pain point** — User describes the problem (e.g., "this page is too crowded", "this flow is confusing")
+2. **Read context** — Read the existing mockup and relevant design docs to understand the current state
+3. **Generate mockup** — Use `/frontend-design` to create a temporary Before / After HTML mockup. Iterate with user feedback until approved
+4. **Archive to future-work** — Move the approved mockup to `features/[feature]/design/mockup/future-work/` as `mockup-[name]-v2.html`. If the redesign introduces new entity fields or UI patterns that affect other flows, generate updated mockups for those flows too (e.g., a new `category` field on templates requires updating the task modal mockup as well)
+5. **Update design doc** — Add a one-line entry under `Planned: Future` in the feature's `baseline.md` describing the work and pointing to the mockups
+6. **Clean up** — Delete any temporary mockup files
+
+```
+design/mockup/
+├── styles.css
+├── mockup-board.html
+├── mockup-plan-form.html
+└── future-work/                   # approved redesigns not yet implemented
+    ├── mockup-plan-form-v2.html
+    └── mockup-task-modal-v2.html
+```
+
 ### Implementing UI Components
 
 When implementing a UI component from an approved mockup, strictly follow every visual detail in the mockup — layout, spacing, text, colors, icons, and states. Do not omit, simplify, or change any detail. If any part of the mockup cannot be implemented as-is (e.g., required data is unavailable, a library limitation), raise the blocker with the user and update the mockup first before proceeding to implementation.
