@@ -1,15 +1,21 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-interface TemplateModalHeaderProps {
-  mode: "create" | "edit";
+interface TaskModalHeaderProps {
+  mode: "create" | "edit" | "adhoc";
   onClose: () => void;
 }
 
-export default function TemplateModalHeader({ mode, onClose }: TemplateModalHeaderProps) {
+const TITLE: Record<TaskModalHeaderProps["mode"], string> = {
+  create: "Create Task Template",
+  edit: "Edit Task Template",
+  adhoc: "Add Ad-hoc Task",
+};
+
+export default function TaskModalHeader({ mode, onClose }: TaskModalHeaderProps) {
   return (
     <div className="flex items-center justify-between -mx-6 px-6 pb-4 mb-4 border-b border-base-content/10">
       <h3 className="font-bold text-lg">
-        {mode === "create" ? "Create Task Template" : "Edit Task Template"}
+        {TITLE[mode]}
       </h3>
       <button
         type="button"

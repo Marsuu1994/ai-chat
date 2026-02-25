@@ -12,7 +12,7 @@ import {
   countIncompleteByTemplateAction,
 } from "@/features/kanban/actions/planActions";
 import TemplateItem from "./TemplateItem";
-import TemplateModal from "./template-modal/TemplateModal";
+import TaskModal from "./task-modal/TaskModal";
 import { ReviewChangesModal } from "./ReviewChangesModal";
 
 interface PlanTemplateConfig {
@@ -324,7 +324,7 @@ export default function PlanForm({
         </div>
       </form>
 
-      <TemplateModal
+      <TaskModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSaved={() => router.refresh()}

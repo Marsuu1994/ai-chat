@@ -1,17 +1,19 @@
 "use client";
 
 import { Droppable } from "@hello-pangea/dnd";
+import { PlusIcon } from "@heroicons/react/24/outline";
 import type { TaskItem } from "@/lib/db/tasks";
 import { TaskStatus } from "../utils/enums";
 import type { RiskLevel } from "../utils/taskUtils";
 import TaskCard from "./TaskCard";
 
-type BoardColumnProps = {
+interface BoardColumnProps {
   status: string;
   tasks: TaskItem[];
   today: Date;
   riskMap: Map<string, RiskLevel>;
-};
+  onAddAdhocTask?: () => void;
+}
 
 const COLUMN_CONFIG: Record<string, { label: string; accent: string }> = {
   [TaskStatus.TODO]: { label: "Todo", accent: "border-l-info" },
@@ -24,6 +26,7 @@ export default function BoardColumn({
   tasks,
   today,
   riskMap,
+  onAddAdhocTask,
 }: BoardColumnProps) {
   const config = COLUMN_CONFIG[status] ?? { label: status, accent: "" };
 
@@ -56,6 +59,15 @@ export default function BoardColumn({
               />
             ))}
             {provided.placeholder}
+            {onAddAdhocTask && status !== TaskStatus.DONE && (
+              <button
+                onClick={onAddAdhocTask}
+                className="flex items-center justify-center gap-1.5 w-full p-3 rounded-lg border-2 border-dashed border-base-content/20 bg-transparent text-base-content/40 text-sm font-medium cursor-pointer transition-colors hover:border-info hover:text-info"
+              >
+                <PlusIcon className="size-4" />
+                Add ad-hoc task
+              </button>
+            )}
           </div>
         )}
       </Droppable>

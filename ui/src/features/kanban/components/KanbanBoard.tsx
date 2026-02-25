@@ -13,6 +13,7 @@ import {
 import { getTodayDate } from "../utils/dateUtils";
 import { updateTaskStatusAction } from "../actions/taskActions";
 import BoardColumn from "./BoardColumn";
+import TaskModal from "./task-modal/TaskModal";
 
 interface KanbanBoardProps {
   tasks: TaskItem[];
@@ -26,6 +27,7 @@ export default function KanbanBoard({
   planTemplates,
 }: KanbanBoardProps) {
   const [localTasks, setLocalTasks] = useState<TaskItem[]>(tasks);
+  const [isAdhocModalOpen, setIsAdhocModalOpen] = useState(false);
 
   useEffect(() => {
     setLocalTasks(tasks);
@@ -86,6 +88,9 @@ export default function KanbanBoard({
     });
   }
 
+  const openAdhocModal = () => setIsAdhocModalOpen(true);
+  const closeAdhocModal = () => setIsAdhocModalOpen(false);
+
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <div className="flex gap-4 overflow-x-auto pb-4 h-full">
@@ -94,12 +99,14 @@ export default function KanbanBoard({
           tasks={columns[TaskStatus.TODO]}
           today={today}
           riskMap={riskMap}
+          onAddAdhocTask={openAdhocModal}
         />
         <BoardColumn
           status={TaskStatus.DOING}
           tasks={columns[TaskStatus.DOING]}
           today={today}
           riskMap={riskMap}
+          onAddAdhocTask={openAdhocModal}
         />
         <BoardColumn
           status={TaskStatus.DONE}
@@ -108,6 +115,12 @@ export default function KanbanBoard({
           riskMap={riskMap}
         />
       </div>
+      <TaskModal
+        isOpen={isAdhocModalOpen}
+        onClose={closeAdhocModal}
+        onSaved={closeAdhocModal}
+        mode="adhoc"
+      />
     </DragDropContext>
   );
 }

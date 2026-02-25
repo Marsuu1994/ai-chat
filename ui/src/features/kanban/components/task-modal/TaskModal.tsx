@@ -2,30 +2,36 @@
 
 import { useEffect, useRef, useState } from "react";
 import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid";
+import { BoltIcon } from "@heroicons/react/24/outline";
 import type { TaskTemplateItem } from "@/lib/db/taskTemplates";
 import {
   createTaskTemplateAction,
   updateTaskTemplateAction,
 } from "@/features/kanban/actions/templateActions";
-import TemplateModalHeader from "./TemplateModalHeader";
-import TemplateModalFooter from "./TemplateModalFooter";
+import { createAdhocTaskAction } from "@/features/kanban/actions/taskActions";
+import TaskModalHeader from "./TaskModalHeader";
+import TaskModalFooter from "./TaskModalFooter";
 import IconNumberField from "./IconNumberField";
 
-interface TemplateModalProps {
+type ModalMode = "create" | "edit" | "adhoc";
+
+interface TaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSaved: () => void;
+  mode?: ModalMode;
   template?: TaskTemplateItem | null;
 }
 
-export default function TemplateModal({
+export default function TaskModal({
   isOpen,
   onClose,
   onSaved,
+  mode: modeProp,
   template,
-}: TemplateModalProps) {
+}: TaskModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const mode = template ? "edit" : "create";
+  const mode: ModalMode = modeProp ?? (template ? "edit" : "create");
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -36,13 +42,13 @@ export default function TemplateModal({
   // Reset form when modal opens or template changes
   useEffect(() => {
     if (isOpen) {
-      setTitle(template?.title ?? "");
-      setDescription(template?.description ?? "");
-      setPoints(template?.points ?? 3);
+      setTitle(mode === "adhoc" ? "" : (template?.title ?? ""));
+      setDescription(mode === "adhoc" ? "" : (template?.description ?? ""));
+      setPoints(mode === "adhoc" ? 1 : (template?.points ?? 3));
       setError(null);
       setIsSubmitting(false);
     }
-  }, [isOpen, template]);
+  }, [isOpen, template, mode]);
 
   // Dialog open/close control
   useEffect(() => {
@@ -73,6 +79,9 @@ export default function TemplateModal({
           points,
         });
         break;
+      case "adhoc":
+        result = await createAdhocTaskAction({ title, description, points });
+        break;
     }
 
     if (result.error) {
@@ -88,12 +97,22 @@ export default function TemplateModal({
     onClose();
   }
 
+  const isAdhoc = mode === "adhoc";
+
   return (
     <dialog ref={dialogRef} className="modal" onClose={onClose}>
       <div className="modal-box max-w-lg">
-        <TemplateModalHeader mode={mode} onClose={onClose} />
+        <TaskModalHeader mode={mode} onClose={onClose} />
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {/* Ad-hoc info banner */}
+          {isAdhoc && (
+            <div className="flex items-center gap-2 bg-warning/10 text-warning text-sm px-3.5 py-2.5 rounded-lg">
+              <BoltIcon className="size-4.5 shrink-0" />
+              Ad-hoc tasks are one-off items — they don&apos;t repeat and never expire.
+            </div>
+          )}
+
           {/* Title */}
           <div className="form-control">
             <label className="label">
@@ -104,7 +123,7 @@ export default function TemplateModal({
             <input
               type="text"
               className="input input-bordered w-full"
-              placeholder="e.g. Solve 3 LeetCode problems"
+              placeholder={isAdhoc ? "e.g. File tax report" : "e.g. Solve 3 LeetCode problems"}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -116,13 +135,19 @@ export default function TemplateModal({
             <label className="label">
               <span className="label-text text-xs font-medium">
                 Description{" "}
-                <span className="text-base-content/40">(used by AI for task generation)</span>
+                {!isAdhoc && (
+                  <span className="text-base-content/40">(used by AI for task generation)</span>
+                )}
               </span>
             </label>
             <textarea
               className="textarea textarea-bordered w-full"
               rows={3}
-              placeholder="e.g. Focus on dynamic programming and graph problems"
+              placeholder={
+                isAdhoc
+                  ? "Optional details about this task"
+                  : "e.g. Focus on dynamic programming and graph problems"
+              }
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -134,12 +159,12 @@ export default function TemplateModal({
             value={points}
             onChange={setPoints}
             icon={<StarIconSolid className="size-4 text-warning" />}
-            placeholder="10"
+            placeholder={isAdhoc ? "1" : "10"}
             helperText="Points earned when completed"
             required
           />
 
-          <TemplateModalFooter
+          <TaskModalFooter
             mode={mode}
             isSubmitting={isSubmitting}
             error={error}

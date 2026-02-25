@@ -1,18 +1,30 @@
 import { PlusIcon, CheckIcon } from "@heroicons/react/24/outline";
 
-interface TemplateModalFooterProps {
-  mode: "create" | "edit";
+interface TaskModalFooterProps {
+  mode: "create" | "edit" | "adhoc";
   isSubmitting: boolean;
   error: string | null;
   onClose: () => void;
 }
 
-export default function TemplateModalFooter({
+const BUTTON_CONFIG: Record<
+  TaskModalFooterProps["mode"],
+  { icon: typeof PlusIcon; label: string }
+> = {
+  create: { icon: PlusIcon, label: "Create Template" },
+  edit: { icon: CheckIcon, label: "Save Changes" },
+  adhoc: { icon: PlusIcon, label: "Add to Board" },
+};
+
+export default function TaskModalFooter({
   mode,
   isSubmitting,
   error,
   onClose,
-}: TemplateModalFooterProps) {
+}: TaskModalFooterProps) {
+  const config = BUTTON_CONFIG[mode];
+  const Icon = config.icon;
+
   return (
     <>
       {error && <div className="alert alert-error text-sm">{error}</div>}
@@ -28,12 +40,10 @@ export default function TemplateModalFooter({
         <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
           {isSubmitting ? (
             <span className="loading loading-spinner loading-sm" />
-          ) : mode === "create" ? (
-            <PlusIcon className="size-4" />
           ) : (
-            <CheckIcon className="size-4" />
+            <Icon className="size-4" />
           )}
-          {mode === "create" ? "Create Template" : "Save Changes"}
+          {config.label}
         </button>
       </div>
     </>
