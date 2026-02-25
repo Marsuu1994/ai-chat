@@ -34,6 +34,12 @@ ui/
 │   │   ├── prisma.ts              # Prisma client singleton
 │   │   └── db/                    # Data access layer
 │   ├── features/
+│   │   ├── auth/                  # Auth feature (see features/auth/README.md)
+│   │   │   ├── actions/           # Server actions
+│   │   │   ├── components/        # UI components
+│   │   │   ├── services/          # Business logic
+│   │   │   ├── utils/             # Helpers
+│   │   │   └── design/            # Design docs (baseline.md, flows.md, api.md)
 │   │   ├── chat/                  # AI Chat feature (see features/chat/README.md)
 │   │   │   ├── components/        # ChatArea, ChatBubble, Sidebar, etc.
 │   │   │   ├── hooks/             # useChat
@@ -57,6 +63,7 @@ ui/
 |---------|--------|-------|
 | AI Chat | Live | `/chat` |
 | Kanban Planner | In progress | `/kanban` |
+| Auth | Scaffolded | `/auth` |
 
 ## Workflow
 
