@@ -92,7 +92,7 @@ design/mockup/
 ├── styles.css                   # shared colors, layout, components
 ├── mockup-board.html            # one file per distinct flow or page
 ├── mockup-plan-form.html
-└── mockup-remove-instances.html
+└── mockup-review-changes.html
 ```
 
 Each file should be self-contained (link to `./styles.css`) and represent only the screens relevant to that flow.
@@ -104,6 +104,10 @@ Each file should be self-contained (link to `./styles.css`) and represent only t
 3. After approval:
    - Update the relevant `mockup/mockup-[flow].html` to reflect the new UI state
    - Delete the temporary mockup file
+
+### Implementing UI Components
+
+When implementing a UI component from an approved mockup, strictly follow every visual detail in the mockup — layout, spacing, text, colors, icons, and states. Do not omit, simplify, or change any detail. If any part of the mockup cannot be implemented as-is (e.g., required data is unavailable, a library limitation), raise the blocker with the user and update the mockup first before proceeding to implementation.
 
 ## Layers
 
@@ -130,6 +134,10 @@ Each file should be self-contained (link to `./styles.css`) and represent only t
 - When a service function performs a series of DB mutations that must succeed or fail together, wrap them in `prisma.$transaction()` to guarantee ACID atomicity. Add `tx?: Prisma.TransactionClient` to each participating DAL write function and use `const db = tx ?? prisma` inside. Place any guard reads before the transaction to keep the connection hold time short.
   - Bad: sequential `createPlan()` → `createManyPlanTemplates()` → `createManyTasks()` with no transaction — a failure mid-way leaves orphaned records
   - Good: `prisma.$transaction(async (tx) => { await createPlan(..., tx); await createManyPlanTemplates(..., tx); await createManyTasks(..., tx); })`
+- When renaming a component, always rename the file to match. The file name and the exported component name must stay in sync.
+  - Bad: file `RemoveInstancesModal.tsx` exports component `ReviewChangesModal`
+  - Good: rename the file to `ReviewChangesModal.tsx` when the component is renamed to `ReviewChangesModal`
+- When adding a new coding convention entry to this file, always include Bad and Good examples to make the rule concrete and unambiguous.
 
 ## Code Style
 

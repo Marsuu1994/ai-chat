@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { TaskType, PeriodType } from "@/features/kanban/utils/enums";
 import type { TaskTemplateItem } from "@/lib/db/taskTemplates";
-import { createPlanAction, updatePlanAction } from "@/features/kanban/actions/planActions";
+import {
+  createPlanAction,
+  updatePlanAction,
+  countIncompleteByTemplateAction,
+} from "@/features/kanban/actions/planActions";
 import TemplateItem from "./TemplateItem";
 import TemplateModal from "./template-modal/TemplateModal";
-import ReviewChangesModal from "./RemoveInstancesModal";
+import { ReviewChangesModal } from "./ReviewChangesModal";
 
 interface PlanTemplateConfig {
   type: TaskType;
@@ -57,14 +61,29 @@ export default function PlanForm({
   const [editingTemplate, setEditingTemplate] =
     useState<TaskTemplateItem | null>(null);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [incompleteCounts, setIncompleteCounts] = useState<Record<string, number>>(
+    {}
+  );
+
+  // Cache configs when templates are unchecked so re-checking restores them
+  const configCache = useRef(new Map<string, PlanTemplateConfig>());
 
   function toggleTemplate(id: string) {
     setSelectedTemplates((prev) => {
       const next = new Map(prev);
       if (next.has(id)) {
+        configCache.current.set(id, next.get(id)!);
         next.delete(id);
       } else {
-        next.set(id, { type: TaskType.DAILY, frequency: 1 });
+        const cached = configCache.current.get(id);
+        const initial = initialPlanTemplates.find((pt) => pt.templateId === id);
+        next.set(
+          id,
+          cached ??
+            (initial
+              ? { type: initial.type, frequency: initial.frequency }
+              : { type: TaskType.DAILY, frequency: 1 })
+        );
       }
       return next;
     });
@@ -84,12 +103,14 @@ export default function PlanForm({
       initialPlanTemplates.map((pt) => [pt.templateId, pt])
     );
     const templateTitleMap = new Map(templates.map((t) => [t.id, t.title]));
+    const templatePointsMap = new Map(templates.map((t) => [t.id, t.points]));
 
     const added = Array.from(selectedTemplates.entries())
       .filter(([id]) => !initialMap.has(id))
       .map(([id, cfg]) => ({
         templateId: id,
         title: templateTitleMap.get(id) ?? "",
+        points: templatePointsMap.get(id) ?? 0,
         type: cfg.type,
         frequency: cfg.frequency,
       }));
@@ -99,6 +120,7 @@ export default function PlanForm({
       .map((pt) => ({
         templateId: pt.templateId,
         title: templateTitleMap.get(pt.templateId) ?? "",
+        points: templatePointsMap.get(pt.templateId) ?? 0,
         type: pt.type,
         frequency: pt.frequency,
       }));
@@ -132,6 +154,20 @@ export default function PlanForm({
       const hasChanges =
         added.length > 0 || removed.length > 0 || modified.length > 0;
       if (hasChanges) {
+        // Fetch incomplete task counts for removed + modified templates
+        const affectedIds = [
+          ...removed.map((t) => t.templateId),
+          ...modified.map((t) => t.templateId),
+        ];
+        if (affectedIds.length > 0) {
+          const counts = await countIncompleteByTemplateAction(
+            planId!,
+            affectedIds
+          );
+          setIncompleteCounts(counts);
+        } else {
+          setIncompleteCounts({});
+        }
         setIsReviewModalOpen(true);
         return;
       }
@@ -301,6 +337,7 @@ export default function PlanForm({
         added={diff.added}
         removed={diff.removed}
         modified={diff.modified}
+        incompleteCounts={incompleteCounts}
         isSubmitting={isSubmitting}
       />
     </>

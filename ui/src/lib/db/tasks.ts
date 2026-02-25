@@ -206,7 +206,7 @@ export async function deleteIncompleteTasksByTemplateIds(
 }
 
 /**
- * Count incomplete (removable) tasks for specific templates
+ * Count incomplete (removable) tasks for specific templates (total)
  */
 export async function countTasksByTemplateIds(
   planId: string,
@@ -220,6 +220,29 @@ export async function countTasksByTemplateIds(
     },
   });
   return { removeCount };
+}
+
+/**
+ * Count incomplete tasks grouped by templateId.
+ * Returns a Map from templateId → count of TODO/DOING tasks.
+ */
+export async function countIncompleteTasksByTemplateId(
+  planId: string,
+  templateIds: string[]
+): Promise<Map<string, number>> {
+  if (templateIds.length === 0) return new Map();
+  const counts = await prisma.task.groupBy({
+    by: ["templateId"],
+    where: {
+      planId,
+      templateId: { in: templateIds },
+      status: { in: ["TODO", "DOING"] },
+    },
+    _count: true,
+  });
+  return new Map(
+    counts.map((c) => [c.templateId!, c._count])
+  );
 }
 
 /**

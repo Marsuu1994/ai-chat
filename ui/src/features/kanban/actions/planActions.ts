@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createPlanSchema, updatePlanSchema } from "../schemas";
 import { createPlan, updatePlan } from "../services/planService";
+import { countIncompleteTasksByTemplateId } from "@/lib/db/tasks";
 
 export async function createPlanAction(input: unknown) {
   const parsed = createPlanSchema.safeParse(input);
@@ -23,5 +24,13 @@ export async function updatePlanAction(planId: string, input: unknown) {
 
   revalidatePath("/kanban");
   return { data: { success: true } };
+}
+
+export async function countIncompleteByTemplateAction(
+  planId: string,
+  templateIds: string[]
+): Promise<Record<string, number>> {
+  const map = await countIncompleteTasksByTemplateId(planId, templateIds);
+  return Object.fromEntries(map);
 }
 

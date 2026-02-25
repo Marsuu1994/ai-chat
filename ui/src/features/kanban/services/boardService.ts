@@ -118,8 +118,6 @@ export async function fetchBoard(): Promise<BoardData | null> {
   // Filter in-memory: board tasks exclude expired
   const boardTasks = allTasks.filter((t) => t.status !== TaskStatus.EXPIRED);
 
-  console.log(allTasks)
-
   // — Today metrics (from board tasks) —
   const todayDone = boardTasks.filter(
     (t) => t.status === TaskStatus.DONE && sameDay(t.doneAt, today)
