@@ -41,16 +41,25 @@ export function computeRiskLevel(
   templateFreqMap: Map<string, number>,
   templateProgressMap: Map<string, { done: number; doing: number }>
 ): RiskLevel {
-  // DONE, EXPIRED, and AD_HOC tasks never carry risk
-  if (
-    task.status === TaskStatus.DONE ||
-    task.status === TaskStatus.EXPIRED ||
-    task.type === TaskTypeEnum.AD_HOC
-  ) {
+  // DONE and EXPIRED tasks never carry risk
+  if (task.status === TaskStatus.DONE || task.status === TaskStatus.EXPIRED) {
     return "normal";
   }
 
   switch (task.type) {
+    case TaskTypeEnum.AD_HOC: {
+      const msElapsed = today.getTime() - new Date(task.createdAt).getTime();
+      const daysSinceCreation = Math.floor(msElapsed / 86400000);
+
+      if (task.status === TaskStatus.TODO) {
+        if (daysSinceCreation >= 8) return "danger";
+        if (daysSinceCreation >= 5) return "warning";
+      } else if (task.status === TaskStatus.DOING) {
+        if (daysSinceCreation >= 8) return "warning";
+      }
+      return "normal";
+    }
+
     case TaskTypeEnum.DAILY: {
       const isRollover =
         task.forDate !== null && normalizeForDate(task.forDate) < today;

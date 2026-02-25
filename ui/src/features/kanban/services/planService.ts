@@ -15,6 +15,8 @@ import {
 import {
   createManyTasks,
   deleteIncompleteTasksByTemplateIds,
+  updateTasksPlanId,
+  unlinkAdhocTasksFromPlan,
 } from "@/lib/db/tasks";
 import { Prisma, TaskType, TaskStatus, PlanStatus } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
@@ -97,7 +99,7 @@ async function generateTasksForTemplates(
 export async function createPlan(
   data: CreatePlanData
 ): Promise<PlanItem | { error: { formErrors: string[]; fieldErrors: Record<string, never> } }> {
-  const { periodType, description, templates } = data;
+  const { periodType, description, templates, adhocTaskIds } = data;
 
   // Guard reads — before transaction to keep connection hold time short
   const existing = await getActivePlan();
@@ -111,12 +113,20 @@ export async function createPlan(
 
   const plan = await prisma.$transaction(async (tx) => {
     const newPlan = await dalCreatePlan({ periodType, periodKey, description }, tx);
-    await createManyPlanTemplates(newPlan.id, templates, tx);
-    await generateTasksForTemplates(newPlan.id, newPlan.periodKey, templates, today, tx);
-    await updateLastSyncDate(newPlan.id, today, tx);
+    if (templates.length > 0) {
+      await createManyPlanTemplates(newPlan.id, templates, tx);
+      await generateTasksForTemplates(newPlan.id, newPlan.periodKey, templates, today, tx);
+    }
+    // Link selected ad-hoc tasks to new plan
+    if (adhocTaskIds && adhocTaskIds.length > 0) {
+      await updateTasksPlanId(adhocTaskIds, newPlan.id, tx);
+    }
+    // Unlink deselected ad-hoc tasks from pending plan
     if (pendingPlan) {
+      await unlinkAdhocTasksFromPlan(pendingPlan.id, adhocTaskIds ?? [], tx);
       await updatePlanStatus(pendingPlan.id, PlanStatus.COMPLETED, tx);
     }
+    await updateLastSyncDate(newPlan.id, today, tx);
     return newPlan;
   });
 
@@ -124,58 +134,83 @@ export async function createPlan(
 }
 
 export async function updatePlan(planId: string, data: UpdatePlanData): Promise<void> {
-  const { description, templates } = data;
+  const { description, templates, adhocTaskIds } = data;
 
-  if (templates) {
+  const hasTemplateChanges = templates !== undefined;
+  const hasAdhocChanges = adhocTaskIds !== undefined;
+  const hasDescriptionChange = description !== undefined;
+
+  if (hasTemplateChanges || hasAdhocChanges) {
     // Read current PlanTemplate records before transaction — diff doesn't need transactional isolation
-    const currentLinks = await getPlanTemplatesByPlanId(planId);
+    const currentLinks = hasTemplateChanges
+      ? await getPlanTemplatesByPlanId(planId)
+      : [];
     const currentMap = new Map(currentLinks.map((l) => [l.templateId, l]));
-    const newMap = new Map(templates.map((t) => [t.templateId, t]));
+    const newMap = hasTemplateChanges
+      ? new Map(templates.map((t) => [t.templateId, t]))
+      : new Map<string, PlanTemplateInput>();
 
-    const addedTemplates = templates.filter((t) => !currentMap.has(t.templateId));
-    const removedIds = currentLinks
-      .filter((l) => !newMap.has(l.templateId))
-      .map((l) => l.templateId);
-    const modifiedTemplates = templates.filter((t) => {
-      const current = currentMap.get(t.templateId);
-      return current && (current.type !== t.type || current.frequency !== t.frequency);
-    });
+    const addedTemplates = hasTemplateChanges
+      ? templates.filter((t) => !currentMap.has(t.templateId))
+      : [];
+    const removedIds = hasTemplateChanges
+      ? currentLinks
+          .filter((l) => !newMap.has(l.templateId))
+          .map((l) => l.templateId)
+      : [];
+    const modifiedTemplates = hasTemplateChanges
+      ? templates.filter((t) => {
+          const current = currentMap.get(t.templateId);
+          return current && (current.type !== t.type || current.frequency !== t.frequency);
+        })
+      : [];
 
     const today = getTodayDate();
     const periodKey = getISOWeekKey(today);
 
     await prisma.$transaction(async (tx) => {
-      // Removed: delete TODO/DOING tasks + remove PlanTemplate links
-      if (removedIds.length > 0) {
-        await deleteIncompleteTasksByTemplateIds(planId, removedIds, tx);
-        await tx.planTemplate.deleteMany({
-          where: { planId, templateId: { in: removedIds } },
-        });
+      // Template changes
+      if (hasTemplateChanges) {
+        // Removed: delete TODO/DOING tasks + remove PlanTemplate links
+        if (removedIds.length > 0) {
+          await deleteIncompleteTasksByTemplateIds(planId, removedIds, tx);
+          await tx.planTemplate.deleteMany({
+            where: { planId, templateId: { in: removedIds } },
+          });
+        }
+
+        // Modified: delete TODO/DOING tasks, update PlanTemplate, regenerate
+        for (const t of modifiedTemplates) {
+          await deleteIncompleteTasksByTemplateIds(planId, [t.templateId], tx);
+          const link = currentMap.get(t.templateId)!;
+          await updatePlanTemplate(link.id, { type: t.type, frequency: t.frequency }, tx);
+        }
+        if (modifiedTemplates.length > 0) {
+          await generateTasksForTemplates(planId, periodKey, modifiedTemplates, today, tx);
+        }
+
+        // Added: create PlanTemplate links + generate instances
+        if (addedTemplates.length > 0) {
+          await createManyPlanTemplates(planId, addedTemplates, tx);
+          await generateTasksForTemplates(planId, periodKey, addedTemplates, today, tx);
+        }
+
+        await updateLastSyncDate(planId, today, tx);
       }
 
-      // Modified: delete TODO/DOING tasks, update PlanTemplate, regenerate
-      for (const t of modifiedTemplates) {
-        await deleteIncompleteTasksByTemplateIds(planId, [t.templateId], tx);
-        const link = currentMap.get(t.templateId)!;
-        await updatePlanTemplate(link.id, { type: t.type, frequency: t.frequency }, tx);
-      }
-      if (modifiedTemplates.length > 0) {
-        await generateTasksForTemplates(planId, periodKey, modifiedTemplates, today, tx);
+      // Ad-hoc task changes: link new, unlink removed
+      if (hasAdhocChanges) {
+        if (adhocTaskIds.length > 0) {
+          await updateTasksPlanId(adhocTaskIds, planId, tx);
+        }
+        await unlinkAdhocTasksFromPlan(planId, adhocTaskIds, tx);
       }
 
-      // Added: create PlanTemplate links + generate instances
-      if (addedTemplates.length > 0) {
-        await createManyPlanTemplates(planId, addedTemplates, tx);
-        await generateTasksForTemplates(planId, periodKey, addedTemplates, today, tx);
-      }
-
-      await updateLastSyncDate(planId, today, tx);
-
-      if (description !== undefined) {
+      if (hasDescriptionChange) {
         await dalUpdatePlan(planId, { description }, tx);
       }
     });
-  } else if (description !== undefined) {
+  } else if (hasDescriptionChange) {
     // Description-only update — single write, no transaction overhead needed
     await dalUpdatePlan(planId, { description });
   }

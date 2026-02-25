@@ -9,16 +9,25 @@ const planTemplateInputSchema = z.object({
   frequency: z.number().int().positive("Frequency must be a positive integer"),
 });
 
-export const createPlanSchema = z.object({
-  periodType: z.literal(PeriodType.WEEKLY),
-  description: z.string().optional(),
-  templates: z.array(planTemplateInputSchema).min(1, "Select at least one template"),
-});
+export const createPlanSchema = z
+  .object({
+    periodType: z.literal(PeriodType.WEEKLY),
+    description: z.string().optional(),
+    templates: z.array(planTemplateInputSchema),
+    adhocTaskIds: z.array(z.string().uuid()).optional(),
+  })
+  .refine(
+    (data) =>
+      data.templates.length > 0 ||
+      (data.adhocTaskIds !== undefined && data.adhocTaskIds.length > 0),
+    { message: "Select at least one template or ad-hoc task" }
+  );
 export type CreatePlanInput = z.infer<typeof createPlanSchema>;
 
 export const updatePlanSchema = z.object({
   description: z.string().optional(),
   templates: z.array(planTemplateInputSchema).optional(),
+  adhocTaskIds: z.array(z.string().uuid()).optional(),
 });
 export type UpdatePlanInput = z.infer<typeof updatePlanSchema>;
 
@@ -54,3 +63,10 @@ export const updateTaskStatusSchema = z.object({
   status: z.enum(mutableTaskStatuses),
 });
 export type UpdateTaskStatusInput = z.infer<typeof updateTaskStatusSchema>;
+
+export const createAdhocTaskSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().optional(),
+  points: z.number().int().positive("Points must be a positive integer"),
+});
+export type CreateAdhocTaskInput = z.infer<typeof createAdhocTaskSchema>;

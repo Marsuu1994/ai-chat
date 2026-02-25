@@ -3,7 +3,7 @@ import { Prisma, TaskStatus, TaskType } from "@/generated/prisma/client";
 
 export type TaskItem = {
   id: string;
-  planId: string;
+  planId: string | null;
   templateId: string | null;
   type: TaskType;
   title: string;
@@ -243,6 +243,54 @@ export async function countIncompleteTasksByTemplateId(
   return new Map(
     counts.map((c) => [c.templateId!, c._count])
   );
+}
+
+/**
+ * Get all non-DONE AD_HOC tasks (any planId).
+ * Filter in-memory for plan-specific needs.
+ */
+export async function getNonDoneAdhocTasks(): Promise<TaskItem[]> {
+  return prisma.task.findMany({
+    where: { type: TaskType.AD_HOC, status: { not: TaskStatus.DONE } },
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    select: taskSelect,
+  });
+}
+
+/**
+ * Batch update planId for specified tasks (link ad-hoc tasks to a plan)
+ */
+export async function updateTasksPlanId(
+  taskIds: string[],
+  planId: string,
+  tx?: Prisma.TransactionClient
+): Promise<{ count: number }> {
+  if (taskIds.length === 0) return { count: 0 };
+  const db = tx ?? prisma;
+  return db.task.updateMany({
+    where: { id: { in: taskIds } },
+    data: { planId },
+  });
+}
+
+/**
+ * Unlink ad-hoc tasks from a plan: set planId = null for AD_HOC tasks
+ * on the given plan whose id is NOT in keepIds.
+ */
+export async function unlinkAdhocTasksFromPlan(
+  planId: string,
+  keepIds: string[],
+  tx?: Prisma.TransactionClient
+): Promise<{ count: number }> {
+  const db = tx ?? prisma;
+  return db.task.updateMany({
+    where: {
+      planId,
+      type: TaskType.AD_HOC,
+      id: { notIn: keepIds },
+    },
+    data: { planId: null },
+  });
 }
 
 /**

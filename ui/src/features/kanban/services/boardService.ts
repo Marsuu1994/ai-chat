@@ -154,8 +154,13 @@ export async function fetchBoard(): Promise<BoardData | null> {
   const weeklyPoints = weeklyTasks.reduce((s, t) => s + t.points, 0);
   const weeklyCount = weeklyTasks.length;
 
-  const weekProjectedPoints = dailyPastPoints + dailyFuturePoints + weeklyPoints;
-  const weekProjectedCount = dailyPastCount + dailyFutureCount + weeklyCount;
+  // Ad-hoc tasks: always included in projected (never expire, no future generation)
+  const adhocTasks = allTasks.filter((t) => t.type === TaskType.AD_HOC);
+  const adhocPoints = adhocTasks.reduce((s, t) => s + t.points, 0);
+  const adhocCount = adhocTasks.length;
+
+  const weekProjectedPoints = dailyPastPoints + dailyFuturePoints + weeklyPoints + adhocPoints;
+  const weekProjectedCount = dailyPastCount + dailyFutureCount + weeklyCount + adhocCount;
 
   const weekDone = allTasks.filter((t) => t.status === TaskStatus.DONE);
   const weekDoneCount = weekDone.length;
