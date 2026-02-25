@@ -11,7 +11,7 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg>
-      <span style="font-weight:600;color:#e2e5ed">Mars Workbench</span>
+      <span style="font-weight:600;color:#161616">Mars Workbench</span>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-section-title">Features</div>
@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="sidebar-bottom">
-      <div class="sidebar-item" style="color:#6b7280">
+      <div class="sidebar-item" style="color:#888888">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         Settings
       </div>
@@ -61,20 +61,20 @@
         </div>
         <div class="ring-label">
           <span class="ring-label-title">Today</span>
-          <span class="ring-label-sub">3 of 10 tasks</span>
+          <span class="ring-label-sub">4 of 13 tasks</span>
         </div>
       </div>
       <div class="dash-divider"></div>
       <div class="stat-item">
-        <div class="stat-value green">3 / 10</div>
+        <div class="stat-value green">6 / 13</div>
         <div class="stat-label">Today Points</div>
       </div>
       <div class="stat-item">
-        <div class="stat-value blue">48 / 156</div>
+        <div class="stat-value blue">58 / 166</div>
         <div class="stat-label">Week Points</div>
       </div>
       <div class="stat-item">
-        <div class="stat-value amber">6.8</div>
+        <div class="stat-value amber">8.3</div>
         <div class="stat-label">Daily Avg</div>
       </div>
       <div class="dash-divider"></div>
@@ -84,14 +84,14 @@
           <span class="week-bar-pct">19%</span>
         </div>
         <div class="week-bar-track"><div class="week-bar-fill"></div></div>
-        <span class="week-bar-sub">8 of 42 tasks</span>
+        <span class="week-bar-sub">10 of 46 tasks</span>
       </div>
     </div>
 
     <div class="board">
       <!-- Todo -->
       <div class="column col-todo">
-        <div class="column-header"><span>Todo</span><span class="column-count">6</span></div>
+        <div class="column-header"><span>Todo</span><span class="column-count">8</span></div>
         <div class="column-body">
 
           <!-- Fresh daily — normal (no risk indicator) -->
@@ -159,12 +159,37 @@
             </div>
           </div>
 
+          <!-- Ad-hoc — normal (no risk) -->
+          <div class="task-card">
+            <div class="task-title">File tax report</div>
+            <div class="task-meta">
+              <span class="task-badge badge-adhoc">Ad-hoc</span>
+              <span class="task-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>5 pts</span>
+            </div>
+          </div>
+
+          <!-- Ad-hoc — warning (5+ days since creation) -->
+          <div class="task-card risk-warning">
+            <div class="task-title">Get sinus CT scan</div>
+            <div class="task-meta">
+              <span class="task-badge badge-adhoc">Ad-hoc</span>
+              <span class="risk-badge warning">⚠ at risk</span>
+              <span class="task-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>3 pts</span>
+            </div>
+          </div>
+
+          <!-- Add ad-hoc task button -->
+          <button class="add-task-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+            Add ad-hoc task
+          </button>
+
         </div>
       </div>
 
       <!-- Doing -->
       <div class="column col-doing">
-        <div class="column-header"><span>In Progress</span><span class="column-count">3</span></div>
+        <div class="column-header"><span>In Progress</span><span class="column-count">4</span></div>
         <div class="column-body">
 
           <!-- Fresh daily in progress — normal -->
@@ -198,12 +223,28 @@
             </div>
           </div>
 
+          <!-- Ad-hoc in progress — warning (8+ days since creation) -->
+          <div class="task-card risk-warning">
+            <div class="task-title">Renew passport</div>
+            <div class="task-meta">
+              <span class="task-badge badge-adhoc">Ad-hoc</span>
+              <span class="risk-badge warning">⚠ at risk</span>
+              <span class="task-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>2 pts</span>
+            </div>
+          </div>
+
+          <!-- Add ad-hoc task button -->
+          <button class="add-task-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+            Add ad-hoc task
+          </button>
+
         </div>
       </div>
 
       <!-- Done -->
       <div class="column col-done">
-        <div class="column-header"><span>Done</span><span class="column-count">3</span></div>
+        <div class="column-header"><span>Done</span><span class="column-count">4</span></div>
         <div class="column-body">
 
           <!-- Done — no risk indicator regardless of type -->
@@ -229,6 +270,15 @@
             <div class="task-meta">
               <span class="task-badge badge-weekly">Weekly</span>
               <span class="task-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>6 pts</span>
+            </div>
+          </div>
+
+          <!-- Done ad-hoc -->
+          <div class="task-card done-card">
+            <div class="task-title">Buy birthday gift</div>
+            <div class="task-meta">
+              <span class="task-badge badge-adhoc">Ad-hoc</span>
+              <span class="task-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>3 pts</span>
             </div>
           </div>
 

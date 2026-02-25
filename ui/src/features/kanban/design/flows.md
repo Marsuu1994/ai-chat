@@ -47,15 +47,23 @@
 **Trigger:** User clicks "Create Plan" on empty board → navigates to `/kanban/plans/new`
 
 **Steps:**
-1. Page preloads PlanTemplates (with type and frequency config) from the `PENDING_UPDATE` plan if one exists (returning user), so user can reuse last week's configuration.
-2. User adds, removes, or edits templates. First-time users create templates from scratch.
-3. For each selected template, user configures type and frequency. Points come from TaskTemplate directly and are not configurable per-plan.
-4. User submits.
-5. Create plan and link selected templates.
-6. Generate task instances: weekly tasks immediately, daily tasks for today only.
-7. Set `lastSyncDate = today`.
-8. Archive any existing `PENDING_UPDATE` plan → `COMPLETED`.
-9. Revalidate `/kanban` to render board.
+1. Page preloads PlanTemplates (with type and frequency config) from the `PENDING_UPDATE` plan  if one exists (returning user) and all non-DONE Ad-hoc tasks associated with that plan, so user can reuse last week's configuration.
+2. Page also preloads all non-DONE Ad-hoc tasks that doesn't associate with any plan from database.
+3. For non-Ad-hoc task templates
+   1. User adds, removes, or edits templates. First-time users create templates from scratch.
+   2. For each selected template, user configures type and frequency. Points come from TaskTemplate directly and are not configurable per-plan.
+
+4. For non-DONE Ad-hoc tasks
+   1. non-Done Ad-hoc tasks from the `PENDING_UPDATE` plan will be preselected, user can deselect it to not include it to the coming plan.
+   2. User can select any other non-Done Ad-hoc tasks to include it to the coming plan.
+
+5. User submits.
+6. Create plan and link selected templates and Ad-hoc tasks.
+7. For Ad-hoc tasks from PENDING_UPDATE plan that were not selected: set planId = null (return to unassigned pool).
+8. Generate task instances: weekly tasks immediately, daily tasks for today only.
+9. Set `lastSyncDate = today`.
+10. Archive any existing `PENDING_UPDATE` plan → `COMPLETED`.
+11. Revalidate `/kanban` to render board.
 
 ---
 
@@ -64,11 +72,13 @@
 **Trigger:** User clicks "Edit Plan" on board header → navigates to `/kanban/plans/[id]`
 
 **Steps:**
-1. User edits template selection and/or type and frequency for a choosen template .
-2. On submit, show confirmation modal summarizing the changes(added, removed, modified)
-3. User click confirm and regenerate button.
-4. Apply template changes and regenerate tasks accordingly.
-5. Revalidate `/kanban` to render updated board.
+1. Page preloads PlanTemplates (with type and frequency config) from the `ACTIVE` plan and all non-DONE Ad-hoc tasks from DB (Ad-hoc tasks associated with current plan will be preselected).
+2. For non-Ad-hoc task: user edits template selection and/or type and frequency for a choosen template .
+3. For Ad-hoc task: user select/deselect to include/exclude task from current plan, deselect will set the planId to null.
+4. On submit, show confirmation modal summarizing the changes(added, removed, modified)
+5. User click confirm and regenerate button.
+6. Apply template changes and regenerate tasks accordingly.
+7. Revalidate `/kanban` to render updated board.
 
 **Rules:**
 
@@ -133,21 +143,27 @@
 
 ---
 
-### Ad-hoc task flow
+### Ad-hoc Task Creation flow
 
-TBD
+**Trigger:** user click the create Ad-hoc task button from bottom of To do/In progress column triggers a modal to prompt creation flow.
+
+**Steps:**
+
+1. User fill in title, description, points and click add to board button.
+2. Generate the Ad-hoc task and link it to the current plan.
+3. UI states updates on success server actions.
 
 ---
 
 ### Task Risky Level Visual Effect Flow
 
-**Trigger:** Computed client-side on every board render, based on `forDate`, task status, and current time to calculate the risky level (warning, dangerous).
+**Trigger:** Computed client-side on every board render, based on `forDate`, `createdAt`, task status, and current time to calculate the risky level (warning, dangerous).
 
 **Steps:**
 
-1. Fetch all tasks for the active plan.
+1. For each task in BoardData, compute risk level using current client time.
 
-2. Derive risky level based on below formula all tasks and return as part of `BoardData`.
+2. For each task, derive risk level based on the rules below and apply the corresponding visual treatment.
 
    **Daily Task — `forDate = today`**
 
@@ -165,8 +181,15 @@ TBD
    **Weekly Task**
 
    - TODO, `daysElapsed >= 3` or `remainingDays < remainingTasks × 2` → Warning
-   - TODO, `daysElapsed >= 5` or `remainingDays <= remainingTasks × 1` → Danger
-   - DOING, `daysElapsed >= 5` or `remainingDays <= remainingTasks × 1` → Warning
+   - TODO, `daysElapsed >= 5` or `remainingDays < remainingTasks × 1` → Danger
+   - DOING, `daysElapsed >= 5` or `remainingDays < remainingTasks × 1` → Warning
+   - DOING → never Danger
+   
+   **Ad-hoc Task**
+   
+   - TODO, `daysElapsedSinceCreation >= 5`  → Warning
+   - TODO, `daysElapsedSinceCreation >= 8` → Danger
+   - DOING, `daysElapsedSinceCreation >= 8` → Warning
    - DOING → never Danger
 
 **Rules:**
@@ -176,3 +199,5 @@ TBD
 * Danger takes priority over Warning when multiple conditions are met
 * Risk level only escalates, never regresses (rollover tasks maintain at minimum Warning)
 * DONE, EXPIRED tasks never trigger any risk indicator
+* Ad-hoc task risk is based on days since creation(`daysElapsedSinceCreation`), not plan period. 
+* Thresholds will be revisited once auto-clear logic is implemented (see Planned: Future).

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kanban — Task Modal (Template / Ad-hoc)</title>
+<link rel="stylesheet" href="./styles.css" />
+<style>
+  .dimmed { flex: 1; overflow-y: auto; padding: 32px; opacity: 0.3; pointer-events: none; }
+  .adhoc-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(197,184,0,0.1);
+    color: #8a7e00;
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  .adhoc-banner svg { flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="screen-nav">
+  <button class="screen-btn active" data-screen="new" onclick="show('new')">New Template</button>
+  <button class="screen-btn" data-screen="edit" onclick="show('edit')">Edit Template</button>
+  <button class="screen-btn" data-screen="adhoc" onclick="show('adhoc')">Add Ad-hoc Task</button>
+</div>
+
+<!-- ══ NEW TEMPLATE ══ -->
+<div id="screen-new" class="app">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg>
+      <span style="font-weight:600;color:#161616">Mars Workbench</span>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Kanban Planner
+      </div>
+    </div>
+  </aside>
+  <div class="main" style="position:relative">
+    <div class="header">
+      <div class="header-left">
+        <div class="back-btn"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <span class="header-title"><span>Kanban</span> Planner</span>
+        <span class="header-badge" style="background:rgba(233,63,51,0.1);color:#e93f33;">Planning Mode</span>
+      </div>
+    </div>
+    <div class="dimmed">
+      <div style="max-width:640px;margin:0 auto">
+        <h2 style="font-size:24px;font-weight:700;color:#161616;margin-bottom:24px">Create Weekly Plan</h2>
+        <div class="template-list">
+          <div class="template-item selected"><div class="template-check"></div><div class="template-info"><div class="template-name">Solve 3 LeetCode problems</div></div></div>
+          <div class="template-item selected"><div class="template-check"></div><div class="template-info"><div class="template-name">Morning jog 5km</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">Create Task Template</div>
+          <button style="background:none;border:none;cursor:pointer;color:#888888;padding:4px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Title <span style="color:#e93f33">*</span></label>
+            <input class="form-input" placeholder="e.g. Solve 3 LeetCode problems" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">
+              Description
+              <span style="font-size:11px;color:#888888;font-weight:400;margin-left:4px">(used by AI for task generation)</span>
+            </label>
+            <textarea class="form-input" rows="3" placeholder="e.g. Focus on dynamic programming and graph problems. Aim for optimal solutions." style="resize:vertical;font-family:inherit"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Points <span style="color:#e93f33">*</span></label>
+            <div style="position:relative">
+              <input class="form-input" type="number" placeholder="10" style="padding-left:32px" />
+              <svg viewBox="0 0 24 24" fill="#ee8134" style="width:16px;height:16px;position:absolute;left:10px;top:50%;transform:translateY(-50%)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            </div>
+            <div style="font-size:11px;color:#888888;margin-top:4px">Points earned when task is completed</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost">Cancel</button>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+            Create Template
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EDIT TEMPLATE ══ -->
+<div id="screen-edit" class="app" style="display:none">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg>
+      <span style="font-weight:600;color:#161616">Mars Workbench</span>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Kanban Planner
+      </div>
+    </div>
+  </aside>
+  <div class="main" style="position:relative">
+    <div class="header">
+      <div class="header-left">
+        <div class="back-btn"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <span class="header-title"><span>Kanban</span> Planner</span>
+        <span class="header-badge" style="background:rgba(233,63,51,0.1);color:#e93f33;">Planning Mode</span>
+      </div>
+    </div>
+    <div class="dimmed">
+      <div style="max-width:640px;margin:0 auto">
+        <h2 style="font-size:24px;font-weight:700;color:#161616;margin-bottom:24px">Update Weekly Plan</h2>
+        <div class="template-list">
+          <div class="template-item selected"><div class="template-check"></div><div class="template-info"><div class="template-name">Solve 3 LeetCode problems</div></div></div>
+          <div class="template-item selected"><div class="template-check"></div><div class="template-info"><div class="template-name">Morning jog 5km</div></div></div>
+          <div class="template-item selected"><div class="template-check"></div><div class="template-info"><div class="template-name">Go to gym</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">Edit Task Template</div>
+          <button style="background:none;border:none;cursor:pointer;color:#888888;padding:4px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Title <span style="color:#e93f33">*</span></label>
+            <input class="form-input" value="Go to gym" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">
+              Description
+              <span style="font-size:11px;color:#888888;font-weight:400;margin-left:4px">(used by AI for task generation)</span>
+            </label>
+            <textarea class="form-input" rows="3" style="resize:vertical;font-family:inherit">30 min workout focusing on compound lifts</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Points <span style="color:#e93f33">*</span></label>
+            <div style="position:relative">
+              <input class="form-input" type="number" value="6" style="padding-left:32px" />
+              <svg viewBox="0 0 24 24" fill="#ee8134" style="width:16px;height:16px;position:absolute;left:10px;top:50%;transform:translateY(-50%)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost">Cancel</button>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M5 13l4 4L19 7" stroke-linecap="round"/></svg>
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD AD-HOC TASK ══ -->
+<div id="screen-adhoc" class="app" style="display:none">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg>
+      <span style="font-weight:600;color:#161616">Mars Workbench</span>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Kanban Planner
+      </div>
+    </div>
+  </aside>
+  <div class="main" style="position:relative">
+    <div class="header">
+      <div class="header-left">
+        <span class="header-title"><span>Kanban</span> Planner</span>
+        <span class="header-badge">Week 08 &middot; Feb 17 – Feb 23</span>
+      </div>
+    </div>
+    <!-- Dimmed board behind modal -->
+    <div class="dimmed" style="padding:0">
+      <div class="board" style="padding:20px 24px;display:flex;gap:16px">
+        <div class="column col-todo" style="flex:1">
+          <div class="column-header"><span>Todo</span><span class="column-count">6</span></div>
+          <div class="column-body">
+            <div class="task-card"><div class="task-title">Solve 3 LeetCode problems</div></div>
+            <div class="task-card"><div class="task-title">Read 30 pages</div></div>
+          </div>
+        </div>
+        <div class="column col-doing" style="flex:1">
+          <div class="column-header"><span>In Progress</span><span class="column-count">3</span></div>
+          <div class="column-body">
+            <div class="task-card"><div class="task-title">Morning jog 5km</div></div>
+          </div>
+        </div>
+        <div class="column col-done" style="flex:1">
+          <div class="column-header"><span>Done</span><span class="column-count">3</span></div>
+          <div class="column-body">
+            <div class="task-card done-card"><div class="task-title">Go to gym – Push day</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Ad-hoc Task Modal -->
+    <div class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">Add Ad-hoc Task</div>
+          <button style="background:none;border:none;cursor:pointer;color:#888888;padding:4px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Info banner -->
+          <div class="adhoc-banner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Ad-hoc tasks are one-off items — they don't repeat and never expire.
+          </div>
+          <div class="form-group">
+            <label class="form-label">Title <span style="color:#e93f33">*</span></label>
+            <input class="form-input" placeholder="e.g. File tax report" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-input" rows="3" placeholder="Optional details about this task" style="resize:vertical;font-family:inherit"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Points <span style="color:#e93f33">*</span></label>
+            <div style="position:relative">
+              <input class="form-input" type="number" value="1" style="padding-left:32px" />
+              <svg viewBox="0 0 24 24" fill="#ee8134" style="width:16px;height:16px;position:absolute;left:10px;top:50%;transform:translateY(-50%)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            </div>
+            <div style="font-size:11px;color:#888888;margin-top:4px">Points earned when task is completed</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost">Cancel</button>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+            Add to Board
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(name) {
+  document.querySelectorAll('.app').forEach(el => el.style.display = 'none');
+  document.getElementById('screen-' + name).style.display = 'flex';
+  document.querySelectorAll('.screen-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.screen === name);
+  });
+}
+</script>
+</body>
+</html>

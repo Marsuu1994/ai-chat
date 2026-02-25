@@ -64,8 +64,13 @@ weeklyTasks       = allTasks.filter(t => t.type == WEEKLY)
 weeklyPoints      = weeklyTasks.sum(points)
 weeklyCount       = weeklyTasks.length
 
-weekProjectedPoints = dailyPastPoints + dailyFuturePoints + weeklyPoints
-weekProjectedCount  = dailyPastCount  + dailyFutureCount  + weeklyCount
+// Ad-hoc tasks: always included in projected (never expire, no future generation)
+adhocTasks        = allTasks.filter(t => t.type == AD_HOC)
+adhocPoints       = adhocTasks.sum(points)
+adhocCount        = adhocTasks.length
+
+weekProjectedPoints = dailyPastPoints + dailyFuturePoints + weeklyPoints + adhocPoints
+weekProjectedCount  = dailyPastCount  + dailyFutureCount  + weeklyCount  + adhocCount
 
 weekDoneCount   = allTasks.filter(t => t.status == DONE).length
 weekDonePoints  = allTasks.filter(t => t.status == DONE).sum(points)
@@ -87,9 +92,10 @@ All actions follow the pattern: **validate with Zod → call service → `revali
 
 ```
 Input {
-  periodType:   PeriodType     // "WEEKLY"
-  description?: string
-  templates:    { templateId: string; type: TaskType; frequency: number }[]   // min 1
+  periodType:    PeriodType     // "WEEKLY"
+  description?:  string
+  templates:     { templateId: string; type: TaskType; frequency: number }[]   // min 0 if adhocTaskIds provided
+  adhocTaskIds?: string[]       // existing ad-hoc task IDs to link to this plan
 }
 
 Steps:
@@ -100,9 +106,12 @@ Steps:
 5. Generate task instances (stamping Task.type from PlanTemplate.type):
    - Weekly templates: generate all instances immediately
    - Daily templates: generate instances for today only
-6. Set lastSyncDate = today
-7. Archive existing PENDING_UPDATE plan → COMPLETED
-8. revalidatePath('/kanban')
+6. Link ad-hoc tasks: update Task.planId = newPlanId for each adhocTaskId
+7. Unlink deselected ad-hoc tasks from PENDING_UPDATE plan: set planId = null
+   for ad-hoc tasks on old plan NOT in adhocTaskIds
+8. Set lastSyncDate = today
+9. Archive existing PENDING_UPDATE plan → COMPLETED
+10. revalidatePath('/kanban')
 ```
 
 ---
@@ -111,8 +120,9 @@ Steps:
 
 ```
 Input {
-  description?: string
-  templates?:   { templateId: string; type: TaskType; frequency: number }[]
+  description?:  string
+  templates?:    { templateId: string; type: TaskType; frequency: number }[]
+  adhocTaskIds?: string[]       // ad-hoc task IDs to include in current plan
 }
 
 Steps:
@@ -138,7 +148,11 @@ Steps:
         * Added weekly templates: generate all instances immediately
    e. Set lastSyncDate = today
 3. If description provided: update Plan.description
-4. revalidatePath('/kanban')
+4. If adhocTaskIds provided:
+   a. Link new: update Task.planId = planId for each adhocTaskId not currently linked
+   b. Unlink removed: set Task.planId = null for ad-hoc tasks currently on plan
+      but NOT in adhocTaskIds
+5. revalidatePath('/kanban')
 ```
 
 ---
@@ -196,6 +210,30 @@ Steps:
 
 ---
 
+### `createAdhocTaskAction(input)`
+
+```
+Input {
+  title:        string
+  description?: string
+  points:       number    // positive integer, default 1
+}
+
+Steps:
+1. Validate input with Zod
+2. Get active plan for user (must exist — button only visible on board)
+3. Create Task record:
+   - planId = activePlan.id
+   - templateId = null
+   - type = AD_HOC
+   - status = TODO
+   - forDate = null, periodKey = null
+   - instanceIndex = 1
+4. revalidatePath('/kanban')
+```
+
+---
+
 ## DAL Functions (Data Access Layer)
 
 All Prisma queries live in `src/lib/db/`. Never import Prisma directly in actions or components.
@@ -227,4 +265,7 @@ taskQueries.ts
   deleteTasksByPlanAndTemplate(planId, templateId, statuses[])      // replaces expireTasks for edit plan flow
   expireStaleDailyTasks(planId, cutoffDate)                         // expire DAILY tasks where forDate < cutoffDate (= yesterday); excludes DONE
   expireTasks(taskIds[])                                            // batch status → EXPIRED; excludes AD_HOC type
+  getNonDoneAdhocTasks()                                            // all non-DONE AD_HOC tasks (any planId); filter in-memory for plan-specific needs
+  updateTasksPlanId(taskIds[], planId)                              // batch update planId (link to plan)
+  unlinkAdhocTasksFromPlan(planId, keepIds[])                       // set planId=null for AD_HOC tasks on plan NOT in keepIds
 ```

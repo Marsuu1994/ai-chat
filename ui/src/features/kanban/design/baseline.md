@@ -20,29 +20,30 @@ A tool to plan and track tasks within defined periods (e.g., weekly). It visuali
 
 ### Planned: V2
 
-1. Support Ad-hoc task type, task like file tax report, get sinus CT. This type of task won't expired and can be generated anytime through the kanban page.
-2. Add AI generated tasks instance flow, LLM should be able to generate tasks based on past works + task template informatiosn to generate task instances, need to record the quality of task it generated.
+1. Support Ad-hoc task type for one-off tasks (e.g. file tax report, get sinus CT).  Ad-hoc tasks are not tied to templates, never expire, and exist independently of plans.  They can be added to the board from the kanban page or carried over from previous plans.
+2. Support evidence flow, when user move a task to completed, submit evidence.
+3. Add AI generated tasks instance flow, LLM should be able to generate tasks based on past works + task template informatiosn to generate task instances, need to record the quality of task it generated.
 
 ### Planned: Future
 
 - Task overlap visualization (stacked cards for multiple instances)
-- Rollover badge for daily tasks carried from previous days
-- Risk indicators (red/yellow) for tasks at risk of not being completed
+- Support Ad-hoc task deletion and auto clear logic.
 - Phone notifications for unfinished tasks
 - LLM-generated motivational messages
 - End-of-period summary before starting a new plan
 - Weekly task rollover across periods
 - Biweekly and custom period types
+- Priority matrix for managing and promoting ad-hoc tasks onto the board
 
 ## Entities
 
-- **Plan** — A time-boxed container (e.g., one week) that groups task templates, their generated task instances, and Ad-hoc tasks. Only one plan can be active at a time. After the period ends, it becomes `PENDING_UPDATE` and serves as a template for the next plan.
+- **Plan** — A time-boxed container (e.g., one week) that groups task templates, their generated task instances, and/or Ad-hoc tasks. Only one plan can be active at a time. After the period ends, it becomes `PENDING_UPDATE` and serves as a template for the next plan.
 - **TaskTemplate** — A reusable blueprint defining what kind of task to generate (title, points). Shared across plans. Editing a template does not affect already-generated Task instances.
 - **PlanTemplate** — Join table linking a plan to its selected task templates, also indicates the type(daily, weekly) and frequency of generation.
 - **Task** — A concrete instance generated from a template or user defined Ad-hoc tasks. This is what appears on the board and gets dragged between columns.
   - Daily task: has `forDate`, generated each day by daily sync
   - Weekly task: has `periodKey`, generated once at plan creation
-  - Ad hoc task: can be generated anytime as needed, does not expire with time
+  - Ad hoc task: can be generated anytime as needed, does not expire with time, does not associate with any task template, optional for associated with a plan
 
 ## Schema
 
@@ -124,7 +125,7 @@ enum TaskType {
 ```prisma
 model Task {
   id            String       @id @default(uuid())
-  planId        String
+  planId        String? 		 // Optional for Ad-hoc tasks
   templateId    String? 		 // Optional for Ad-hoc tasks
   title         String
   description   String?
@@ -138,7 +139,7 @@ model Task {
   updatedAt     DateTime     @updatedAt
   doneAt        DateTime?
 
-  plan     Plan          @relation(fields: [planId], references: [id])
+  plan     Plan?         @relation(fields: [planId], references: [id])
   template TaskTemplate? @relation(fields: [templateId], references: [id])
 }
 
@@ -152,7 +153,8 @@ enum TaskStatus {
 // Constraints:
 // - Daily tasks: UNIQUE(planId, templateId, forDate, instanceIndex)
 // - Weekly tasks: UNIQUE(planId, templateId, periodKey, instanceIndex)
-// - AD_HOC tasks: templateId is null, forDate and periodKey are both null, instanceIndex = 1
+// - DAILY and WEEKLY tasks: planId is required (NOT NULL)
+// - AD_HOC tasks: templateId is null, planId is optional(NULL = unassigned, not on the board), forDate and periodKey are both null, instanceIndex = 1
 // - AD_HOC tasks do not expire
 // - Exactly one of forDate or periodKey must be set for DAILY and WEEKLY tasks
 ```
@@ -160,4 +162,4 @@ enum TaskStatus {
 ## Architecture Decision
 
 * Uses **Server Actions** for mutations and **direct DAL calls from Server Components** for data fetching. No REST API routes. Inputs are validated at the boundary with **Zod** schemas.
-* Ad-hoc task not associated with task template but associated with plan only
+* Ad-hoc tasks are not associated with any TaskTemplate.  They are optionally associated with a plan (planId = null means unassigned backlog).

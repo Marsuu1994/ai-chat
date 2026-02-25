@@ -131,6 +131,9 @@ When implementing a UI component from an approved mockup, strictly follow every 
 - When you need both a full dataset and a filtered subset, fetch once from the DB and filter in-memory on the server side. Do not issue multiple DB queries for overlapping data.
   - Bad: `boardTasks = getTasksByStatus([TODO, DOING, DONE])` + `allTasks = getTasksByStatus([TODO, DOING, DONE, EXPIRED])`
   - Good: `allTasks = getTasksByPlanId(planId)` then `boardTasks = allTasks.filter(t => t.status !== EXPIRED)`
+- Do not create a narrower DAL query when an existing broader query can be filtered in-memory. Adding `getXByY` variants that return a subset of what another query already provides leads to redundant code and inconsistent caching.
+  - Bad: `getNonDoneAdhocTasks()` (all plans) + `getNonDoneAdhocTasksByPlanId(planId)` (single plan) — two DAL functions for overlapping data
+  - Good: `getNonDoneAdhocTasks()` then `tasks.filter(t => t.planId === planId)` — one DAL function, filter in-memory
 - When a service function performs a series of DB mutations that must succeed or fail together, wrap them in `prisma.$transaction()` to guarantee ACID atomicity. Add `tx?: Prisma.TransactionClient` to each participating DAL write function and use `const db = tx ?? prisma` inside. Place any guard reads before the transaction to keep the connection hold time short.
   - Bad: sequential `createPlan()` → `createManyPlanTemplates()` → `createManyTasks()` with no transaction — a failure mid-way leaves orphaned records
   - Good: `prisma.$transaction(async (tx) => { await createPlan(..., tx); await createManyPlanTemplates(..., tx); await createManyTasks(..., tx); })`
