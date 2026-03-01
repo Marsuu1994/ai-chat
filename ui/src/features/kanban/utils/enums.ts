@@ -23,3 +23,9 @@ export const PeriodType = {
   WEEKLY: "WEEKLY",
 } as const;
 export type PeriodType = (typeof PeriodType)[keyof typeof PeriodType];
+
+export const PlanMode = {
+  NORMAL: "NORMAL",
+  EXTREME: "EXTREME",
+} as const;
+export type PlanMode = (typeof PlanMode)[keyof typeof PlanMode];

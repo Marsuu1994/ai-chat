@@ -52,6 +52,11 @@ enum PlanStatus {
   COMPLETED
 }
 
+enum PlanMode {
+  NORMAL
+  EXTREME
+}
+
 enum TaskType {
   DAILY
   WEEKLY
@@ -71,6 +76,7 @@ model Plan {
   periodType  PeriodType     @map("period_type")
   periodKey   String         @map("period_key")
   description String?
+  mode        PlanMode       @default(NORMAL)
   status      PlanStatus
   createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz
   lastSyncDate DateTime?      @map("last_sync_date") @db.Date

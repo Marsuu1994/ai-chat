@@ -51,8 +51,8 @@ ui/
 │   │       ├── utils/             # dateUtils, taskUtils, enums
 │   │       ├── schemas.ts         # Zod validation schemas
 │   │       └── design/            # Design docs (baseline.md, flows.md, api.md)
-│   │           ├── mockup/        # Per-flow HTML mockups + shared styles.css
-│   │           └── mockup-v2/     # v2 redesign mockups (dark/light themes)
+│   │           ├── mockup/        # Per-flow HTML mockups + shared styles.css (source of truth)
+│   │           └── mockup-v2/     # Future brainstorming only (not for active work)
 │   └── components/
 │       └── common/
 │           └── Header.tsx         # Shared header component
@@ -114,6 +114,8 @@ Each file should be self-contained (link to `./styles.css`) and represent only t
 ### Design Exploration (Future Work)
 
 Use the `/design-explore` skill (e.g., `/design-explore kanban board`). See `.claude/skills/design-explore/SKILL.md`.
+
+**Important:** `mockup-v2/` is for future brainstorming and design exploration only. All active mockups (temp before/after diffs, source-of-truth per-flow files) belong in `mockup/`. Never place temp or active mockups in `mockup-v2/`.
 
 ### Implementing UI Components
 

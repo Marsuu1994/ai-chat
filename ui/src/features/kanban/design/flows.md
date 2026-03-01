@@ -19,7 +19,8 @@
 **Steps:**
 1. Set `lastSyncDate = today` first to prevent concurrent re-runs.
 2. Expire all daily tasks where `forDate` is **strictly before yesterday** (i.e., `forDate < today - 1 day`) and status is not DONE.
-3. Generate new daily task instances for today.
+3. If today is a weekend day and plan mode is NORMAL, skip daily task generation.
+4. Otherwise, generate new daily task instances for today.
 
 **Rules:**
 - Idempotent — safe to re-run multiple times.
@@ -28,6 +29,8 @@
 - A task is considered **rolled over** when `task.type === DAILY && task.forDate < today`. This is computed in-memory; no schema change required.
 - Rolled-over tasks are sorted after today's fresh daily tasks (but before weekly tasks) within each column.
 - Rolled-over tasks display a distinct visual treatment on the task card to signal they are from a previous day (see `mockup-board.html`).
+- During weekends, daily task generation is skipped unless plan mode is EXTREME.
+- Week projection formula adjusts for mode: NORMAL counts only remaining weekdays, EXTREME counts all remaining calendar days.
 
 ---
 
@@ -57,13 +60,15 @@
    1. non-Done Ad-hoc tasks from the `PENDING_UPDATE` plan will be preselected, user can deselect it to not include it to the coming plan.
    2. User can select any other non-Done Ad-hoc tasks to include it to the coming plan.
 
-5. User submits.
-6. Create plan and link selected templates and Ad-hoc tasks.
-7. For Ad-hoc tasks from PENDING_UPDATE plan that were not selected: set planId = null (return to unassigned pool).
-8. Generate task instances: weekly tasks immediately, daily tasks for today only.
-9. Set `lastSyncDate = today`.
-10. Archive any existing `PENDING_UPDATE` plan → `COMPLETED`.
-11. Revalidate `/kanban` to render board.
+5. Toggle plan mode between NORMAL and EXTREME. Defaults to NORMAL.
+
+6. User submits.
+7. Create plan and link selected templates and Ad-hoc tasks.
+8. For Ad-hoc tasks from PENDING_UPDATE plan that were not selected: set planId = null (return to unassigned pool).
+9. Generate task instances: weekly tasks immediately, daily tasks for today only (respecting plan mode for weekend skipping).
+10. Set `lastSyncDate = today`.
+11. Archive any existing `PENDING_UPDATE` plan → `COMPLETED`.
+12. Revalidate `/kanban` to render board.
 
 ---
 
@@ -75,10 +80,11 @@
 1. Page preloads PlanTemplates (with type and frequency config) from the `ACTIVE` plan and all non-DONE Ad-hoc tasks from DB (Ad-hoc tasks associated with current plan will be preselected).
 2. For non-Ad-hoc task: user edits template selection and/or type and frequency for a choosen template .
 3. For Ad-hoc task: user select/deselect to include/exclude task from current plan, deselect will set the planId to null.
-4. On submit, show confirmation modal summarizing the changes(added, removed, modified)
-5. User click confirm and regenerate button.
-6. Apply template changes and regenerate tasks accordingly.
-7. Revalidate `/kanban` to render updated board.
+4. Toggle plan mode between NORMAL and EXTREME.
+5. On submit, show confirmation modal summarizing the changes (added, removed, modified, mode change).
+6. User clicks confirm and regenerate button.
+7. Apply template changes and regenerate tasks accordingly (respecting plan mode for weekend skipping).
+8. Revalidate `/kanban` to render updated board.
 
 **Rules:**
 

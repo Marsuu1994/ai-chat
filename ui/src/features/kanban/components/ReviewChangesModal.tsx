@@ -11,7 +11,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid";
-import { TaskType } from "@/features/kanban/utils/enums";
+import { TaskType, PlanMode } from "@/features/kanban/utils/enums";
 
 interface AddedTemplate {
   templateId: string;
@@ -55,6 +55,9 @@ interface ReviewChangesModalProps {
   removedAdhoc?: AdhocTaskChange[];
   incompleteCounts: Record<string, number>;
   isSubmitting: boolean;
+  modeChanged?: boolean;
+  fromMode?: PlanMode;
+  toMode?: PlanMode;
 }
 
 function typeLabel(type: TaskType) {
@@ -63,6 +66,16 @@ function typeLabel(type: TaskType) {
 
 function freqLabel(type: TaskType, frequency: number) {
   return `${frequency}\u00d7 per ${type === TaskType.DAILY ? "day" : "week"}`;
+}
+
+function modeLabel(m: PlanMode) {
+  return m === PlanMode.NORMAL ? "Normal" : "Extreme";
+}
+
+function modeDescription(m: PlanMode) {
+  return m === PlanMode.NORMAL
+    ? "Daily tasks on weekdays only"
+    : "Daily tasks every day including weekends";
 }
 
 export function ReviewChangesModal({
@@ -76,6 +89,9 @@ export function ReviewChangesModal({
   removedAdhoc = [],
   incompleteCounts,
   isSubmitting,
+  modeChanged = false,
+  fromMode,
+  toMode,
 }: ReviewChangesModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -317,6 +333,34 @@ export function ReviewChangesModal({
                   </div>
                 </>
               )}
+            </div>
+          )}
+        {/* Mode Changed */}
+          {modeChanged && fromMode && toMode && (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <ArrowPathIcon className="size-3.5 text-info" />
+                <span className="text-[11px] font-bold uppercase tracking-widest text-info">
+                  Mode Changed
+                </span>
+              </div>
+              <div className="flex items-start gap-2.5 px-3 py-2.5 bg-base-300 border border-info/30 rounded-lg">
+                <div className="size-[7px] rounded-full bg-info shrink-0 mt-[5px]" />
+                <div>
+                  <div className="flex items-center gap-1 text-sm">
+                    <span className="text-base-content/30 line-through">
+                      {modeLabel(fromMode)}
+                    </span>
+                    <span className="text-info mx-0.5">&rarr;</span>
+                    <span className="text-info font-medium">
+                      {modeLabel(toMode)}
+                    </span>
+                  </div>
+                  <div className="text-[11px] italic text-info mt-1">
+                    {modeDescription(toMode)} — change applies to future daily tasks only
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>

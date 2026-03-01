@@ -38,6 +38,7 @@ export default async function EditPlanPage({
       planId={id}
       initialPlanTemplates={initialPlanTemplates}
       initialDescription={plan.description ?? ""}
+      initialPlanMode={plan.mode}
       adhocTasks={adhocTasks}
       initialAdhocTaskIds={initialAdhocTaskIds}
     />

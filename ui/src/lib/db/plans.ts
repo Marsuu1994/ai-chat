@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Prisma, PlanStatus, TaskType } from "@/generated/prisma/client";
+import { Prisma, PlanMode, PlanStatus, TaskType } from "@/generated/prisma/client";
 
 export type PlanItem = {
   id: string;
@@ -7,6 +7,7 @@ export type PlanItem = {
   periodType: string;
   periodKey: string;
   description: string | null;
+  mode: PlanMode;
   status: PlanStatus;
   lastSyncDate: Date | null;
   createdAt: Date;
@@ -35,6 +36,7 @@ const planSelect = {
   periodType: true,
   periodKey: true,
   description: true,
+  mode: true,
   status: true,
   lastSyncDate: true,
   createdAt: true,
@@ -94,7 +96,7 @@ export async function getPlanWithTemplates(planId: string): Promise<PlanWithTemp
  * Create a new plan with ACTIVE status
  */
 export async function createPlan(
-  data: { periodType: "WEEKLY"; periodKey: string; description?: string },
+  data: { periodType: "WEEKLY"; periodKey: string; description?: string; mode?: PlanMode },
   tx?: Prisma.TransactionClient
 ): Promise<PlanItem> {
   const db = tx ?? prisma;
@@ -103,6 +105,7 @@ export async function createPlan(
       periodType: data.periodType,
       periodKey: data.periodKey,
       description: data.description,
+      mode: data.mode,
       status: "ACTIVE",
     },
     select: planSelect,
@@ -114,7 +117,7 @@ export async function createPlan(
  */
 export async function updatePlan(
   planId: string,
-  data: { description?: string },
+  data: { description?: string; mode?: PlanMode },
   tx?: Prisma.TransactionClient
 ): Promise<PlanItem> {
   const db = tx ?? prisma;

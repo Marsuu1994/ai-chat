@@ -3,9 +3,9 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CheckIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, MoonIcon, BoltIcon } from "@heroicons/react/24/outline";
 import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid";
-import { TaskType, TaskStatus, PeriodType } from "@/features/kanban/utils/enums";
+import { TaskType, TaskStatus, PeriodType, PlanMode } from "@/features/kanban/utils/enums";
 import type { TaskTemplateItem } from "@/lib/db/taskTemplates";
 import {
   createPlanAction,
@@ -41,6 +41,7 @@ interface PlanFormProps {
   planId?: string;
   initialPlanTemplates?: InitialPlanTemplate[];
   initialDescription?: string;
+  initialPlanMode?: PlanMode;
   adhocTasks?: AdhocTaskItem[];
   initialAdhocTaskIds?: string[];
 }
@@ -51,6 +52,7 @@ export default function PlanForm({
   planId,
   initialPlanTemplates = [],
   initialDescription = "",
+  initialPlanMode = PlanMode.NORMAL,
   adhocTasks = [],
   initialAdhocTaskIds = [],
 }: PlanFormProps) {
@@ -68,6 +70,7 @@ export default function PlanForm({
     )
   );
   const [description, setDescription] = useState(initialDescription);
+  const [planMode, setPlanMode] = useState<PlanMode>(initialPlanMode);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -176,7 +179,9 @@ export default function PlanForm({
       (t) => !selectedAdhocIds.has(t.id) && initialAdhocSet.has(t.id)
     );
 
-    return { added, removed, modified, addedAdhoc, removedAdhoc };
+    const modeChanged = planMode !== initialPlanMode;
+
+    return { added, removed, modified, addedAdhoc, removedAdhoc, modeChanged, fromMode: initialPlanMode, toMode: planMode };
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -184,10 +189,10 @@ export default function PlanForm({
     setError(null);
 
     if (mode === "edit") {
-      const { added, removed, modified, addedAdhoc, removedAdhoc } = computeDiff();
+      const { added, removed, modified, addedAdhoc, removedAdhoc, modeChanged } = computeDiff();
       const hasChanges =
         added.length > 0 || removed.length > 0 || modified.length > 0 ||
-        addedAdhoc.length > 0 || removedAdhoc.length > 0;
+        addedAdhoc.length > 0 || removedAdhoc.length > 0 || modeChanged;
       if (hasChanges) {
         // Fetch incomplete task counts for removed + modified templates
         const affectedIds = [
@@ -232,6 +237,7 @@ export default function PlanForm({
         result = await createPlanAction({
           periodType: PeriodType.WEEKLY,
           description: description.trim() || undefined,
+          mode: planMode,
           templates: templatesPayload,
           adhocTaskIds: Array.from(selectedAdhocIds),
         });
@@ -239,6 +245,7 @@ export default function PlanForm({
       case "edit":
         result = await updatePlanAction(planId!, {
           description: description.trim() || undefined,
+          mode: planMode,
           templates: templatesPayload,
           adhocTaskIds: Array.from(selectedAdhocIds),
         });
@@ -262,7 +269,7 @@ export default function PlanForm({
 
   const diff = mode === "edit"
     ? computeDiff()
-    : { added: [], removed: [], modified: [], addedAdhoc: [], removedAdhoc: [] };
+    : { added: [], removed: [], modified: [], addedAdhoc: [], removedAdhoc: [], modeChanged: false, fromMode: initialPlanMode, toMode: planMode };
 
   return (
     <>
@@ -290,6 +297,49 @@ export default function PlanForm({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+        </div>
+
+        {/* Plan Mode */}
+        <div className="rounded-lg border border-base-content/10 bg-base-200 p-3.5">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-base-content/50 block mb-2">
+            Plan Mode
+          </span>
+          <div className="flex gap-0 rounded-lg border border-base-content/10 bg-base-100 p-[3px]">
+            <button
+              type="button"
+              onClick={() => setPlanMode(PlanMode.NORMAL)}
+              className={`flex flex-1 flex-col items-center gap-0.5 rounded-md px-3 py-2.5 cursor-pointer border transition-colors ${
+                planMode === PlanMode.NORMAL
+                  ? "border-info/50 bg-info/5"
+                  : "border-transparent"
+              }`}
+            >
+              <MoonIcon className={`size-4 ${planMode === PlanMode.NORMAL ? "text-info" : "text-base-content/30"}`} />
+              <span className={`text-[13px] font-semibold tracking-wide ${planMode === PlanMode.NORMAL ? "text-info" : "text-base-content/30"}`}>
+                Normal
+              </span>
+              <span className={`text-[11px] ${planMode === PlanMode.NORMAL ? "text-base-content/60" : "text-base-content/30"}`}>
+                Weekdays only
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setPlanMode(PlanMode.EXTREME)}
+              className={`flex flex-1 flex-col items-center gap-0.5 rounded-md px-3 py-2.5 cursor-pointer border transition-colors ${
+                planMode === PlanMode.EXTREME
+                  ? "border-error/50 bg-error/5"
+                  : "border-transparent"
+              }`}
+            >
+              <BoltIcon className={`size-4 ${planMode === PlanMode.EXTREME ? "text-error" : "text-base-content/30"}`} />
+              <span className={`text-[13px] font-semibold tracking-wide ${planMode === PlanMode.EXTREME ? "text-error" : "text-base-content/30"}`}>
+                Extreme
+              </span>
+              <span className={`text-[11px] ${planMode === PlanMode.EXTREME ? "text-base-content/60" : "text-base-content/30"}`}>
+                Every day incl. weekends
+              </span>
+            </button>
+          </div>
         </div>
 
         {/* Template picker */}
@@ -456,6 +506,9 @@ export default function PlanForm({
         removedAdhoc={diff.removedAdhoc}
         incompleteCounts={incompleteCounts}
         isSubmitting={isSubmitting}
+        modeChanged={diff.modeChanged}
+        fromMode={diff.fromMode}
+        toMode={diff.toMode}
       />
     </>
   );

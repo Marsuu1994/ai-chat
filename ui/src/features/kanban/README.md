@@ -4,12 +4,13 @@ A drag-and-drop kanban board for planning and tracking tasks within weekly perio
 
 ## Current State
 
-Backend complete (schema, DAL, services, server actions, board sync). Full board UI with drag-and-drop — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards that can be dragged between columns. Moves use optimistic UI with server-side persistence and automatic rollback on failure. Task cards show title, description, unified type badge (`TaskTypeBadge` — supports DAILY, WEEKLY, and AD_HOC), and points with color-coded risk badges (⚠ at risk / ‼ urgent). Progress dashboard shows Today ring, stat metrics, and Week Progress Bar. End-of-period sync auto-expires undone tasks and transitions plans. Create/edit plan flows share a unified `PlanForm` with inline type/frequency config per template. AD_HOC tasks fully implemented end-to-end with plan linking. `ReviewChangesModal` shows added/removed/modified template diffs. Architecture follows strict 3-layer pattern with `prisma.$transaction()` for all multi-step mutations.
+Backend complete (schema, DAL, services, server actions, board sync). Full board UI with drag-and-drop — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards that can be dragged between columns. Moves use optimistic UI with server-side persistence and automatic rollback on failure. Task cards show title, description, unified type badge (`TaskTypeBadge` — supports DAILY, WEEKLY, and AD_HOC), and points with color-coded risk badges (⚠ at risk / ‼ urgent). Progress dashboard shows Today ring, stat metrics, and Week Progress Bar. End-of-period sync auto-expires undone tasks and transitions plans. Create/edit plan flows share a unified `PlanForm` with inline type/frequency config per template and a Plan Mode toggle (NORMAL = weekdays only, EXTREME = every day). AD_HOC tasks fully implemented end-to-end with plan linking. `ReviewChangesModal` shows added/removed/modified template diffs and mode changes. Architecture follows strict 3-layer pattern with `prisma.$transaction()` for all multi-step mutations.
 
 **v2 UI Redesign**: Complete mockup-v2 design system under `design/mockup-v2/` with 11 flow mockups and shared `styles.css` — "Techno Mission Control" aesthetic featuring cyan primary, violet secondary, amber warning palette. Covers all existing flows (board with collapsed/expanded backlog drawer, empty state, plan form with category groups, task modal, review changes, Eisenhower priority matrix) plus new flows (AI generate task via chat, end-of-period mission debrief summary, vacation/break mode, dedicated template library page). Light and dark theme variants with side-by-side comparison mockup. Custom daisyUI themes (`mars-dark`, `mars-light`) defined in `globals.css` via `@plugin "daisyui/theme"` and applied app-wide (`mars-dark` as default).
 
 ## Backlog
 ### High Priority
+- [ ] Consolidate task generation logic for update plan, or consider to remove the edit plan action, user can only set their plan during the beginning
 - [ ] Design evidence submit feature when user move task to done
 
 ### Future
@@ -25,6 +26,16 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - [ ] Implement light/dark theme toggle UI
 
 ## Update Log
+
+### 2026-02-28
+- Implemented Plan Mode (NORMAL / EXTREME): `PlanMode` enum added to Prisma schema with migration, `mode` field on Plan model defaults to NORMAL
+- NORMAL mode skips daily task generation on weekends; EXTREME mode generates daily tasks every day — expiry logic remains mode-independent
+- Plan form UI: segmented toggle (moon icon / bolt icon) between Description and Template picker; mode persists through create and edit flows
+- `ReviewChangesModal` displays mode changes with old → new transition and impact description
+- Week projection adjusted: NORMAL mode counts only weekdays remaining, EXTREME counts all calendar days
+- New plan inherits mode from PENDING_UPDATE plan; mode change is forward-looking (no retroactive task creation/deletion)
+- Added `isWeekend()` and `countWeekdaysInRange()` date utilities; `PlanMode` client-safe enum for use-client components
+- Updated mockups: `mockup-plan-form.html` (mode toggle in create + edit), `mockup-review-changes.html` (mode changed section); deleted temp mockup
 
 ### 2026-02-26
 - Complete v2 UI redesign: created `mockup-v2/` with 11 mockup files and a shared design system CSS — "Techno Mission Control" aesthetic with cyan/violet neon palette, dark+light theme support
@@ -141,6 +152,7 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - UI mockups created (board, empty state, create plan, create/edit template)
 
 ## Done
+- [x] Plan Mode toggle (NORMAL / EXTREME) — schema, services, board sync, plan form UI, review modal, mockups
 - [x] Ad-hoc task flow: plan form integration — ad-hoc task selection in create/edit plan, ReviewChangesModal ad-hoc sections
 - [x] Ad-hoc task initial status matches source column (Todo → TODO, In Progress → DOING)
 - [x] Ad-hoc task flow: board UI — TaskTypeBadge AD_HOC, add-task button in columns, TaskModal adhoc mode

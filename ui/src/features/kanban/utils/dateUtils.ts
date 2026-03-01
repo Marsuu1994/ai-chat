@@ -98,6 +98,29 @@ export function formatShortDate(date: Date): string {
 }
 
 /**
+ * Returns true if the given date falls on a Saturday or Sunday.
+ */
+export function isWeekend(date: Date): boolean {
+  const day = date.getDay();
+  return day === 0 || day === 6;
+}
+
+/**
+ * Counts the number of weekdays (Mon–Fri) in a date range, inclusive of both ends.
+ */
+export function countWeekdaysInRange(from: Date, to: Date): number {
+  let count = 0;
+  const current = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+  const end = new Date(to.getFullYear(), to.getMonth(), to.getDate());
+  while (current <= end) {
+    const day = current.getDay();
+    if (day !== 0 && day !== 6) count++;
+    current.setDate(current.getDate() + 1);
+  }
+  return count;
+}
+
+/**
  * Returns the ISO week key for a given date, e.g. "2026-W07".
  */
 export function getISOWeekKey(date: Date): string {

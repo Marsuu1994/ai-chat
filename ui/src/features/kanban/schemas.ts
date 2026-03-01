@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PeriodType, TaskType, TaskStatus } from "@/generated/prisma/client";
+import { PeriodType, PlanMode, TaskType, TaskStatus } from "@/generated/prisma/client";
 
 // ── Plan Schemas ───────────────────────────────────────────────────────
 
@@ -13,6 +13,7 @@ export const createPlanSchema = z
   .object({
     periodType: z.literal(PeriodType.WEEKLY),
     description: z.string().optional(),
+    mode: z.nativeEnum(PlanMode).default(PlanMode.NORMAL),
     templates: z.array(planTemplateInputSchema),
     adhocTaskIds: z.array(z.string().uuid()).optional(),
   })
@@ -26,6 +27,7 @@ export type CreatePlanInput = z.infer<typeof createPlanSchema>;
 
 export const updatePlanSchema = z.object({
   description: z.string().optional(),
+  mode: z.nativeEnum(PlanMode).optional(),
   templates: z.array(planTemplateInputSchema).optional(),
   adhocTaskIds: z.array(z.string().uuid()).optional(),
 });

@@ -36,6 +36,35 @@
   }
   .freq-unit { font-size: 12px; color: #888888; }
 
+  /* Mode toggle */
+  .mode-section {
+    background: #f5f5f5; border: 1px solid #dedede; border-radius: 8px; padding: 14px;
+    margin-bottom: 20px;
+  }
+  .mode-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; color: #888888; margin-bottom: 8px;
+  }
+  .mode-toggle {
+    display: flex; gap: 0; background: #ffffff; border-radius: 8px;
+    padding: 3px; border: 1px solid #dedede;
+  }
+  .mode-option {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 10px 12px; border-radius: 6px; cursor: pointer;
+    border: 1px solid transparent;
+  }
+  .mode-option.active.normal { border-color: #45aeee; background: rgba(69,174,238,0.06); }
+  .mode-option.active.extreme { border-color: #e93f33; background: rgba(233,63,51,0.06); }
+  .mode-option-icon { font-size: 16px; margin-bottom: 1px; }
+  .mode-option-name { font-size: 13px; font-weight: 600; letter-spacing: 0.02em; }
+  .mode-option.active.normal .mode-option-name { color: #45aeee; }
+  .mode-option.active.extreme .mode-option-name { color: #e93f33; }
+  .mode-option:not(.active) .mode-option-name { color: #bbbbbb; }
+  .mode-option-desc { font-size: 11px; }
+  .mode-option.active .mode-option-desc { color: #888888; }
+  .mode-option:not(.active) .mode-option-desc { color: #bbbbbb; }
+
   /* Ad-hoc task items */
   .adhoc-item {
     display: flex; align-items: center; gap: 12px; padding: 12px;
@@ -97,7 +126,25 @@
           <label class="form-label">Description (optional)</label>
           <input class="form-input" placeholder="e.g. Focus on interview prep this week" />
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;margin-top:20px">
+
+        <!-- Plan Mode Toggle -->
+        <div class="mode-section">
+          <div class="mode-label">Plan Mode</div>
+          <div class="mode-toggle">
+            <div class="mode-option active normal">
+              <div class="mode-option-icon">&#9790;</div>
+              <div class="mode-option-name">Normal</div>
+              <div class="mode-option-desc">Weekdays only</div>
+            </div>
+            <div class="mode-option extreme">
+              <div class="mode-option-icon">&#9889;</div>
+              <div class="mode-option-name">Extreme</div>
+              <div class="mode-option-desc">Every day incl. weekends</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
           <label class="form-label" style="margin:0">Task Templates</label>
           <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px">+ New Template</button>
         </div>
@@ -286,7 +333,25 @@
           <label class="form-label">Description (optional)</label>
           <input class="form-input" value="Interview prep + system design" />
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;margin-top:20px">
+
+        <!-- Plan Mode Toggle — Extreme selected -->
+        <div class="mode-section" style="border-color: rgba(233,63,51,0.25);">
+          <div class="mode-label">Plan Mode</div>
+          <div class="mode-toggle">
+            <div class="mode-option normal">
+              <div class="mode-option-icon">&#9790;</div>
+              <div class="mode-option-name">Normal</div>
+              <div class="mode-option-desc">Weekdays only</div>
+            </div>
+            <div class="mode-option active extreme">
+              <div class="mode-option-icon">&#9889;</div>
+              <div class="mode-option-name">Extreme</div>
+              <div class="mode-option-desc">Every day incl. weekends</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
           <label class="form-label" style="margin:0">Task Templates</label>
           <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px">+ New Template</button>
         </div>

@@ -18,11 +18,12 @@ A tool to plan and track tasks within defined periods (e.g., weekly). It visuali
 8. **Daily task rollover** — Unfinished daily tasks from yesterday roll over to the board for one extra day, shown with a "↩ Mon, Feb 23" date badge. Tasks older than yesterday are expired.
 9. **Risk level visualization** — Tasks display color-coded risk badges (warning / danger) based on task type, time of day, days elapsed in the period, and completion progress.
 
+10. **Ad-hoc tasks** — One-off tasks (e.g. file tax report, get sinus CT) not tied to templates. Never expire, exist independently of plans. Can be added to the board from the kanban page or carried over from previous plans.
+
 ### Planned: V2
 
-1. Support Ad-hoc task type for one-off tasks (e.g. file tax report, get sinus CT).  Ad-hoc tasks are not tied to templates, never expire, and exist independently of plans.  They can be added to the board from the kanban page or carried over from previous plans.
-2. Support evidence flow, when user move a task to completed, submit evidence.
-3. Add AI generated tasks instance flow, LLM should be able to generate tasks based on past works + task template informatiosn to generate task instances, need to record the quality of task it generated.
+1. Support evidence flow, when user move a task to completed, submit evidence.
+2. Add AI generated tasks instance flow, LLM should be able to generate tasks based on past works + task template informatiosn to generate task instances, need to record the quality of task it generated.
 
 ### Planned: Future
 
@@ -61,10 +62,16 @@ model Plan {
   lastSyncDate DateTime?      // Date-only. Tracks last daily sync to skip redundant runs.
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+  mode         PlanMode     @default(NORMAL)
 }
 
 enum PeriodType {
   WEEKLY     // Only supported type for MVP
+}
+
+enum PlanMode {
+  NORMAL     // Generate daily tasks on weekdays only (skip weekends)
+  EXTREME    // Generate daily tasks every day including weekends
 }
 
 enum PlanStatus {

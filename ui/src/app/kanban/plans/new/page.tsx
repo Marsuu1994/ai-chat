@@ -29,6 +29,7 @@ export default async function NewPlanPage() {
       templates={templates}
       mode="create"
       initialPlanTemplates={initialPlanTemplates}
+      initialPlanMode={pendingPlan?.mode}
       adhocTasks={adhocTasks}
       initialAdhocTaskIds={initialAdhocTaskIds}
     />

@@ -18,9 +18,9 @@ import {
   updateTasksPlanId,
   unlinkAdhocTasksFromPlan,
 } from "@/lib/db/tasks";
-import { Prisma, TaskType, TaskStatus, PlanStatus } from "@/generated/prisma/client";
+import { Prisma, PlanMode, TaskType, TaskStatus, PlanStatus } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
-import { getTodayDate, getISOWeekKey } from "../utils/dateUtils";
+import { getTodayDate, getISOWeekKey, isWeekend } from "../utils/dateUtils";
 import type { PlanItem } from "@/lib/db/plans";
 import type { z } from "zod";
 import type { createPlanSchema, updatePlanSchema } from "../schemas";
@@ -39,6 +39,7 @@ async function generateTasksForTemplates(
   periodKey: string,
   templates: PlanTemplateInput[],
   today: Date,
+  mode: PlanMode,
   tx?: Prisma.TransactionClient
 ) {
   const taskData: Parameters<typeof createManyTasks>[0] = [];
@@ -71,6 +72,7 @@ async function generateTasksForTemplates(
         }
         break;
       case TaskType.DAILY:
+        if (mode === PlanMode.NORMAL && isWeekend(today)) break;
         for (let i = 0; i < frequency; i++) {
           taskData.push({
             planId,
@@ -99,7 +101,7 @@ async function generateTasksForTemplates(
 export async function createPlan(
   data: CreatePlanData
 ): Promise<PlanItem | { error: { formErrors: string[]; fieldErrors: Record<string, never> } }> {
-  const { periodType, description, templates, adhocTaskIds } = data;
+  const { periodType, description, mode, templates, adhocTaskIds } = data;
 
   // Guard reads — before transaction to keep connection hold time short
   const existing = await getActivePlan();
@@ -112,10 +114,10 @@ export async function createPlan(
   const periodKey = getISOWeekKey(today);
 
   const plan = await prisma.$transaction(async (tx) => {
-    const newPlan = await dalCreatePlan({ periodType, periodKey, description }, tx);
+    const newPlan = await dalCreatePlan({ periodType, periodKey, description, mode }, tx);
     if (templates.length > 0) {
       await createManyPlanTemplates(newPlan.id, templates, tx);
-      await generateTasksForTemplates(newPlan.id, newPlan.periodKey, templates, today, tx);
+      await generateTasksForTemplates(newPlan.id, newPlan.periodKey, templates, today, mode, tx);
     }
     // Link selected ad-hoc tasks to new plan
     if (adhocTaskIds && adhocTaskIds.length > 0) {
@@ -134,11 +136,12 @@ export async function createPlan(
 }
 
 export async function updatePlan(planId: string, data: UpdatePlanData): Promise<void> {
-  const { description, templates, adhocTaskIds } = data;
+  const { description, mode, templates, adhocTaskIds } = data;
 
   const hasTemplateChanges = templates !== undefined;
   const hasAdhocChanges = adhocTaskIds !== undefined;
   const hasDescriptionChange = description !== undefined;
+  const hasModeChange = mode !== undefined;
 
   if (hasTemplateChanges || hasAdhocChanges) {
     // Read current PlanTemplate records before transaction — diff doesn't need transactional isolation
@@ -168,6 +171,13 @@ export async function updatePlan(planId: string, data: UpdatePlanData): Promise<
     const today = getTodayDate();
     const periodKey = getISOWeekKey(today);
 
+    // Resolve effective mode: use new mode if changed, otherwise fetch current plan mode
+    let effectiveMode = mode;
+    if (effectiveMode === undefined) {
+      const currentPlan = await getActivePlan();
+      effectiveMode = currentPlan?.mode ?? PlanMode.NORMAL;
+    }
+
     await prisma.$transaction(async (tx) => {
       // Template changes
       if (hasTemplateChanges) {
@@ -186,13 +196,13 @@ export async function updatePlan(planId: string, data: UpdatePlanData): Promise<
           await updatePlanTemplate(link.id, { type: t.type, frequency: t.frequency }, tx);
         }
         if (modifiedTemplates.length > 0) {
-          await generateTasksForTemplates(planId, periodKey, modifiedTemplates, today, tx);
+          await generateTasksForTemplates(planId, periodKey, modifiedTemplates, today, effectiveMode, tx);
         }
 
         // Added: create PlanTemplate links + generate instances
         if (addedTemplates.length > 0) {
           await createManyPlanTemplates(planId, addedTemplates, tx);
-          await generateTasksForTemplates(planId, periodKey, addedTemplates, today, tx);
+          await generateTasksForTemplates(planId, periodKey, addedTemplates, today, effectiveMode, tx);
         }
 
         await updateLastSyncDate(planId, today, tx);
@@ -206,12 +216,18 @@ export async function updatePlan(planId: string, data: UpdatePlanData): Promise<
         await unlinkAdhocTasksFromPlan(planId, adhocTaskIds, tx);
       }
 
-      if (hasDescriptionChange) {
-        await dalUpdatePlan(planId, { description }, tx);
+      if (hasDescriptionChange || hasModeChange) {
+        await dalUpdatePlan(planId, {
+          ...(hasDescriptionChange && { description }),
+          ...(hasModeChange && { mode }),
+        }, tx);
       }
     });
-  } else if (hasDescriptionChange) {
-    // Description-only update — single write, no transaction overhead needed
-    await dalUpdatePlan(planId, { description });
+  } else if (hasDescriptionChange || hasModeChange) {
+    // Description/mode-only update — single write, no transaction overhead needed
+    await dalUpdatePlan(planId, {
+      ...(hasDescriptionChange && { description }),
+      ...(hasModeChange && { mode }),
+    });
   }
 }

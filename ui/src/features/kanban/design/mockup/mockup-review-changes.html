@@ -19,6 +19,7 @@
   .cs-removed { color: #e93f33; } .cs-badge-removed { background: rgba(233,63,51,0.1); color: #e93f33; }
   .cs-mod     { color: #ee8134; } .cs-badge-mod     { background: rgba(238,129,52,0.1); color: #ee8134; }
   .cs-adhoc   { color: #8a7e00; } .cs-badge-adhoc   { background: rgba(197,184,0,0.15); color: #8a7e00; }
+  .cs-mode    { color: #45aeee; } .cs-badge-mode    { background: rgba(69,174,238,0.1); color: #45aeee; }
   .cs-row {
     display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px;
     background: #f5f5f5; border: 1px solid #dedede; border-radius: 8px; margin-bottom: 6px;
@@ -167,6 +168,26 @@
                 <div class="cs-name">Renew passport</div>
                 <div class="cs-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:10px;height:10px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 2 pts</div>
                 <div class="cs-impact cs-removed">Will be moved to unassigned pool</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mode Changed -->
+          <div class="cs-section">
+            <div class="cs-head cs-mode">
+              <!-- Arrow-path / refresh icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="#45aeee" stroke-width="2.5" style="width:14px;height:14px"><path d="M4 4v5h5M20 20v-5h-5" stroke-linecap="round"/><path d="M20 9a8 8 0 00-14.9-2M4 15a8 8 0 0014.9 2" stroke-linecap="round"/></svg>
+              Mode Changed
+            </div>
+            <div class="cs-row" style="border-color:rgba(69,174,238,0.3)">
+              <div class="cs-dot" style="background:#45aeee"></div>
+              <div>
+                <div class="cs-detail">
+                  <span style="text-decoration:line-through;opacity:0.5">Normal</span>
+                  <span style="margin:0 6px;color:#45aeee">&rarr;</span>
+                  <span style="color:#45aeee;font-weight:500">Extreme</span>
+                </div>
+                <div class="cs-impact cs-mode">Daily tasks every day including weekends — change applies to future daily tasks only</div>
               </div>
             </div>
           </div>

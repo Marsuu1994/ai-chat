@@ -13,8 +13,8 @@ import {
 } from "@/lib/db/tasks";
 import type { PlanWithTemplates } from "@/lib/db/plans";
 import type { TaskItem } from "@/lib/db/tasks";
-import { TaskType, TaskStatus, PlanStatus } from "@/generated/prisma/client";
-import { getTodayDate, getYesterdayDate, getISOWeekKey, sameDay, getMondayFromPeriodKey, getSundayFromPeriodKey } from "../utils/dateUtils";
+import { PlanMode, TaskType, TaskStatus, PlanStatus } from "@/generated/prisma/client";
+import { getTodayDate, getYesterdayDate, getISOWeekKey, sameDay, getMondayFromPeriodKey, getSundayFromPeriodKey, isWeekend, countWeekdaysInRange } from "../utils/dateUtils";
 
 export type BoardData = {
   plan: PlanWithTemplates;
@@ -39,23 +39,28 @@ export async function runDailySync(planId: string, today: Date): Promise<void> {
   const planWithTemplates = await getPlanWithTemplates(planId);
   if (!planWithTemplates) return;
 
+  const skipDailyGeneration =
+    planWithTemplates.mode === PlanMode.NORMAL && isWeekend(today);
+
   const dailyTaskData: Parameters<typeof createManyTasks>[0] = [];
 
-  for (const pt of planWithTemplates.planTemplates) {
-    if (pt.type !== TaskType.DAILY) continue;
+  if (!skipDailyGeneration) {
+    for (const pt of planWithTemplates.planTemplates) {
+      if (pt.type !== TaskType.DAILY) continue;
 
-    for (let i = 0; i < pt.frequency; i++) {
-      dailyTaskData.push({
-        planId,
-        templateId: pt.template.id,
-        type: TaskType.DAILY,
-        title: pt.template.title,
-        description: pt.template.description,
-        points: pt.template.points,
-        status: TaskStatus.TODO,
-        forDate: today,
-        instanceIndex: i,
-      });
+      for (let i = 0; i < pt.frequency; i++) {
+        dailyTaskData.push({
+          planId,
+          templateId: pt.template.id,
+          type: TaskType.DAILY,
+          title: pt.template.title,
+          description: pt.template.description,
+          points: pt.template.points,
+          status: TaskStatus.TODO,
+          forDate: today,
+          instanceIndex: i,
+        });
+      }
     }
   }
 
@@ -135,8 +140,10 @@ export async function fetchBoard(): Promise<BoardData | null> {
   const dailyPastCount = dailyPastTasks.length;
 
   const weekEnd = getSundayFromPeriodKey(planWithTemplates.periodKey);
-  const remainingMs = weekEnd.getTime() - today.getTime();
-  const remainingDays = Math.max(1, Math.floor(remainingMs / 86400000) + 1);
+  const remainingDays =
+    planWithTemplates.mode === PlanMode.NORMAL
+      ? countWeekdaysInRange(today, weekEnd)
+      : Math.max(1, Math.floor((weekEnd.getTime() - today.getTime()) / 86400000) + 1);
 
   const currentDailyTemplates = planWithTemplates.planTemplates.filter(
     (pt) => pt.type === TaskType.DAILY
