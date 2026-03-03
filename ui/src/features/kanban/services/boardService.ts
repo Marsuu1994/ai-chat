@@ -9,12 +9,13 @@ import {
   expireStaleDailyTasks,
   expireAllNonDoneTasks,
   createManyTasks,
-  getTasksByPlanId,
+  getBoardMetricsByPlanId,
+  getBoardTasksByPlanId,
 } from "@/lib/db/tasks";
 import type { PlanWithTemplates } from "@/lib/db/plans";
 import type { TaskItem } from "@/lib/db/tasks";
 import { PlanMode, TaskType, TaskStatus, PlanStatus } from "@/generated/prisma/client";
-import { getTodayDate, getYesterdayDate, getISOWeekKey, sameDay, getMondayFromPeriodKey, getSundayFromPeriodKey, isWeekend, countWeekdaysInRange } from "../utils/dateUtils";
+import { getTodayDate, getYesterdayDate, getISOWeekKey, getMondayFromPeriodKey, getSundayFromPeriodKey, isWeekend, countWeekdaysInRange } from "../utils/dateUtils";
 
 export type BoardData = {
   plan: PlanWithTemplates;
@@ -117,27 +118,23 @@ export async function fetchBoard(): Promise<BoardData | null> {
   const planWithTemplates = await getPlanWithTemplates(activePlan.id);
   if (!planWithTemplates) return null;
 
-  // Single query: fetch all tasks for the plan (including expired)
-  const allTasks = await getTasksByPlanId(activePlan.id);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
 
-  // Filter in-memory: board tasks exclude expired
-  const boardTasks = allTasks.filter((t) => t.status !== TaskStatus.EXPIRED);
+  const [boardTasks, boardMetrics] = await Promise.all([
+    getBoardTasksByPlanId(activePlan.id),
+    getBoardMetricsByPlanId(activePlan.id, today, tomorrow),
+  ]);
 
-  // — Today metrics (from board tasks) —
-  const todayDone = boardTasks.filter(
-    (t) => t.status === TaskStatus.DONE && sameDay(t.doneAt, today)
-  );
-  const todayDoneCount = todayDone.length;
+  // — Today metrics —
+  const todayDoneCount = boardMetrics.todayDoneCount;
   const todayTotalCount = boardTasks.length;
-  const todayDonePoints = todayDone.reduce((sum, t) => sum + t.points, 0);
+  const todayDonePoints = boardMetrics.todayDonePoints;
   const todayTotalPoints = boardTasks.reduce((sum, t) => sum + t.points, 0);
 
   // — Week Projected (Option C: past instances + future projection + weekly instances) —
-  const dailyPastTasks = allTasks.filter(
-    (t) => t.forDate && t.forDate < today
-  );
-  const dailyPastPoints = dailyPastTasks.reduce((s, t) => s + t.points, 0);
-  const dailyPastCount = dailyPastTasks.length;
+  const dailyPastPoints = boardMetrics.dailyPastPoints;
+  const dailyPastCount = boardMetrics.dailyPastCount;
 
   const weekEnd = getSundayFromPeriodKey(planWithTemplates.periodKey);
   const remainingDays =
@@ -157,21 +154,18 @@ export async function fetchBoard(): Promise<BoardData | null> {
     currentDailyTemplates.reduce((s, pt) => s + pt.frequency, 0) *
     remainingDays;
 
-  const weeklyTasks = allTasks.filter((t) => t.type === TaskType.WEEKLY);
-  const weeklyPoints = weeklyTasks.reduce((s, t) => s + t.points, 0);
-  const weeklyCount = weeklyTasks.length;
+  const weeklyPoints = boardMetrics.weeklyPoints;
+  const weeklyCount = boardMetrics.weeklyCount;
 
   // Ad-hoc tasks: always included in projected (never expire, no future generation)
-  const adhocTasks = allTasks.filter((t) => t.type === TaskType.AD_HOC);
-  const adhocPoints = adhocTasks.reduce((s, t) => s + t.points, 0);
-  const adhocCount = adhocTasks.length;
+  const adhocPoints = boardMetrics.adhocPoints;
+  const adhocCount = boardMetrics.adhocCount;
 
   const weekProjectedPoints = dailyPastPoints + dailyFuturePoints + weeklyPoints + adhocPoints;
   const weekProjectedCount = dailyPastCount + dailyFutureCount + weeklyCount + adhocCount;
 
-  const weekDone = allTasks.filter((t) => t.status === TaskStatus.DONE);
-  const weekDoneCount = weekDone.length;
-  const weekDonePoints = weekDone.reduce((s, t) => s + t.points, 0);
+  const weekDoneCount = boardMetrics.weekDoneCount;
+  const weekDonePoints = boardMetrics.weekDonePoints;
 
   // — Days elapsed (1–7) —
   const weekStart = getMondayFromPeriodKey(planWithTemplates.periodKey);

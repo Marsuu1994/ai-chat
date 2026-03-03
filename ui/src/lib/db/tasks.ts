@@ -18,6 +18,19 @@ export type TaskItem = {
   doneAt: Date | null;
 };
 
+export type BoardMetrics = {
+  todayDoneCount: number;
+  todayDonePoints: number;
+  weekDoneCount: number;
+  weekDonePoints: number;
+  dailyPastCount: number;
+  dailyPastPoints: number;
+  weeklyCount: number;
+  weeklyPoints: number;
+  adhocCount: number;
+  adhocPoints: number;
+};
+
 const taskSelect = {
   id: true,
   planId: true,
@@ -44,6 +57,111 @@ export async function getTasksByPlanId(planId: string): Promise<TaskItem[]> {
     orderBy: [{ createdAt: "asc" }, { id: "asc" }],
     select: taskSelect,
   });
+}
+
+/**
+ * Get all board-visible tasks for a plan (excludes EXPIRED)
+ */
+export async function getBoardTasksByPlanId(planId: string): Promise<TaskItem[]> {
+  return prisma.task.findMany({
+    where: {
+      planId,
+      status: { not: TaskStatus.EXPIRED },
+    },
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    select: taskSelect,
+  });
+}
+
+const EMPTY_BOARD_METRICS: BoardMetrics = {
+  todayDoneCount: 0,
+  todayDonePoints: 0,
+  weekDoneCount: 0,
+  weekDonePoints: 0,
+  dailyPastCount: 0,
+  dailyPastPoints: 0,
+  weeklyCount: 0,
+  weeklyPoints: 0,
+  adhocCount: 0,
+  adhocPoints: 0,
+};
+
+type BoardMetricsRow = {
+  todayDoneCount: unknown;
+  todayDonePoints: unknown;
+  weekDoneCount: unknown;
+  weekDonePoints: unknown;
+  dailyPastCount: unknown;
+  dailyPastPoints: unknown;
+  weeklyCount: unknown;
+  weeklyPoints: unknown;
+  adhocCount: unknown;
+  adhocPoints: unknown;
+};
+
+function toNumber(value: unknown): number {
+  if (typeof value === "number") return value;
+  if (typeof value === "bigint") return Number(value);
+  if (typeof value === "string") return Number(value);
+  return 0;
+}
+
+function toLocalDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Fetch all board-level metrics in one aggregate query for a plan.
+ */
+export async function getBoardMetricsByPlanId(
+  planId: string,
+  todayStart: Date,
+  tomorrowStart: Date
+): Promise<BoardMetrics> {
+  const todayDateKey = toLocalDateKey(todayStart);
+
+  const rows = await prisma.$queryRaw<BoardMetricsRow[]>`
+    SELECT
+      COUNT(*) FILTER (
+        WHERE status = 'DONE'
+          AND done_at >= ${todayStart}
+          AND done_at < ${tomorrowStart}
+      ) AS "todayDoneCount",
+      COALESCE(SUM(points) FILTER (
+        WHERE status = 'DONE'
+          AND done_at >= ${todayStart}
+          AND done_at < ${tomorrowStart}
+      ), 0) AS "todayDonePoints",
+      COUNT(*) FILTER (WHERE status = 'DONE') AS "weekDoneCount",
+      COALESCE(SUM(points) FILTER (WHERE status = 'DONE'), 0) AS "weekDonePoints",
+      COUNT(*) FILTER (WHERE for_date < ${todayDateKey}::date) AS "dailyPastCount",
+      COALESCE(SUM(points) FILTER (WHERE for_date < ${todayDateKey}::date), 0) AS "dailyPastPoints",
+      COUNT(*) FILTER (WHERE type = 'WEEKLY') AS "weeklyCount",
+      COALESCE(SUM(points) FILTER (WHERE type = 'WEEKLY'), 0) AS "weeklyPoints",
+      COUNT(*) FILTER (WHERE type = 'AD_HOC') AS "adhocCount",
+      COALESCE(SUM(points) FILTER (WHERE type = 'AD_HOC'), 0) AS "adhocPoints"
+    FROM tasks
+    WHERE plan_id = ${planId}::uuid
+  `;
+
+  const row = rows[0];
+  if (!row) return EMPTY_BOARD_METRICS;
+
+  return {
+    todayDoneCount: toNumber(row.todayDoneCount),
+    todayDonePoints: toNumber(row.todayDonePoints),
+    weekDoneCount: toNumber(row.weekDoneCount),
+    weekDonePoints: toNumber(row.weekDonePoints),
+    dailyPastCount: toNumber(row.dailyPastCount),
+    dailyPastPoints: toNumber(row.dailyPastPoints),
+    weeklyCount: toNumber(row.weeklyCount),
+    weeklyPoints: toNumber(row.weeklyPoints),
+    adhocCount: toNumber(row.adhocCount),
+    adhocPoints: toNumber(row.adhocPoints),
+  };
 }
 
 /**
