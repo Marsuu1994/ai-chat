@@ -145,5 +145,6 @@ model Task {
   @@unique([planId, templateId, periodKey, instanceIndex], name: "uq_task_weekly")
   @@index([planId, status], name: "idx_tasks_plan_id_status")
   @@index([planId, forDate], name: "idx_tasks_plan_id_for_date")
+  @@index([planId, createdAt, id], name: "idx_tasks_plan_id_created_at_id")
   @@map("tasks")
 }
