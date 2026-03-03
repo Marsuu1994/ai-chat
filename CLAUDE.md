@@ -55,7 +55,8 @@ ui/
 │   │           └── mockup-v2/     # Future brainstorming only (not for active work)
 │   └── components/
 │       └── common/
-│           └── Header.tsx         # Shared header component
+│           ├── Header.tsx         # Shared header component
+│           └── ThemeProvider.tsx   # Auto dark/light theme by time of day
 ```
 
 ## Features
