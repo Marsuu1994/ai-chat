@@ -10,6 +10,9 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: env("DATABASE_URL"),
+    // Use direct connection (bypasses pooler) for CLI operations
+    // (migrations, db push, introspection). Runtime uses pooled
+    // DATABASE_URL via the PrismaPg adapter in src/lib/prisma.ts.
+    url: env("DIRECT_URL"),
   },
 });

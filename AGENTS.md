@@ -16,7 +16,8 @@ A Next.js application with multiple features: AI Chat and Kanban Period Planner.
 - Framework: Next.js 16 (App Router)
 - UI: React 19, Tailwind CSS 4, daisyUI 5 (custom `mars-dark` / `mars-light` themes)
 - State: Zustand
-- Database: PostgreSQL + Prisma ORM
+- Database: PostgreSQL (Supabase) + Prisma ORM
+- Auth: Supabase Auth (Google OAuth)
 - Icons: Heroicons
 - Language: TypeScript
 
@@ -27,10 +28,13 @@ prisma/
 ├── schema.prisma                  # Database schema
 └── migrations/                    # Database migrations
 src/
+├── proxy.ts                       # Route protection (Supabase session check)
 ├── app/
 │   ├── api/
 │   │   ├── llm/                   # LLM streaming + title summarization
 │   │   └── chats/                 # Chat CRUD + messages endpoints
+│   ├── auth/
+│   │   └── callback/route.ts      # OAuth callback (code → session exchange)
 │   ├── chat/                      # Chat pages (layout, new, [chatId])
 │   ├── kanban/                    # Kanban pages
 │   │   ├── page.tsx               # Board page
@@ -39,7 +43,11 @@ src/
 │   └── globals.css                # Global styles
 ├── generated/prisma/              # Generated Prisma client (gitignored)
 ├── lib/                           # Shared utilities
-│   ├── prisma.ts                  # Prisma client singleton
+│   ├── prisma.ts                  # Prisma client singleton (pooled connection)
+│   ├── supabase/                  # Supabase client utilities
+│   │   ├── client.ts              # Browser client ('use client' components)
+│   │   ├── server.ts              # Server client (Server Components, Actions)
+│   │   └── middleware.ts          # Session refresh + redirect logic
 │   └── db/                        # Data access layer
 ├── features/
 │   ├── auth/                      # Auth feature (see features/auth/README.md)

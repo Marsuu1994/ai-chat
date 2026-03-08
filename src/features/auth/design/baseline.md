@@ -7,12 +7,11 @@ An authentication layer for Mars Workbench that identifies users and gates acces
 ## Features
 
 ### Implemented
-
-(none yet)
+- Connect to Supabase database (migrated from local PostgreSQL)
 
 ### Planned: V1
-
-(to be designed)
+- Sign-up / login via Google OAuth
+- Route protection — redirect unauthenticated users to login
 
 ### Planned: Future
 
@@ -20,8 +19,8 @@ An authentication layer for Mars Workbench that identifies users and gates acces
 
 ## Entities
 
-(to be designed)
+* **User** — a Mars Workbench user who authenticates via Google OAuth.
 
 ## Schema
 
-(to be designed)
+No additional schema required — Supabase Auth manages user records internally.

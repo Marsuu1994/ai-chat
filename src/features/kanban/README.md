@@ -12,6 +12,7 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 
 ## Backlog
 ### High Priority
+- [ ] Implement the AI assisted plan creation flow
 - [ ] Consolidate task generation logic for update plan, or consider to remove the edit plan action, user can only set their plan during the beginning
 - [ ] Design evidence submit feature when user move task to done
 
