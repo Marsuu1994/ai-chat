@@ -4,19 +4,25 @@ Authentication layer for Mars Workbench. See [baseline.md](./design/baseline.md)
 
 ## Current State
 
-Auth infrastructure implemented — Supabase Auth connected with Google OAuth flow. Supabase client utilities (browser, server, middleware), OAuth callback route handler (`/auth/callback`), and route protection proxy (`proxy.ts`) are in place. Database migrated to Supabase PostgreSQL. Login page UI not yet built (protected routes redirect to `/auth/login` which currently 404s).
+Auth infrastructure and login page implemented. Supabase Auth connected with Google OAuth flow — Supabase client utilities (browser, server, middleware), OAuth callback route handler (`/auth/callback`), and route protection proxy (`proxy.ts`) redirect unauthenticated users to the login page. Login page (`/auth/login`) renders a branded sign-in screen with Google OAuth button, theme-aware decorations for both dark and light modes, and fade-in animations.
 
 ## Backlog
 
 ### High Priority
-- [ ] Implement login/signup pages
+- [ ] If user is authenticated and visited /auth/login, they should be redirected to homepage
+- [ ] Sign-out button in app header
 - [ ] Add userId to existing features (kanban, chat)
 
 ### Future
 - [ ] User profile/settings page
-- [ ] Sign-out button in app header
+
 
 ## Update Log
+
+### 2026-03-08
+- Implemented login page (`/auth/login`) with Google OAuth sign-in button
+- Added theme-aware decorative elements (grid, atmospheric gradients, button hover shadow) for dark/light modes
+- Login page layout with fade-in animations and branded design (gradient icon, "Mars" gradient text, tagline)
 
 ### 2026-03-06
 - Connected to Supabase database and migrated all data from local PostgreSQL
@@ -37,3 +43,4 @@ Auth infrastructure implemented — Supabase Auth connected with Google OAuth fl
 - [x] Design login/signup UI flows and mockups
 - [x] Connect to Supabase database and migrate data
 - [x] Add auth infrastructure (Supabase clients, callback route, route protection proxy)
+- [x] Implement login/signup pages

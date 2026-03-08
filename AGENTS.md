@@ -34,7 +34,8 @@ src/
 │   │   ├── llm/                   # LLM streaming + title summarization
 │   │   └── chats/                 # Chat CRUD + messages endpoints
 │   ├── auth/
-│   │   └── callback/route.ts      # OAuth callback (code → session exchange)
+│   │   ├── callback/route.ts      # OAuth callback (code → session exchange)
+│   │   └── login/page.tsx         # Login page (Google OAuth sign-in)
 │   ├── chat/                      # Chat pages (layout, new, [chatId])
 │   ├── kanban/                    # Kanban pages
 │   │   ├── page.tsx               # Board page
