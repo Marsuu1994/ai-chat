@@ -4,7 +4,7 @@ A drag-and-drop kanban board for planning and tracking tasks within weekly perio
 
 ## Current State
 
-Backend complete (schema, DAL, services, server actions, board sync). Full board UI with drag-and-drop — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards that can be dragged between columns. Moves use optimistic UI with server-side persistence and automatic rollback on failure. Task cards show title, description, unified type badge (`TaskTypeBadge` — supports DAILY, WEEKLY, and AD_HOC), and points with color-coded risk badges (⚠ at risk / ‼ urgent). Progress dashboard shows Today ring, stat metrics, and Week Progress Bar. Board metrics use a two-query strategy: `getBoardTasksByPlanId` for UI tasks + `getBoardMetricsByPlanId` (raw SQL aggregate with `FILTER` clauses) for pre-computed stats, fetched in parallel. End-of-period sync auto-expires undone tasks and transitions plans. Create/edit plan flows share a unified `PlanForm` with inline type/frequency config per template and a Plan Mode toggle (NORMAL = weekdays only, EXTREME = every day). AD_HOC tasks fully implemented end-to-end with plan linking. `ReviewChangesModal` shows added/removed/modified template diffs and mode changes. Architecture follows strict 3-layer pattern with `prisma.$transaction()` for all multi-step mutations.
+Backend complete (schema, DAL, services, server actions, board sync). Full board UI with drag-and-drop — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards that can be dragged between columns. Moves use optimistic UI with server-side persistence and automatic rollback on failure. Task cards show title, description, unified type badge (`TaskTypeBadge` — supports DAILY, WEEKLY, and AD_HOC), and points with color-coded risk badges (⚠ at risk / ‼ urgent). Progress dashboard shows Today ring, stat metrics, and Week Progress Bar. Board metrics use a two-query strategy: `getBoardTasksByPlanId` for UI tasks + `getBoardMetricsByPlanId` (raw SQL aggregate with `FILTER` clauses) for pre-computed stats, fetched in parallel. End-of-period sync auto-expires undone tasks and transitions plans. Create/edit plan flows share a unified `PlanForm` with inline type/frequency config per template and a Plan Mode toggle (NORMAL = weekdays only, EXTREME = every day). AD_HOC tasks fully implemented end-to-end with plan linking. `ReviewChangesModal` shows added/removed/modified template diffs and mode changes. Architecture follows strict 3-layer pattern with `prisma.$transaction()` for all multi-step mutations. All date calculations anchored to `America/Los_Angeles` timezone via `KANBAN_TZ` constant, ensuring consistent behavior across local dev and Vercel (UTC) deployments.
 
 **AI Assisted Plan Creation**: Full design complete — flows, API actions, mockups. Chat-based wizard where AI generates draft task templates via structured JSON output (`response_format: json_schema`). Two server actions: `getWelcomeMessageAction` (plain text LLM welcome) and `generateDraftPlanAction` (structured draft with template cards). `Chat.metadata` serves as working clipboard for latest draft and stats snapshot. `MessageType` enum (`TEXT`, `DRAFT_PLAN`) distinguishes plain messages from structured drafts. Static suggestion chips for welcome screen. Post-approval reuses existing `createPlanAction`. Mockups: `mockup-empty.html` (new/returning user), `mockup-plan-form.html` (AI entry point), `mockup-ai-chat.html` (6-screen flow: welcome, generating, draft, revision, approval).
 
@@ -17,7 +17,7 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - [ ] Design evidence submit feature when user move task to done
 
 ### Future
-- [ ] Research timezone handling for traveling users — `getTodayDate()` and `getISOWeekKey()` use local time, so crossing timezones near week boundaries can cause incorrect period detection. Consider anchoring to a user-configured home timezone.
+- [ ] Research timezone handling for traveling users — date utils are anchored to `America/Los_Angeles` (hardcoded). Consider making this a user-configurable setting stored in the database.
 - [ ] Support same group ordering for drag and drop within same column
 - [ ] Add subtitle field to task template to support different titles
 - [ ] Create common landing page for Mars workbench to navigate between features
@@ -30,6 +30,11 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - [ ] Implement light/dark theme toggle UI
 
 ## Update Log
+
+### 2026-03-08
+- Fixed timezone bug causing false end-of-period sync: `getISOWeekKey()` used UTC methods while `getTodayDate()` used local time, producing mismatched week keys near week boundaries
+- Anchored all date calculations to `America/Los_Angeles` timezone via `KANBAN_TZ` constant and `Intl.DateTimeFormat`, ensuring consistent "today" on both local dev and Vercel (UTC) deployments
+- Added future backlog item to research user-configurable timezone setting
 
 ### 2026-03-03
 - Designed AI assisted plan creation flow end-to-end: updated `baseline.md` (Chat-Plan relationship, MessageType enum, Chat.metadata shape), `flows.md` (6-step AI wizard flow, LLM config, static suggestion chips), and `api.md` (getWelcomeMessageAction, generateDraftPlanAction, new DAL modules)
