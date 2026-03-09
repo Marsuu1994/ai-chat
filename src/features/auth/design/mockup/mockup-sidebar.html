@@ -58,7 +58,7 @@
     margin-left: auto;
     width: 24px; height: 24px;
     border: none; background: none;
-    color: #aaa; cursor: pointer;
+    color: #aaa; cursor: w-resize;
     display: flex; align-items: center; justify-content: center;
     border-radius: 6px;
     transition: background 0.15s, color 0.15s;
@@ -106,7 +106,8 @@
   .sb-collapsed .sb-toggle { display: none; }
 
   /* Logo hover-to-expand in collapsed state */
-  .sb-logo { position: relative; cursor: pointer; z-index: 20; }
+  .sb-logo { position: relative; cursor: default; z-index: 20; }
+  .sb-collapsed .sb-logo { cursor: e-resize; }
   .sb-logo .logo-expand-icon { display: none; }
   .sb-collapsed .sb-logo:hover .logo-main-icon { display: none; }
   .sb-collapsed .sb-logo:hover .logo-expand-icon { display: block; }
@@ -178,7 +179,13 @@
 
   /* Collapsed nav */
   .sb-collapsed .sb-section { padding: 12px 8px 4px; }
-  .sb-collapsed .sb-section-label { display: none; }
+  .sb-collapsed .sb-section-label {
+    height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
   .sb-collapsed .sb-nav-item {
     padding: 10px 0;
     justify-content: center;
@@ -317,27 +324,7 @@
   .ph-bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #45aeee, #823290); width: 30%; }
   .ph-bar-sub { font-size: 12px; color: #999; }
 
-  /* ── Before Header ── */
-  .before-header {
-    padding: 12px 16px; border-bottom: 1px solid #dedede;
-    display: flex; align-items: center; justify-content: space-between;
-    background: #fff; flex-shrink: 0;
-  }
-  .before-header-left { display: flex; align-items: center; gap: 12px; }
-  .before-header-title { font-size: 18px; font-weight: 700; }
-  .before-header-title span { color: #45aeee; }
-  .before-header-badge {
-    font-size: 12px; background: rgba(69,174,238,0.1); color: #45aeee;
-    padding: 4px 10px; border-radius: 999px; font-weight: 500;
-  }
-  .before-header-btn {
-    padding: 8px 14px; font-size: 13px;
-    background: transparent; color: #999; border: 1px solid #dedede;
-    border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px;
-  }
-  .before-header-btn svg { width: 14px; height: 14px; }
-
-  /* ── After Header (slightly adjusted when sidebar present) ── */
+  /* ── Content Header ── */
   .after-header {
     padding: 12px 16px; border-bottom: 1px solid #dedede;
     display: flex; align-items: center; justify-content: space-between;
@@ -364,8 +351,7 @@
     letter-spacing: 0.1em; padding: 5px 12px;
     border-radius: 6px; z-index: 300;
   }
-  .screen-label.before-label { background: #fee; color: #e93f33; }
-  .screen-label.after-label { background: #e8f7ee; color: #2ea043; }
+  .screen-label { background: #e8f7ee; color: #2ea043; }
 
   /* Star icon for points */
   .star-icon { width: 12px; height: 12px; fill: currentColor; }
@@ -373,89 +359,15 @@
 </head>
 <body>
 
-<!-- ========== SCREEN 1: BEFORE ========== -->
-<div class="screen active" id="screen-before">
-  <span class="screen-label before-label">Before</span>
-  <div class="before-main">
-    <!-- Header -->
-    <div class="before-header">
-      <div class="before-header-left">
-        <div class="before-header-title"><span>Kanban</span> Planner</div>
-        <span class="before-header-badge">Week 10 · Mar 2 – Mar 8</span>
-      </div>
-      <button class="before-header-btn">
-        <!-- PencilSquare (Heroicons 24/outline) --><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"/></svg>
-        Edit Plan
-      </button>
-    </div>
-
-    <!-- Progress -->
-    <div class="ph-progress">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div class="ph-ring">
-          <svg viewBox="0 0 52 52" width="48" height="48">
-            <circle class="ring-bg" cx="26" cy="26" r="22"/>
-            <circle class="ring-fg" cx="26" cy="26" r="22"/>
-          </svg>
-          <div class="ph-ring-center">30%</div>
-        </div>
-        <div class="ph-ring-label">
-          <span>Today</span>
-          <span>4 of 13 tasks</span>
-        </div>
-      </div>
-      <div class="ph-divider"></div>
-      <div class="ph-stat"><div class="ph-stat-val c1">6 / 13</div><div class="ph-stat-lbl">Today Points</div></div>
-      <div class="ph-stat"><div class="ph-stat-val c2">58 / 166</div><div class="ph-stat-lbl">Week Points</div></div>
-      <div class="ph-stat"><div class="ph-stat-val c3">8.3</div><div class="ph-stat-lbl">Daily Avg</div></div>
-      <div class="ph-divider"></div>
-      <div class="ph-bar-group">
-        <div class="ph-bar-head"><span>Week Progress</span><span>30%</span></div>
-        <div class="ph-bar-track"><div class="ph-bar-fill"></div></div>
-        <span class="ph-bar-sub">14 of 46 tasks</span>
-      </div>
-    </div>
-
-    <!-- Board -->
-    <div class="board-placeholder">
-      <div class="col-placeholder">
-        <div class="col-ph-header todo"><span>Todo</span><span class="column-count">5</span></div>
-        <div class="col-ph-body">
-          <div class="card-ph"><div class="card-ph-title">Solve 3 LeetCode problems</div><div class="card-ph-meta"><span class="task-badge badge-daily">Daily</span><span class="pts"><!-- Star (Heroicons 24/solid) --><svg class="star-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd"/></svg>10 pts</span></div></div>
-          <div class="card-ph warn"><div class="card-ph-title">Read 30 pages</div><div class="card-ph-meta"><span class="task-badge badge-daily">Daily</span><span class="risk-badge warning">⚠ at risk</span><span class="pts"><!-- Star (Heroicons 24/solid) --><svg class="star-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd"/></svg>5 pts</span></div></div>
-          <div class="card-ph"><div class="card-ph-title">Go to gym – Leg day</div><div class="card-ph-meta"><span class="task-badge badge-weekly">Weekly</span><span class="pts"><!-- Star (Heroicons 24/solid) --><svg class="star-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd"/></svg>6 pts</span></div></div>
-          <div class="card-ph"><div class="card-ph-title">File tax report</div><div class="card-ph-meta"><span class="task-badge badge-adhoc">Ad-hoc</span><span class="pts"><!-- Star (Heroicons 24/solid) --><svg class="star-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd"/></svg>5 pts</span></div></div>
-        </div>
-      </div>
-      <div class="col-placeholder">
-        <div class="col-ph-header doing"><span>In Progress</span><span class="column-count">3</span></div>
-        <div class="col-ph-body">
-          <div class="card-ph"><div class="card-ph-title">Morning jog 5km</div><div class="card-ph-meta"><span class="task-badge badge-daily">Daily</span><span class="pts"><!-- Star (Heroicons 24/solid) --><svg class="star-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd"/></svg>4 pts</span></div></div>
-          <div class="card-ph warn"><div class="card-ph-title">Meditate 10 min</div><div class="card-ph-meta"><span class="task-badge badge-daily">Daily</span><span class="rollover-tag">↩ Sat, Mar 7</span><span class="risk-badge warning">⚠ at risk</span><span class="pts"><!-- Star (Heroicons 24/solid) --><svg class="star-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd"/></svg>3 pts</span></div></div>
-          <div class="card-ph"><div class="card-ph-title">Renew passport</div><div class="card-ph-meta"><span class="task-badge badge-adhoc">Ad-hoc</span><span class="pts"><!-- Star (Heroicons 24/solid) --><svg class="star-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd"/></svg>2 pts</span></div></div>
-        </div>
-      </div>
-      <div class="col-placeholder">
-        <div class="col-ph-header done"><span>Done</span><span class="column-count">4</span></div>
-        <div class="col-ph-body">
-          <div class="card-ph" style="opacity:0.6"><div class="card-ph-title" style="text-decoration:line-through;color:#888">Solve 3 LeetCode problems</div><div class="card-ph-meta"><span class="task-badge badge-daily">Daily</span><span class="pts"><!-- Star (Heroicons 24/solid) --><svg class="star-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd"/></svg>10 pts</span></div></div>
-          <div class="card-ph" style="opacity:0.6"><div class="card-ph-title" style="text-decoration:line-through;color:#888">Morning jog 5km</div><div class="card-ph-meta"><span class="task-badge badge-daily">Daily</span><span class="pts"><!-- Star (Heroicons 24/solid) --><svg class="star-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd"/></svg>4 pts</span></div></div>
-          <div class="card-ph" style="opacity:0.6"><div class="card-ph-title" style="text-decoration:line-through;color:#888">Go to gym – Push day</div><div class="card-ph-meta"><span class="task-badge badge-weekly">Weekly</span><span class="pts"><!-- Star (Heroicons 24/solid) --><svg class="star-icon" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd"/></svg>6 pts</span></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ========== SCREEN 2: AFTER — EXPANDED ========== -->
-<div class="screen" id="screen-expanded">
-  <span class="screen-label after-label">After — Expanded</span>
+<!-- ========== SCREEN 1: EXPANDED ========== -->
+<div class="screen active" id="screen-expanded">
+  <span class="screen-label">Expanded</span>
 
   <!-- Sidebar Expanded -->
   <aside class="sb sb-expanded">
     <div class="sb-header">
       <div class="sb-logo">
-        <svg class="logo-main-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 018 0"/><line x1="12" y1="2" x2="12" y2="6"/></svg>
+        <svg class="logo-main-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         <svg class="logo-expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
       </div>
       <span class="sb-brand">Mars Workbench</span>
@@ -471,7 +383,7 @@
       <div class="sb-nav-item">
         <!-- ChatBubbleOvalLeftEllipsis (Heroicons 24/outline) -->
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"/></svg>
-        <span class="sb-nav-label">AI Chat</span>
+        <span class="sb-nav-label">Simple Chat Bot</span>
       </div>
       <div class="sb-nav-item active">
         <!-- Squares2x2 (Heroicons 24/outline) -->
@@ -557,16 +469,16 @@
   </div>
 </div>
 
-<!-- ========== SCREEN 3: AFTER — COLLAPSED ========== -->
+<!-- ========== SCREEN 2: COLLAPSED ========== -->
 <div class="screen" id="screen-collapsed">
-  <span class="screen-label after-label">After — Collapsed</span>
+  <span class="screen-label">Collapsed</span>
 
   <!-- Sidebar Collapsed -->
   <aside class="sb sb-collapsed">
     <div class="sb-header">
       <div class="sb-logo">
         <!-- Default: Mars icon -->
-        <svg class="logo-main-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 018 0"/><line x1="12" y1="2" x2="12" y2="6"/></svg>
+        <svg class="logo-main-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         <!-- Hover: ChevronRight (Heroicons 24/outline) -->
         <svg class="logo-expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
         <span class="sb-logo-tooltip">Open sidebar</span>
@@ -574,10 +486,10 @@
     </div>
 
     <div class="sb-section">
-      <div class="sb-nav-item" title="AI Chat">
+      <div class="sb-nav-item" title="Simple Chat Bot">
         <!-- ChatBubbleOvalLeftEllipsis (Heroicons 24/outline) -->
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"/></svg>
-        <span class="sb-nav-label">AI Chat</span>
+        <span class="sb-nav-label">Simple Chat Bot</span>
       </div>
       <div class="sb-nav-item active" title="Kanban Planner">
         <!-- Squares2x2 (Heroicons 24/outline) -->
@@ -657,9 +569,8 @@
 
 <!-- ========== SCREEN NAVIGATOR ========== -->
 <div class="screen-nav">
-  <button class="screen-btn active" onclick="showScreen('screen-before', this)">Before</button>
-  <button class="screen-btn" onclick="showScreen('screen-expanded', this)">After — Expanded</button>
-  <button class="screen-btn" onclick="showScreen('screen-collapsed', this)">After — Collapsed</button>
+  <button class="screen-btn active" onclick="showScreen('screen-expanded', this)">Expanded</button>
+  <button class="screen-btn" onclick="showScreen('screen-collapsed', this)">Collapsed</button>
 </div>
 
 <script>

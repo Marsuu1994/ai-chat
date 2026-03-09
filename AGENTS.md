@@ -80,13 +80,17 @@ When creating mockups for a new feature with multiple flows/pages, split into se
 
 ### Modify Existing UI Mockup
 
-1. Create a temporary before/after HTML mockup for review.
+1. Create a temporary before/after HTML mockup for review. The "before" section exists only for side-by-side comparison to help the user decide.
 2. Get user approval before code changes.
-3. After approval, update source-of-truth mockup file and remove temporary file.
+3. After approval, convert to source-of-truth: remove the "before" section (keep only the approved screens), strip before/after labels and navigator entries, and make the primary screen the default active view. Remove the temporary file if it was separate.
 
 ### Implementing UI Components
 
 Implement approved mockups exactly (layout, spacing, text, colors, icons, states). If any part cannot be implemented as-is, raise blockers and update mockup first.
+
+### Keeping Mockups in Sync
+
+Mockups are the source of truth for UI, but implementation may introduce details not in the original mockup (e.g. cursor styles, hover states, text/icon changes). After completing a UI task, back-port any such details to the source-of-truth mockup as a final step so the mockup stays accurate.
 
 ### Mockup Folder Policy
 

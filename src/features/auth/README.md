@@ -4,7 +4,7 @@ Authentication layer for Mars Workbench. See [baseline.md](./design/baseline.md)
 
 ## Current State
 
-Auth infrastructure, login page, and app sidebar implemented. Supabase Auth connected with Google OAuth flow — Supabase client utilities (browser, server, middleware), OAuth callback route handler (`/auth/callback`), and route protection proxy (`proxy.ts`) redirect unauthenticated users to the login page. Login page (`/auth/login`) renders a branded sign-in screen with Google OAuth button, theme-aware decorations for both dark and light modes, and fade-in animations. Authenticated users visiting `/auth/login` are redirected to homepage. Collapsible app sidebar (`AppSidebar`) in the root layout provides navigation between features (Chat, Kanban) and sign-out. App deployed on Vercel.
+Supabase Auth with Google OAuth, route protection, themed login page, and collapsible app sidebar with feature navigation and sign-out. Deployed on Vercel.
 
 ## Backlog
 
@@ -19,14 +19,10 @@ Auth infrastructure, login page, and app sidebar implemented. Supabase Auth conn
 ## Update Log
 
 ### 2026-03-08
-- Implemented collapsible app sidebar with navigation (Chat, Kanban) and sign-out flow (mockup: `mockup/mockup-sidebar.html`)
-- Root layout fetches user via Supabase server client and renders sidebar + main content in flex layout
-- Sidebar features: collapse/expand with smooth transitions, logo hover interaction, opacity-based text fading, tooltips, cursor feedback
-- Redirect authenticated users away from `/auth/login` to homepage
-- Adjusted chat and kanban layouts for nesting (`h-screen` → `h-full`)
-- Implemented login page (`/auth/login`) with Google OAuth sign-in button
-- Added theme-aware decorative elements (grid, atmospheric gradients, button hover shadow) for dark/light modes
-- App deployed on Vercel
+- Collapsible app sidebar with feature navigation, sign-out, and directional cursor feedback
+- Fixed collapsed sidebar gap: "Features" label now collapses to zero height (no layout shift)
+- Synced sidebar mockup with code (icon, nav labels, cursors) and cleaned up before/after to source-of-truth
+- Login page with Google OAuth, theme-aware styling, Vercel deployment
 
 ### 2026-03-06
 - Connected to Supabase database and migrated all data from local PostgreSQL

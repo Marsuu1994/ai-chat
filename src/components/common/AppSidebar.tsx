@@ -111,8 +111,10 @@ export const AppSidebar = ({ user }: AppSidebarProps) => {
 
       {/* Nav — consistent padding, labels fade */}
       <div className="px-3 pt-3 pb-1 overflow-hidden">
-        <div className={`mb-1.5 px-2 text-[10px] font-semibold uppercase tracking-widest text-base-content/40 whitespace-nowrap ${textOpacity}`}>
-          Features
+        <div className={`overflow-hidden transition-all duration-200 ${collapsed ? "h-0 mb-0" : "h-5 mb-1.5"}`}>
+          <span className={`block px-2 text-[10px] font-semibold uppercase tracking-widest text-base-content/40 whitespace-nowrap ${textOpacity}`}>
+            Features
+          </span>
         </div>
         <nav className="flex flex-col gap-0.5">
           {navItems.map((item) => {
