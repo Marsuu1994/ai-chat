@@ -8,11 +8,14 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 
 **AI Assisted Plan Creation**: Full design complete — flows, API actions, mockups. Chat-based wizard where AI generates draft task templates via structured JSON output (`response_format: json_schema`). Two server actions: `getWelcomeMessageAction` (plain text LLM welcome) and `generateDraftPlanAction` (structured draft with template cards). `Chat.metadata` serves as working clipboard for latest draft and stats snapshot. `MessageType` enum (`TEXT`, `DRAFT_PLAN`) distinguishes plain messages from structured drafts. Static suggestion chips for welcome screen. Post-approval reuses existing `createPlanAction`. Mockups: `mockup-empty.html` (new/returning user), `mockup-plan-form.html` (AI entry point), `mockup-ai-chat.html` (6-screen flow: welcome, generating, draft, revision, approval).
 
-**v2 UI Redesign**: Complete mockup-v2 design system under `design/mockup-v2/` with 11 flow mockups and shared `styles.css` — "Techno Mission Control" aesthetic featuring cyan primary, violet secondary, amber warning palette. Covers all existing flows (board with collapsed/expanded backlog drawer, empty state, plan form with collapsible category groups and search, task modal with category combobox, review changes, Eisenhower priority matrix) plus new flows (AI Plan Assistant 6-screen chat flow, end-of-period mission debrief summary, vacation/break mode, dedicated template library page). Light and dark theme variants with side-by-side comparison mockup. v2 flows are synced with active mockup content (AI chat, Eisenhower matrix, plan form groups, task modal categories). Custom daisyUI themes (`mars-dark`, `mars-light`) defined in `globals.css` via `@plugin "daisyui/theme"` and applied app-wide (`mars-dark` as default).
+**Mobile Mockups**: `mockup-mobile/mockup-board.html` — 3-frame drag-and-drop flow (normal, long press pickup, drag over target) at 375×812 with linear stats bars, compact task cards (badge/title/footer), risk top strips, and task card widget showcase. `mockup-mobile/mockup-settings.html` — settings page with profile card and sign-out. All mockups use shared `mockup-theme.css` with interactive light/dark toggle.
 
 ## Backlog
 ### High Priority
+- [ ] Implement mobile view + PWA manifest
 - [ ] Implement the AI assisted plan creation flow
+- [ ] Refactor the codebase, remove chat feature and make kanban as the main entry of the app
+- [ ] Add dashed border to droppable column indicate item can be placed here.
 - [ ] Consolidate task generation logic for update plan, or consider to remove the edit plan action, user can only set their plan during the beginning
 - [ ] Design evidence submit feature when user move task to done
 
@@ -32,9 +35,13 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 ## Update Log
 
 ### 2026-03-09
-- Synced AppSidebar into all active kanban mockups: updated `styles.css` with sidebar component styles (gradient logo, nav items, user section with avatar, sign-out button) and replaced sidebar HTML in 5 mockup files (board, empty, plan-form, task-modal, review-changes) with two variants (full nav vs kanban-only)
-- Redesigned mockup-v2 flows using active mockup content while preserving v2 design tokens: replaced AI generate with 6-screen AI Plan Assistant chat flow, replaced priorities with Eisenhower Matrix, updated plan form with collapsible groups/search/tabs, updated task modal with category combobox
-- Fixed `future-work/mockup-priorities-v2.html` stylesheet path (`./styles.css` → `../styles.css`)
+- Created shared mockup theme system (`mockup-theme.css`) with light/dark CSS variables, applied to all kanban and auth mockups with interactive toggle button
+- Converted all hardcoded colors in kanban mockup `styles.css` and 6 HTML mockup files to theme variables — full dark mode support across board, empty, plan-form, task-modal, ai-chat, and review-changes
+- Created mobile kanban mockup (`mockup-mobile/mockup-board.html`): 375×812 phone frames showing drag-and-drop flow (normal state, long press pickup, drag over target), stats dashboard with linear progress bars, compact task cards with risk top strips
+- Created mobile settings mockup (`mockup-mobile/mockup-settings.html`): profile card with sign-out button, 3-tab dock (Board, Plan, Settings)
+- Task card widget showcase: all card states (normal, rollover, warning, danger, done, lifted) at mobile size
+- Removed `mockup-v2/` directory — redundant with `future-work/` subfolder
+- Removed danger border from Plan Mode section in edit mode mockup
 
 ### 2026-03-08
 - Fixed timezone bug causing false end-of-period sync: `getISOWeekKey()` used UTC methods while `getTodayDate()` used local time, producing mismatched week keys near week boundaries
@@ -173,6 +180,10 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - UI mockups created (board, empty state, create plan, create/edit template)
 
 ## Done
+- [x] Shared mockup theme system (mockup-theme.css) with light/dark toggle across all kanban and auth mockups
+- [x] Mobile kanban board mockup (drag-and-drop flow, stats dashboard, task card widgets)
+- [x] Mobile settings mockup (profile card, sign-out)
+- [x] Remove mockup-v2 directory (consolidated into future-work)
 - [x] Sync AppSidebar component into active kanban mockups (styles + HTML in 5 files)
 - [x] Redesign mockup-v2 flows with active mockup content (AI chat, Eisenhower matrix, plan form groups, task modal categories)
 - [x] Fix future-work mockup-priorities-v2.html stylesheet path

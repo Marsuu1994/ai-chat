@@ -92,10 +92,6 @@ Implement approved mockups exactly (layout, spacing, text, colors, icons, states
 
 Mockups are the source of truth for UI, but implementation may introduce details not in the original mockup (e.g. cursor styles, hover states, text/icon changes). After completing a UI task, back-port any such details to the source-of-truth mockup as a final step so the mockup stays accurate.
 
-### Mockup Folder Policy
-
-`mockup-v2/` is for future exploration only. Active/source-of-truth mockups belong in `mockup/`.
-
 ## Layers
 
 - Actions (`features/[feature]/actions/`): `'use server'`, thin layer (validate with Zod -> call service -> `revalidatePath`)
@@ -157,6 +153,7 @@ Mockups are the source of truth for UI, but implementation may introduce details
 - No raw string enum values.
 - No redundant actions/routes when existing handlers can be extended.
 - No direct service/DAL calls from UI components.
+- Never modify past Update Log entries in README files. Update logs are append-only history.
 
 ## Commands
 

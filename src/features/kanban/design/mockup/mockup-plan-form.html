@@ -1,80 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-mockup-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Kanban — Plan Form (Create / Edit)</title>
+<link rel="stylesheet" href="../../../mockup-theme.css" />
 <link rel="stylesheet" href="./styles.css" />
 <style>
   .form-scroll { flex: 1; overflow-y: auto; padding: 32px; }
   .form-inner { max-width: 640px; margin: 0 auto; }
   .form-footer {
     display: flex; justify-content: space-between; align-items: center;
-    margin-top: 28px; padding-top: 20px; border-top: 1px solid #dedede;
+    margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--m-border);
   }
-  .form-footer-summary { font-size: 13px; color: #888888; }
-  .form-footer-summary span { color: #45aeee; font-weight: 600; }
+  .form-footer-summary { font-size: 13px; color: var(--m-text-secondary); }
+  .form-footer-summary span { color: var(--m-blue); font-weight: 600; }
 
   /* Inline type + frequency config on selected template rows */
   .tmpl-config {
-    border-top: 1px solid #dedede; margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid var(--m-border); margin-top: 10px; padding-top: 10px;
     display: flex; align-items: center; gap: 8px;
   }
-  .config-label { font-size: 11px; color: #888888; flex-shrink: 0; }
+  .config-label { font-size: 11px; color: var(--m-text-secondary); flex-shrink: 0; }
   .type-pills { display: flex; gap: 4px; }
   .type-pill {
     padding: 4px 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
-    border-radius: 999px; border: 1px solid #dedede; cursor: pointer;
-    background: transparent; color: #888888;
+    border-radius: 999px; border: 1px solid var(--m-border); cursor: pointer;
+    background: transparent; color: var(--m-text-secondary);
   }
-  .type-pill.p-daily  { background: rgba(75,168,192,0.12); border-color: #4ba8c0; color: #4ba8c0; }
-  .type-pill.p-weekly { background: rgba(232,72,138,0.12); border-color: #e8488a; color: #e8488a; }
-  .config-divider { width: 1px; height: 16px; background: #dedede; margin: 0 2px; flex-shrink: 0; }
+  .type-pill.p-daily  { background: var(--m-teal-bg); border-color: var(--m-teal); color: var(--m-teal); }
+  .type-pill.p-weekly { background: var(--m-pink-bg); border-color: var(--m-pink); color: var(--m-pink); }
+  .config-divider { width: 1px; height: 16px; background: var(--m-border); margin: 0 2px; flex-shrink: 0; }
   .freq-input {
-    width: 48px; padding: 4px 8px; background: #ffffff; border: 1px solid #dedede;
-    border-radius: 6px; color: #161616; font-size: 13px; text-align: center; outline: none;
+    width: 48px; padding: 4px 8px; background: var(--m-surface-raised); border: 1px solid var(--m-border);
+    border-radius: 6px; color: var(--m-text); font-size: 13px; text-align: center; outline: none;
   }
-  .freq-unit { font-size: 12px; color: #888888; }
+  .freq-unit { font-size: 12px; color: var(--m-text-secondary); }
 
   /* Mode toggle */
   .mode-section {
-    background: #f5f5f5; border: 1px solid #dedede; border-radius: 8px; padding: 14px;
+    background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 8px; padding: 14px;
     margin-bottom: 20px;
   }
   .mode-label {
     font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
-    text-transform: uppercase; color: #888888; margin-bottom: 8px;
+    text-transform: uppercase; color: var(--m-text-secondary); margin-bottom: 8px;
   }
   .mode-toggle {
-    display: flex; gap: 0; background: #ffffff; border-radius: 8px;
-    padding: 3px; border: 1px solid #dedede;
+    display: flex; gap: 0; background: var(--m-surface-raised); border-radius: 8px;
+    padding: 3px; border: 1px solid var(--m-border);
   }
   .mode-option {
     flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
     padding: 10px 12px; border-radius: 6px; cursor: pointer;
     border: 1px solid transparent;
   }
-  .mode-option.active.normal { border-color: #45aeee; background: rgba(69,174,238,0.06); }
-  .mode-option.active.extreme { border-color: #e93f33; background: rgba(233,63,51,0.06); }
+  .mode-option.active.normal { border-color: var(--m-blue); background: var(--m-blue-a06); }
+  .mode-option.active.extreme { border-color: var(--m-red); background: var(--m-red-a06); }
   .mode-option-icon { font-size: 16px; margin-bottom: 1px; }
   .mode-option-name { font-size: 13px; font-weight: 600; letter-spacing: 0.02em; }
-  .mode-option.active.normal .mode-option-name { color: #45aeee; }
-  .mode-option.active.extreme .mode-option-name { color: #e93f33; }
-  .mode-option:not(.active) .mode-option-name { color: #bbbbbb; }
+  .mode-option.active.normal .mode-option-name { color: var(--m-blue); }
+  .mode-option.active.extreme .mode-option-name { color: var(--m-red); }
+  .mode-option:not(.active) .mode-option-name { color: var(--m-text-muted); }
   .mode-option-desc { font-size: 11px; }
-  .mode-option.active .mode-option-desc { color: #888888; }
-  .mode-option:not(.active) .mode-option-desc { color: #bbbbbb; }
+  .mode-option.active .mode-option-desc { color: var(--m-text-secondary); }
+  .mode-option:not(.active) .mode-option-desc { color: var(--m-text-muted); }
 
   /* Ad-hoc task items */
   .adhoc-item {
     display: flex; align-items: center; gap: 12px; padding: 12px;
-    background: #f5f5f5; border: 1px solid #dedede; border-radius: 8px;
+    background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 8px;
   }
-  .adhoc-item.selected { border-color: #45aeee; background: rgba(69,174,238,0.06); }
-  .adhoc-item.selected .template-check { background: #45aeee; border-color: #45aeee; }
+  .adhoc-item.selected { border-color: var(--m-blue); background: var(--m-blue-a06); }
+  .adhoc-item.selected .template-check { background: var(--m-blue); border-color: var(--m-blue); }
   .adhoc-status {
     font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px;
-    background: #f0f0f0; color: #999999; text-transform: uppercase; letter-spacing: 0.04em;
+    background: var(--m-disabled-bg); color: var(--m-text-tertiary); text-transform: uppercase; letter-spacing: 0.04em;
   }
 
   /* Section header for ad-hoc tasks */
@@ -82,33 +83,33 @@
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 12px; margin-top: 28px;
   }
-  .adhoc-section-label { font-size: 13px; font-weight: 500; color: #999999; }
+  .adhoc-section-label { font-size: 13px; font-weight: 500; color: var(--m-text-tertiary); }
   .adhoc-count {
     font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
-    background: rgba(197,184,0,0.15); color: #8a7e00;
+    background: var(--m-olive-bg); color: var(--m-olive);
   }
 
   /* AI assistant banner */
   .ai-banner {
     display: flex; align-items: center; gap: 14px; padding: 14px 16px;
-    background: #f5f5f5; border: 1px solid #dedede; border-radius: 8px;
+    background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 8px;
     margin-bottom: 24px;
   }
   .ai-banner-icon {
     width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
-    background: rgba(69,174,238,0.08); border: 1px solid rgba(69,174,238,0.2);
+    background: var(--m-blue-a08); border: 1px solid var(--m-blue-a20);
     display: flex; align-items: center; justify-content: center;
   }
-  .ai-banner-icon svg { width: 18px; height: 18px; color: #45aeee; }
+  .ai-banner-icon svg { width: 18px; height: 18px; color: var(--m-blue); }
   .ai-banner-text { flex: 1; }
-  .ai-banner-text p { font-size: 13px; color: #888888; line-height: 1.4; }
+  .ai-banner-text p { font-size: 13px; color: var(--m-text-secondary); line-height: 1.4; }
   .btn-ai-open {
     padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
-    border: 1px solid rgba(69,174,238,0.35); background: rgba(69,174,238,0.06);
-    color: #45aeee; cursor: pointer; display: inline-flex; align-items: center;
+    border: 1px solid var(--m-blue-a35); background: var(--m-blue-a06);
+    color: var(--m-blue); cursor: pointer; display: inline-flex; align-items: center;
     gap: 5px; flex-shrink: 0; white-space: nowrap;
   }
-  .btn-ai-open:hover { background: rgba(69,174,238,0.12); border-color: #45aeee; }
+  .btn-ai-open:hover { background: var(--m-blue-a12); border-color: var(--m-blue); }
   .btn-ai-open svg { width: 14px; height: 14px; }
 </style>
 </head>
@@ -124,7 +125,7 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--m-surface-raised)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
       </div>
       <span class="sidebar-brand">Mars Workbench</span>
       <button class="sidebar-collapse">
@@ -154,13 +155,13 @@
       <div class="header-left">
         <div class="back-btn"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
         <span class="header-title"><span>Kanban</span> Planner</span>
-        <span class="header-badge" style="background:rgba(233,63,51,0.1);color:#e93f33;">Planning Mode</span>
+        <span class="header-badge" style="background:var(--m-red-a10);color:var(--m-red);">Planning Mode</span>
       </div>
     </div>
     <div class="form-scroll">
       <div class="form-inner">
-        <h2 style="font-size:24px;font-weight:700;color:#161616;margin-bottom:4px">Create Weekly Plan</h2>
-        <p style="color:#888888;margin-bottom:20px">Set up your task templates and start a new week.</p>
+        <h2 style="font-size:24px;font-weight:700;color:var(--m-text);margin-bottom:4px">Create Weekly Plan</h2>
+        <p style="color:var(--m-text-secondary);margin-bottom:20px">Set up your task templates and start a new week.</p>
 
         <!-- AI Assistant Banner -->
         <div class="ai-banner">
@@ -208,10 +209,10 @@
           <!-- Selected: expands with type + freq config -->
           <div class="template-item selected" style="flex-direction:column;align-items:stretch;gap:0">
             <div style="display:flex;align-items:center;gap:12px">
-              <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--m-surface-raised)" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
               <div class="template-info">
                 <div class="template-name">Solve 3 LeetCode problems</div>
-                <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 10 pts</div>
+                <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 10 pts</div>
               </div>
               <button class="template-edit-btn" title="Edit template (title, description, points)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></button>
             </div>
@@ -230,10 +231,10 @@
 
           <div class="template-item selected" style="flex-direction:column;align-items:stretch;gap:0">
             <div style="display:flex;align-items:center;gap:12px">
-              <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--m-surface-raised)" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
               <div class="template-info">
                 <div class="template-name">Morning jog 5km</div>
-                <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 4 pts</div>
+                <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 4 pts</div>
               </div>
               <button class="template-edit-btn" title="Edit template (title, description, points)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></button>
             </div>
@@ -252,10 +253,10 @@
 
           <div class="template-item selected" style="flex-direction:column;align-items:stretch;gap:0">
             <div style="display:flex;align-items:center;gap:12px">
-              <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--m-surface-raised)" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
               <div class="template-info">
                 <div class="template-name">Read 30 pages</div>
-                <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5 pts</div>
+                <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5 pts</div>
               </div>
               <button class="template-edit-btn" title="Edit template (title, description, points)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></button>
             </div>
@@ -274,10 +275,10 @@
 
           <div class="template-item selected" style="flex-direction:column;align-items:stretch;gap:0">
             <div style="display:flex;align-items:center;gap:12px">
-              <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--m-surface-raised)" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
               <div class="template-info">
                 <div class="template-name">Go to gym</div>
-                <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 6 pts</div>
+                <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 6 pts</div>
               </div>
               <button class="template-edit-btn" title="Edit template (title, description, points)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></button>
             </div>
@@ -299,7 +300,7 @@
             <div class="template-check"></div>
             <div class="template-info">
               <div class="template-name">Write blog post</div>
-              <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 12 pts</div>
+              <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 12 pts</div>
             </div>
             <button class="template-edit-btn" title="Edit template (title, description, points)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></button>
           </div>
@@ -315,19 +316,19 @@
         <div class="template-list">
           <!-- Selected ad-hoc task (from PENDING_UPDATE plan) -->
           <div class="adhoc-item selected">
-            <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--m-surface-raised)" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <div class="template-info">
               <div class="template-name">File tax report</div>
-              <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5 pts</div>
+              <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5 pts</div>
             </div>
             <span class="adhoc-status">Todo</span>
           </div>
 
           <div class="adhoc-item selected">
-            <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--m-surface-raised)" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <div class="template-info">
               <div class="template-name">Renew passport</div>
-              <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 2 pts</div>
+              <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 2 pts</div>
             </div>
             <span class="adhoc-status">Doing</span>
           </div>
@@ -337,7 +338,7 @@
             <div class="template-check"></div>
             <div class="template-info">
               <div class="template-name">Get sinus CT scan</div>
-              <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 3 pts</div>
+              <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 3 pts</div>
             </div>
             <span class="adhoc-status">Todo</span>
           </div>
@@ -363,7 +364,7 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--m-surface-raised)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
       </div>
       <span class="sidebar-brand">Mars Workbench</span>
       <button class="sidebar-collapse">
@@ -393,19 +394,19 @@
       <div class="header-left">
         <div class="back-btn"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
         <span class="header-title"><span>Kanban</span> Planner</span>
-        <span class="header-badge" style="background:rgba(233,63,51,0.1);color:#e93f33;">Planning Mode</span>
+        <span class="header-badge" style="background:var(--m-red-a10);color:var(--m-red);">Planning Mode</span>
       </div>
     </div>
     <div class="form-scroll">
       <div class="form-inner">
-        <h2 style="font-size:24px;font-weight:700;color:#161616;margin-bottom:28px">Update Weekly Plan</h2>
+        <h2 style="font-size:24px;font-weight:700;color:var(--m-text);margin-bottom:28px">Update Weekly Plan</h2>
         <div class="form-group">
           <label class="form-label">Description (optional)</label>
           <input class="form-input" value="Interview prep + system design" />
         </div>
 
         <!-- Plan Mode Toggle — Extreme selected -->
-        <div class="mode-section" style="border-color: rgba(233,63,51,0.25);">
+        <div class="mode-section">
           <div class="mode-label">Plan Mode</div>
           <div class="mode-toggle">
             <div class="mode-option normal">
@@ -431,10 +432,10 @@
           <!-- Selected: preloaded with existing PlanTemplate config -->
           <div class="template-item selected" style="flex-direction:column;align-items:stretch;gap:0">
             <div style="display:flex;align-items:center;gap:12px">
-              <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--m-surface-raised)" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
               <div class="template-info">
                 <div class="template-name">Solve 3 LeetCode problems</div>
-                <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 10 pts</div>
+                <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 10 pts</div>
               </div>
               <button class="template-edit-btn" title="Edit template (title, description, points)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></button>
             </div>
@@ -453,10 +454,10 @@
 
           <div class="template-item selected" style="flex-direction:column;align-items:stretch;gap:0">
             <div style="display:flex;align-items:center;gap:12px">
-              <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--m-surface-raised)" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
               <div class="template-info">
                 <div class="template-name">Go to gym</div>
-                <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 6 pts</div>
+                <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 6 pts</div>
               </div>
               <button class="template-edit-btn" title="Edit template (title, description, points)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></button>
             </div>
@@ -478,7 +479,7 @@
             <div class="template-check"></div>
             <div class="template-info">
               <div class="template-name">Morning jog 5km</div>
-              <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 4 pts</div>
+              <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 4 pts</div>
             </div>
             <button class="template-edit-btn" title="Edit template (title, description, points)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></button>
           </div>
@@ -487,7 +488,7 @@
             <div class="template-check"></div>
             <div class="template-info">
               <div class="template-name">Write blog post</div>
-              <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 12 pts</div>
+              <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 12 pts</div>
             </div>
             <button class="template-edit-btn" title="Edit template (title, description, points)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></button>
           </div>
@@ -503,10 +504,10 @@
         <div class="template-list">
           <!-- Selected ad-hoc task (currently on plan) -->
           <div class="adhoc-item selected">
-            <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="template-check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--m-surface-raised)" stroke-width="3" style="width:12px;height:12px"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <div class="template-info">
               <div class="template-name">File tax report</div>
-              <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5 pts</div>
+              <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5 pts</div>
             </div>
             <span class="adhoc-status">Todo</span>
           </div>
@@ -516,7 +517,7 @@
             <div class="template-check"></div>
             <div class="template-info">
               <div class="template-name">Get sinus CT scan</div>
-              <div class="template-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 3 pts</div>
+              <div class="template-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:11px;height:11px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 3 pts</div>
             </div>
             <span class="adhoc-status">Todo</span>
           </div>
@@ -545,6 +546,26 @@ function show(name) {
     btn.classList.toggle('active', btn.textContent.toLowerCase().includes(name));
   });
 }
+</script>
+<script>
+(function() {
+  var btn = document.createElement('button');
+  btn.className = 'mockup-theme-toggle';
+  btn.title = 'Toggle theme';
+  var sun = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  var moon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+  function update() {
+    var t = document.documentElement.getAttribute('data-mockup-theme');
+    btn.innerHTML = t === 'dark' ? sun : moon;
+  }
+  btn.addEventListener('click', function() {
+    var t = document.documentElement.getAttribute('data-mockup-theme');
+    document.documentElement.setAttribute('data-mockup-theme', t === 'dark' ? 'light' : 'dark');
+    update();
+  });
+  document.body.appendChild(btn);
+  update();
+})();
 </script>
 </body>
 </html>

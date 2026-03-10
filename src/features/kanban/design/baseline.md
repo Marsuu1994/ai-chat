@@ -22,15 +22,19 @@ A tool to plan and track tasks within defined periods (e.g., weekly). It visuali
 
 ### Planned: V2
 
-1. Support evidence flow, when user move a task to completed, submit evidence.
-2. Add AI generated tasks instance flow, LLM should be able to generate tasks based on past works + task template informatiosn to generate task instances, need to record the quality of task it generated.
-3. **LLM assisted plan creation (V1 — static wizard)** — AI generates a draft plan via structured JSON output. User sees read-only template cards and either approves the whole batch or rejects with text feedback for re-generation. No per-card editing. Uses `Chat.metadata` as working clipboard for the latest draft. Server action (no streaming). Post-approval creates new TaskTemplates and calls existing `createPlanAction`.
-4. Per-card select/unselect to keep/remove individual draft templates during AI plan creation.
-5. Inline editing of points, type, frequency on draft template cards.
-6. Ad-hoc task carryover in AI plan creation flow.
-7. LLM-suggested plan mode (NORMAL/EXTREME).
+1. Mobile Kanban + PWA app
+2. **LLM assisted plan creation (V1 — static wizard)** — AI generates a draft plan via structured JSON output. User sees read-only template cards and either approves the whole batch or rejects with text feedback for re-generation. No per-card editing. Uses `Chat.metadata` as working clipboard for the latest draft. Server action (no streaming). Post-approval creates new TaskTemplates and calls existing `createPlanAction`.
+3. Support evidence flow, when user move a task to completed, submit evidence.
+4. Add AI generated tasks instance flow, LLM should be able to generate tasks based on past works + task template informatiosn to generate task instances, need to record the quality of task it generated.
 
 ### Planned: Future
+
+- Template categories — Add optional `category` field to TaskTemplate for grouping templates in the plan form. Collapsible groups + search for scalability. Mockups in `design/mockup/future-work/`.
+- Expand the AI plan creation flow
+  - Per-card select/unselect to keep/remove individual draft templates during AI plan creation.
+  - Inline editing of points, type, frequency on draft template cards.
+  - Ad-hoc task carryover in AI plan creation flow.
+  - LLM-suggested plan mode (NORMAL/EXTREME).
 
 - User-configurable timezone — Date utils are currently anchored to `America/Los_Angeles` via `KANBAN_TZ` constant. Consider making this a user setting stored in the database for multi-user support or if the user relocates.
 - Backlog drawer — Expandable side panel for staging template-generated task instances before moving them to the board via drag-and-drop. Reduces visual clutter from duplicate cards. Mockup in `design/mockup/future-work/mockup-board-backlog-drawer-v2.html`.
@@ -41,7 +45,6 @@ A tool to plan and track tasks within defined periods (e.g., weekly). It visuali
 - Weekly task rollover across periods
 - Biweekly and custom period types
 - Priorities page — Full-page Eisenhower priority matrix (Board/Priorities tab switcher) for organizing personal one-off tasks by urgency/importance. Tasks can be promoted to the board via "Track this week". Renames "Ad-hoc" to "Todo" badge, backlog drawer renamed to "Queued" — see `mockup/future-work/mockup-priorities-v2.html`
-- Template categories — Add optional `category` field to TaskTemplate for grouping templates in the plan form. Collapsible groups + search for scalability. Mockups in `design/mockup/future-work/`.
 - AI-assisted plan editing — Use a new Chat linked to the same plan to suggest modifications via LLM. Separate from creation flow.
 - Per-task completion rate stats for richer AI welcome messages.
 

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-mockup-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Kanban — Review Plan Changes Modal</title>
+<link rel="stylesheet" href="../../../mockup-theme.css" />
 <link rel="stylesheet" href="./styles.css" />
 <style>
   .dimmed { flex: 1; overflow-y: auto; padding: 32px; opacity: 0.3; pointer-events: none; }
@@ -15,24 +16,24 @@
     display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
   }
   .cs-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
-  .cs-added   { color: #45aeee; } .cs-badge-added   { background: rgba(69,174,238,0.1); color: #45aeee; }
-  .cs-removed { color: #e93f33; } .cs-badge-removed { background: rgba(233,63,51,0.1); color: #e93f33; }
-  .cs-mod     { color: #ee8134; } .cs-badge-mod     { background: rgba(238,129,52,0.1); color: #ee8134; }
-  .cs-adhoc   { color: #8a7e00; } .cs-badge-adhoc   { background: rgba(197,184,0,0.15); color: #8a7e00; }
-  .cs-mode    { color: #45aeee; } .cs-badge-mode    { background: rgba(69,174,238,0.1); color: #45aeee; }
+  .cs-added   { color: var(--m-blue); } .cs-badge-added   { background: var(--m-blue-a10); color: var(--m-blue); }
+  .cs-removed { color: var(--m-red); } .cs-badge-removed { background: var(--m-red-a10); color: var(--m-red); }
+  .cs-mod     { color: var(--m-orange); } .cs-badge-mod     { background: var(--m-orange-bg); color: var(--m-orange); }
+  .cs-adhoc   { color: var(--m-olive); } .cs-badge-adhoc   { background: var(--m-olive-bg); color: var(--m-olive); }
+  .cs-mode    { color: var(--m-blue); } .cs-badge-mode    { background: var(--m-blue-a10); color: var(--m-blue); }
   .cs-row {
     display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px;
-    background: #f5f5f5; border: 1px solid #dedede; border-radius: 8px; margin-bottom: 6px;
+    background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 8px; margin-bottom: 6px;
   }
   .cs-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
-  .cs-name   { font-size: 13px; font-weight: 500; color: #161616; }
-  .cs-detail { font-size: 12px; color: #888888; margin-top: 2px; }
+  .cs-name   { font-size: 13px; font-weight: 500; color: var(--m-text); }
+  .cs-detail { font-size: 12px; color: var(--m-text-secondary); margin-top: 2px; }
   .cs-impact { font-size: 11px; margin-top: 4px; font-style: italic; }
   .impact-note {
     display: flex; gap: 8px; align-items: flex-start; padding: 12px 14px;
-    background: #f5f5f5; border: 1px dashed #cccccc; border-radius: 8px; margin-top: 12px;
+    background: var(--m-surface); border: 1px dashed var(--m-border-hover); border-radius: 8px; margin-top: 12px;
   }
-  .impact-note span { font-size: 12px; color: #999999; line-height: 1.5; }
+  .impact-note span { font-size: 12px; color: var(--m-text-tertiary); line-height: 1.5; }
 
   /* Ad-hoc sub-group labels */
   .adhoc-subgroup { font-size: 11px; font-weight: 600; margin-top: 8px; margin-bottom: 4px; padding-left: 2px; }
@@ -74,18 +75,18 @@
       <div class="header-left">
         <div class="back-btn"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
         <span class="header-title"><span>Kanban</span> Planner</span>
-        <span class="header-badge" style="background:rgba(233,63,51,0.1);color:#e93f33;">Planning Mode</span>
+        <span class="header-badge" style="background:var(--m-red-a10);color:var(--m-red);">Planning Mode</span>
       </div>
     </div>
     <!-- Dimmed plan form behind modal -->
     <div class="dimmed">
       <div style="max-width:640px;margin:0 auto">
-        <h2 style="font-size:24px;font-weight:700;color:#161616;margin-bottom:24px">Update Weekly Plan</h2>
+        <h2 style="font-size:24px;font-weight:700;color:var(--m-text);margin-bottom:24px">Update Weekly Plan</h2>
         <div class="template-list">
           <div class="template-item selected"><div class="template-check"></div><div class="template-info"><div class="template-name">Solve 3 LeetCode problems</div></div></div>
           <div class="template-item selected"><div class="template-check"></div><div class="template-info"><div class="template-name">Read 30 pages</div></div></div>
           <div class="template-item selected"><div class="template-check"></div><div class="template-info"><div class="template-name">Go to gym</div></div></div>
-          <div class="template-item"><div class="template-check"></div><div class="template-info"><div class="template-name" style="text-decoration:line-through;color:#888888">Morning jog 5km</div></div></div>
+          <div class="template-item"><div class="template-check"></div><div class="template-info"><div class="template-name" style="text-decoration:line-through;color:var(--m-text-secondary)">Morning jog 5km</div></div></div>
         </div>
       </div>
     </div>
@@ -95,7 +96,7 @@
       <div class="modal" style="width:520px">
         <div class="modal-header">
           <div class="modal-title">Review Plan Changes</div>
-          <button style="background:none;border:none;cursor:pointer;color:#888888;padding:4px">
+          <button style="background:none;border:none;cursor:pointer;color:var(--m-text-secondary);padding:4px">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg>
           </button>
         </div>
@@ -104,15 +105,15 @@
           <!-- Added -->
           <div class="cs-section">
             <div class="cs-head cs-added">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#45aeee" stroke-width="2.5" style="width:14px;height:14px"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--m-blue)" stroke-width="2.5" style="width:14px;height:14px"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
               Added
               <span class="cs-badge cs-badge-added">1 template</span>
             </div>
-            <div class="cs-row" style="border-color:rgba(69,174,238,0.3)">
-              <div class="cs-dot" style="background:#45aeee"></div>
+            <div class="cs-row" style="border-color:var(--m-blue-a25)">
+              <div class="cs-dot" style="background:var(--m-blue)"></div>
               <div>
                 <div class="cs-name">Read 30 pages</div>
-                <div class="cs-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:10px;height:10px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5 pts &middot; Daily &middot; 1&times; per day</div>
+                <div class="cs-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:10px;height:10px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5 pts &middot; Daily &middot; 1&times; per day</div>
                 <div class="cs-impact cs-added">New daily tasks will be generated starting today</div>
               </div>
             </div>
@@ -121,15 +122,15 @@
           <!-- Removed -->
           <div class="cs-section">
             <div class="cs-head cs-removed">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#e93f33" stroke-width="2.5" style="width:14px;height:14px"><path d="M5 12h14" stroke-linecap="round"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--m-red)" stroke-width="2.5" style="width:14px;height:14px"><path d="M5 12h14" stroke-linecap="round"/></svg>
               Removed
               <span class="cs-badge cs-badge-removed">1 template</span>
             </div>
-            <div class="cs-row" style="border-color:rgba(233,63,51,0.3)">
-              <div class="cs-dot" style="background:#e93f33"></div>
+            <div class="cs-row" style="border-color:var(--m-red-a25)">
+              <div class="cs-dot" style="background:var(--m-red)"></div>
               <div>
                 <div class="cs-name">Morning jog 5km</div>
-                <div class="cs-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:10px;height:10px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 4 pts &middot; Daily &middot; 1&times; per day</div>
+                <div class="cs-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:10px;height:10px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 4 pts &middot; Daily &middot; 1&times; per day</div>
                 <div class="cs-impact cs-removed">3 Todo / In Progress tasks will be deleted from the board</div>
               </div>
             </div>
@@ -138,18 +139,18 @@
           <!-- Modified -->
           <div class="cs-section">
             <div class="cs-head cs-mod">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#ee8134" stroke-width="2.5" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--m-orange)" stroke-width="2.5" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg>
               Modified
               <span class="cs-badge cs-badge-mod">1 template</span>
             </div>
-            <div class="cs-row" style="border-color:rgba(238,129,52,0.3)">
-              <div class="cs-dot" style="background:#ee8134"></div>
+            <div class="cs-row" style="border-color:var(--m-orange-bg)">
+              <div class="cs-dot" style="background:var(--m-orange)"></div>
               <div>
                 <div class="cs-name">Go to gym</div>
                 <div class="cs-detail">
                   <span style="text-decoration:line-through;opacity:0.5">Daily &middot; 1&times; per day</span>
-                  <span style="margin:0 6px;color:#ee8134">&rarr;</span>
-                  <span style="color:#ee8134">Weekly &middot; 3&times; per week</span>
+                  <span style="margin:0 6px;color:var(--m-orange)">&rarr;</span>
+                  <span style="color:var(--m-orange)">Weekly &middot; 3&times; per week</span>
                 </div>
                 <div class="cs-impact cs-mod">Existing Todo / In Progress tasks deleted &mdash; 3 new weekly instances will be generated</div>
               </div>
@@ -160,29 +161,29 @@
           <div class="cs-section">
             <div class="cs-head cs-adhoc">
               <!-- Lightning bolt icon -->
-              <svg viewBox="0 0 24 24" fill="none" stroke="#8a7e00" stroke-width="2.5" style="width:14px;height:14px"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--m-olive)" stroke-width="2.5" style="width:14px;height:14px"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Ad-hoc Tasks
               <span class="cs-badge cs-badge-adhoc">2 tasks</span>
             </div>
 
             <!-- Added to board -->
-            <div class="adhoc-subgroup" style="color:#45aeee">Added to board</div>
-            <div class="cs-row" style="border-color:rgba(69,174,238,0.3)">
-              <div class="cs-dot" style="background:#45aeee"></div>
+            <div class="adhoc-subgroup" style="color:var(--m-blue)">Added to board</div>
+            <div class="cs-row" style="border-color:var(--m-blue-a25)">
+              <div class="cs-dot" style="background:var(--m-blue)"></div>
               <div>
                 <div class="cs-name">Get sinus CT scan</div>
-                <div class="cs-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:10px;height:10px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 3 pts</div>
+                <div class="cs-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:10px;height:10px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 3 pts</div>
                 <div class="cs-impact cs-added">Will appear on the board</div>
               </div>
             </div>
 
             <!-- Removed from board -->
-            <div class="adhoc-subgroup" style="color:#e93f33">Removed from board</div>
-            <div class="cs-row" style="border-color:rgba(233,63,51,0.3)">
-              <div class="cs-dot" style="background:#e93f33"></div>
+            <div class="adhoc-subgroup" style="color:var(--m-red)">Removed from board</div>
+            <div class="cs-row" style="border-color:var(--m-red-a25)">
+              <div class="cs-dot" style="background:var(--m-red)"></div>
               <div>
                 <div class="cs-name">Renew passport</div>
-                <div class="cs-detail"><svg viewBox="0 0 24 24" fill="#ee8134" style="width:10px;height:10px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 2 pts</div>
+                <div class="cs-detail"><svg viewBox="0 0 24 24" fill="var(--m-orange)" style="width:10px;height:10px;display:inline;vertical-align:-1px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 2 pts</div>
                 <div class="cs-impact cs-removed">Will be moved to unassigned pool</div>
               </div>
             </div>
@@ -192,16 +193,16 @@
           <div class="cs-section">
             <div class="cs-head cs-mode">
               <!-- Arrow-path / refresh icon -->
-              <svg viewBox="0 0 24 24" fill="none" stroke="#45aeee" stroke-width="2.5" style="width:14px;height:14px"><path d="M4 4v5h5M20 20v-5h-5" stroke-linecap="round"/><path d="M20 9a8 8 0 00-14.9-2M4 15a8 8 0 0014.9 2" stroke-linecap="round"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--m-blue)" stroke-width="2.5" style="width:14px;height:14px"><path d="M4 4v5h5M20 20v-5h-5" stroke-linecap="round"/><path d="M20 9a8 8 0 00-14.9-2M4 15a8 8 0 0014.9 2" stroke-linecap="round"/></svg>
               Mode Changed
             </div>
-            <div class="cs-row" style="border-color:rgba(69,174,238,0.3)">
-              <div class="cs-dot" style="background:#45aeee"></div>
+            <div class="cs-row" style="border-color:var(--m-blue-a25)">
+              <div class="cs-dot" style="background:var(--m-blue)"></div>
               <div>
                 <div class="cs-detail">
                   <span style="text-decoration:line-through;opacity:0.5">Normal</span>
-                  <span style="margin:0 6px;color:#45aeee">&rarr;</span>
-                  <span style="color:#45aeee;font-weight:500">Extreme</span>
+                  <span style="margin:0 6px;color:var(--m-blue)">&rarr;</span>
+                  <span style="color:var(--m-blue);font-weight:500">Extreme</span>
                 </div>
                 <div class="cs-impact cs-mode">Daily tasks every day including weekends — change applies to future daily tasks only</div>
               </div>
@@ -210,7 +211,7 @@
 
           <!-- Global note -->
           <div class="impact-note">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#888888" stroke-width="2" style="width:14px;height:14px;flex-shrink:0;margin-top:1px"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4m0 4h.01" stroke-linecap="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--m-text-secondary)" stroke-width="2" style="width:14px;height:14px;flex-shrink:0;margin-top:1px"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4m0 4h.01" stroke-linecap="round"/></svg>
             <span>Done and Expired tasks are never affected by any change — your completed work is always preserved.</span>
           </div>
 
@@ -226,5 +227,25 @@
     </div>
   </div>
 </div>
+<script>
+(function() {
+  var btn = document.createElement('button');
+  btn.className = 'mockup-theme-toggle';
+  btn.title = 'Toggle theme';
+  var sun = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  var moon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+  function update() {
+    var t = document.documentElement.getAttribute('data-mockup-theme');
+    btn.innerHTML = t === 'dark' ? sun : moon;
+  }
+  btn.addEventListener('click', function() {
+    var t = document.documentElement.getAttribute('data-mockup-theme');
+    document.documentElement.setAttribute('data-mockup-theme', t === 'dark' ? 'light' : 'dark');
+    update();
+  });
+  document.body.appendChild(btn);
+  update();
+})();
+</script>
 </body>
 </html>

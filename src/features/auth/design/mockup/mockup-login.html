@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-mockup-theme="dark">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Mars Workbench — Login</title>
+<link rel="stylesheet" href="../../../mockup-theme.css" />
 <style>
   /*
    * mars-dark theme tokens (mirrors globals.css)
@@ -18,7 +19,8 @@
    */
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Outfit:wght@300;600;700&display=swap');
 
-  :root {
+  /* Dark (default) */
+  :root, [data-mockup-theme="dark"] {
     --base-100: #141428;
     --base-200: #0e0e1e;
     --base-300: #08081a;
@@ -27,6 +29,37 @@
     --secondary: #a855f7;
     --accent: #f43f5e;
     --neutral: #1a1a34;
+    --glow-cyan: rgba(0, 212, 240, 0.06);
+    --glow-purple: rgba(168, 85, 247, 0.04);
+    --glow-rose: rgba(244, 63, 94, 0.03);
+    --grid-line: rgba(224, 224, 236, 0.02);
+    --divider: rgba(224, 224, 236, 0.08);
+    --btn-border: rgba(224, 224, 236, 0.1);
+    --btn-hover-border: rgba(0, 212, 240, 0.25);
+    --tagline: rgba(224, 224, 236, 0.45);
+    --footer: rgba(224, 224, 236, 0.25);
+    --btn-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  }
+  /* Light */
+  [data-mockup-theme="light"] {
+    --base-100: #ffffff;
+    --base-200: #f1f4f9;
+    --base-300: #e8ecf4;
+    --base-content: #1a1a2e;
+    --primary: #0891b2;
+    --secondary: #7c3aed;
+    --accent: #e11d48;
+    --neutral: #e8ecf4;
+    --glow-cyan: rgba(8, 145, 178, 0.08);
+    --glow-purple: rgba(124, 58, 237, 0.06);
+    --glow-rose: rgba(225, 29, 72, 0.04);
+    --grid-line: rgba(26, 26, 46, 0.03);
+    --divider: rgba(26, 26, 46, 0.08);
+    --btn-border: rgba(26, 26, 46, 0.12);
+    --btn-hover-border: rgba(8, 145, 178, 0.4);
+    --tagline: rgba(26, 26, 46, 0.45);
+    --footer: rgba(26, 26, 46, 0.3);
+    --btn-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
 
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -49,9 +82,9 @@
     position: fixed;
     inset: 0;
     background:
-      radial-gradient(ellipse 60% 50% at 50% 100%, rgba(0, 212, 240, 0.06) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 20% 20%, rgba(168, 85, 247, 0.04) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 50% at 80% 30%, rgba(244, 63, 94, 0.03) 0%, transparent 60%);
+      radial-gradient(ellipse 60% 50% at 50% 100%, var(--glow-cyan) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 20%, var(--glow-purple) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 30%, var(--glow-rose) 0%, transparent 60%);
     pointer-events: none;
     z-index: 0;
   }
@@ -62,8 +95,8 @@
     position: fixed;
     inset: 0;
     background-image:
-      linear-gradient(rgba(224, 224, 236, 0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(224, 224, 236, 0.02) 1px, transparent 1px);
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 64px 64px;
     pointer-events: none;
     z-index: 0;
@@ -138,7 +171,7 @@
     font-family: 'Outfit', sans-serif;
     font-weight: 300;
     font-size: 15px;
-    color: rgba(224, 224, 236, 0.45);
+    color: var(--tagline);
     letter-spacing: 0.3px;
   }
 
@@ -149,8 +182,8 @@
     background: linear-gradient(
       90deg,
       transparent 0%,
-      rgba(224, 224, 236, 0.08) 30%,
-      rgba(224, 224, 236, 0.08) 70%,
+      var(--divider) 30%,
+      var(--divider) 70%,
       transparent 100%
     );
   }
@@ -172,7 +205,7 @@
     gap: 12px;
     width: 100%;
     padding: 14px 24px;
-    border: 1px solid rgba(224, 224, 236, 0.1);
+    border: 1px solid var(--btn-border);
     border-radius: 12px;
     background: var(--neutral);
     color: var(--base-content);
@@ -196,9 +229,9 @@
   }
 
   .google-btn:hover {
-    border-color: rgba(0, 212, 240, 0.25);
+    border-color: var(--btn-hover-border);
     transform: translateY(-1px);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--btn-shadow);
   }
 
   .google-btn:hover::before { opacity: 1; }
@@ -219,7 +252,7 @@
   /* ── footer ── */
   .login-footer {
     font-size: 12px;
-    color: rgba(224, 224, 236, 0.25);
+    color: var(--footer);
     text-align: center;
     line-height: 1.6;
     letter-spacing: 0.2px;
@@ -273,5 +306,25 @@
   </div>
 </div>
 
+<script>
+(function() {
+  var btn = document.createElement('button');
+  btn.className = 'mockup-theme-toggle';
+  btn.title = 'Toggle theme';
+  var sun = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  var moon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+  function update() {
+    var t = document.documentElement.getAttribute('data-mockup-theme');
+    btn.innerHTML = t === 'dark' ? sun : moon;
+  }
+  btn.addEventListener('click', function() {
+    var t = document.documentElement.getAttribute('data-mockup-theme');
+    document.documentElement.setAttribute('data-mockup-theme', t === 'dark' ? 'light' : 'dark');
+    update();
+  });
+  document.body.appendChild(btn);
+  update();
+})();
+</script>
 </body>
 </html>
