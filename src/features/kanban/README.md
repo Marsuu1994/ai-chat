@@ -42,6 +42,7 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - Updated root layout metadata: manifest link, viewport export, apple-touch-icon, appleWebApp config
 - Registered service worker from ThemeProvider on mount
 - Generated placeholder PWA icons (gradient "M" on dark background) in `public/icons/`
+- Fixed dynamic island overlap on iOS PWA: added `env(safe-area-inset-top)` padding to root layout and `env(safe-area-inset-bottom)` to bottom tab bar
 - Created shared mockup theme system (`mockup-theme.css`) with light/dark CSS variables, applied to all kanban and auth mockups with interactive toggle button
 - Converted all hardcoded colors in kanban mockup `styles.css` and 6 HTML mockup files to theme variables — full dark mode support across board, empty, plan-form, task-modal, ai-chat, and review-changes
 - Created mobile kanban mockup (`mockup-mobile/mockup-board.html`): 375×812 phone frames showing drag-and-drop flow (normal state, long press pickup, drag over target), stats dashboard with linear progress bars, compact task cards with risk top strips

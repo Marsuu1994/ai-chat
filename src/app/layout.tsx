@@ -69,7 +69,7 @@ export default async function RootLayout({
       >
         <ThemeProvider>
           <BreakpointProvider>
-            <div className="flex h-screen">
+            <div className="flex h-screen pt-[env(safe-area-inset-top)]">
               <AppSidebar user={userInfo} />
               <main className="flex-1 min-w-0 overflow-auto pb-20 md:pb-0">{children}</main>
               <BottomTabBar user={userInfo} activePlanId={activePlan?.id ?? null} />
