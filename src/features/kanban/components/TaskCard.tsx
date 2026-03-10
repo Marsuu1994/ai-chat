@@ -32,12 +32,21 @@ export default function TaskCard({
     task.forDate !== null &&
     normalizeForDate(task.forDate) < today;
 
-  const riskBorderClass =
+  // Desktop: left border for risk
+  const desktopRiskClass =
     riskLevel === "danger"
-      ? "border-l-4 border-l-error"
+      ? "md:border-l-4 md:border-l-error"
       : riskLevel === "warning"
-        ? "border-l-4 border-l-warning"
-        : "border-l-4 border-l-transparent";
+        ? "md:border-l-4 md:border-l-warning"
+        : "md:border-l-4 md:border-l-transparent";
+
+  // Mobile: top border for risk
+  const mobileRiskClass =
+    riskLevel === "danger"
+      ? "border-t-[3px] border-t-error"
+      : riskLevel === "warning"
+        ? "border-t-[3px] border-t-warning"
+        : "";
 
   return (
     <Draggable draggableId={task.id} index={index}>
@@ -46,7 +55,7 @@ export default function TaskCard({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`card bg-base-100/70 shadow-sm border border-base-content/10 cursor-grab transition-[box-shadow,border-color,opacity] duration-150 hover:-translate-y-0.5 hover:shadow-md hover:border-base-content/25 ${riskBorderClass} ${
+          className={`card bg-base-100/70 shadow-sm border border-base-content/10 cursor-grab transition-[box-shadow,border-color,opacity] duration-150 hover:-translate-y-0.5 hover:shadow-md hover:border-base-content/25 flex-shrink-0 w-[136px] md:w-auto ${mobileRiskClass} ${desktopRiskClass} ${
             isDone ? "opacity-50" : ""
           } ${
             snapshot.isDragging
@@ -54,9 +63,14 @@ export default function TaskCard({
               : ""
           }`}
         >
-          <div className="card-body p-3 gap-1">
+          <div className="card-body p-2.5 md:p-3 gap-1.5 md:gap-1">
+            {/* Mobile: badge first, then title, then footer */}
+            <div className="md:hidden">
+              <TaskTypeBadge type={taskType} />
+            </div>
+
             <h3
-              className={`card-title text-sm font-medium ${
+              className={`card-title text-xs md:text-sm font-medium line-clamp-2 h-[2.6em] md:h-auto md:line-clamp-none ${
                 isDone ? "line-through text-base-content/50" : ""
               }`}
             >
@@ -64,12 +78,13 @@ export default function TaskCard({
             </h3>
 
             {task.description && (
-              <p className="text-xs text-base-content/60">
+              <p className="hidden md:block text-xs text-base-content/60">
                 {task.description}
               </p>
             )}
 
-            <div className="flex items-center gap-2 mt-2">
+            {/* Desktop footer */}
+            <div className="hidden md:flex items-center gap-2 mt-2">
               <TaskTypeBadge type={taskType} />
 
               {isRollover && (
@@ -88,6 +103,19 @@ export default function TaskCard({
               <span className="flex gap-0.5 text-xs ml-auto">
                 <StarIcon className="size-4 text-warning" />
                 <span className="text-base-content/70 font-bold">{`${task.points} ${task.points === 1 ? "pt" : "pts"}`}</span>
+              </span>
+            </div>
+
+            {/* Mobile footer */}
+            <div className="flex md:hidden items-center mt-auto">
+              {isRollover && (
+                <span className="flex items-center gap-0.5 text-[8px] text-warning font-medium">
+                  ↩ {formatShortDate(new Date(task.forDate!))}
+                </span>
+              )}
+              <span className="flex gap-0.5 text-[9px] ml-auto items-center">
+                <StarIcon className="size-3 text-warning" />
+                <span className="text-base-content/70 font-bold">{task.points}</span>
               </span>
             </div>
           </div>

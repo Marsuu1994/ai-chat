@@ -1,8 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/common/ThemeProvider";
+import { BreakpointProvider } from "@/components/common/BreakpointProvider";
 import { AppSidebar } from "@/components/common/AppSidebar";
+import { BottomTabBar } from "@/components/common/BottomTabBar";
 import { createClient } from "@/lib/supabase/server";
+import { getActivePlan } from "@/lib/db/plans";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,9 +18,29 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#141428",
+};
+
 export const metadata: Metadata = {
-  title: "AI Chat Learning Lab",
-  description: "Hands-on AI chat experiments built with Next.js.",
+  title: "Mars Workbench",
+  description: "Agile-like personal kanban planner",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Mars Workbench",
+  },
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
+  },
 };
 
 export default async function RootLayout({
@@ -37,16 +60,21 @@ export default async function RootLayout({
       }
     : null;
 
+  const activePlan = user ? await getActivePlan() : null;
+
   return (
     <html lang="en" data-theme="mars-dark" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-base-300 text-base-content antialiased`}
       >
         <ThemeProvider>
-          <div className="flex h-screen">
-            <AppSidebar user={userInfo} />
-            <main className="flex-1 min-w-0 overflow-auto">{children}</main>
-          </div>
+          <BreakpointProvider>
+            <div className="flex h-screen">
+              <AppSidebar user={userInfo} />
+              <main className="flex-1 min-w-0 overflow-auto pb-20 md:pb-0">{children}</main>
+              <BottomTabBar user={userInfo} activePlanId={activePlan?.id ?? null} />
+            </div>
+          </BreakpointProvider>
         </ThemeProvider>
       </body>
     </html>

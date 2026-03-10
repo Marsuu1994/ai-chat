@@ -97,7 +97,7 @@ export default function KanbanBoard({
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="flex gap-4 overflow-x-auto pb-4 h-full">
+      <div className="flex flex-col gap-3.5 md:flex-row md:gap-4 overflow-y-auto md:overflow-x-auto md:overflow-y-visible pb-4 h-full">
         <BoardColumn
           status={TaskStatus.TODO}
           tasks={columns[TaskStatus.TODO]}

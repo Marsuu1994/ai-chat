@@ -4,7 +4,7 @@ A drag-and-drop kanban board for planning and tracking tasks within weekly perio
 
 ## Current State
 
-Backend complete (schema, DAL, services, server actions, board sync). Full board UI with drag-and-drop — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards that can be dragged between columns. Moves use optimistic UI with server-side persistence and automatic rollback on failure. Task cards show title, description, unified type badge (`TaskTypeBadge` — supports DAILY, WEEKLY, and AD_HOC), and points with color-coded risk badges (⚠ at risk / ‼ urgent). Progress dashboard shows Today ring, stat metrics, and Week Progress Bar. Board metrics use a two-query strategy: `getBoardTasksByPlanId` for UI tasks + `getBoardMetricsByPlanId` (raw SQL aggregate with `FILTER` clauses) for pre-computed stats, fetched in parallel. End-of-period sync auto-expires undone tasks and transitions plans. Create/edit plan flows share a unified `PlanForm` with inline type/frequency config per template and a Plan Mode toggle (NORMAL = weekdays only, EXTREME = every day). AD_HOC tasks fully implemented end-to-end with plan linking. `ReviewChangesModal` shows added/removed/modified template diffs and mode changes. Architecture follows strict 3-layer pattern with `prisma.$transaction()` for all multi-step mutations. All date calculations anchored to `America/Los_Angeles` timezone via `KANBAN_TZ` constant, ensuring consistent behavior across local dev and Vercel (UTC) deployments.
+Backend complete (schema, DAL, services, server actions, board sync). Full board UI with drag-and-drop — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards that can be dragged between columns. Moves use optimistic UI with server-side persistence and automatic rollback on failure. Task cards show title, description, unified type badge (`TaskTypeBadge` — supports DAILY, WEEKLY, and AD_HOC), and points with color-coded risk badges (⚠ at risk / ‼ urgent). Progress dashboard shows Today ring, stat metrics, and Week Progress Bar. Board metrics use a two-query strategy: `getBoardTasksByPlanId` for UI tasks + `getBoardMetricsByPlanId` (raw SQL aggregate with `FILTER` clauses) for pre-computed stats, fetched in parallel. End-of-period sync auto-expires undone tasks and transitions plans. Create/edit plan flows share a unified `PlanForm` with inline type/frequency config per template and a Plan Mode toggle (NORMAL = weekdays only, EXTREME = every day). AD_HOC tasks fully implemented end-to-end with plan linking. `ReviewChangesModal` shows added/removed/modified template diffs and mode changes. Architecture follows strict 3-layer pattern with `prisma.$transaction()` for all multi-step mutations. All date calculations anchored to `America/Los_Angeles` timezone via `KANBAN_TZ` constant, ensuring consistent behavior across local dev and Vercel (UTC) deployments. PWA manifest and service worker enable mobile installability ("Add to Home Screen") on both Android and iOS — standalone display with mars-dark theme colors.
 
 **AI Assisted Plan Creation**: Full design complete — flows, API actions, mockups. Chat-based wizard where AI generates draft task templates via structured JSON output (`response_format: json_schema`). Two server actions: `getWelcomeMessageAction` (plain text LLM welcome) and `generateDraftPlanAction` (structured draft with template cards). `Chat.metadata` serves as working clipboard for latest draft and stats snapshot. `MessageType` enum (`TEXT`, `DRAFT_PLAN`) distinguishes plain messages from structured drafts. Static suggestion chips for welcome screen. Post-approval reuses existing `createPlanAction`. Mockups: `mockup-empty.html` (new/returning user), `mockup-plan-form.html` (AI entry point), `mockup-ai-chat.html` (6-screen flow: welcome, generating, draft, revision, approval).
 
@@ -12,9 +12,11 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 
 ## Backlog
 ### High Priority
-- [ ] Implement mobile view + PWA manifest
+- [ ] Implement mobile view
 - [ ] Implement the AI assisted plan creation flow
 - [ ] Refactor the codebase, remove chat feature and make kanban as the main entry of the app
+- [ ] Setup story book and optimize workflow for UI mockup
+- [ ] Redesign the navigation after getting rid of chat feature, keep navigation logic same between web and mobile, especially the plan tab
 - [ ] Add dashed border to droppable column indicate item can be placed here.
 - [ ] Consolidate task generation logic for update plan, or consider to remove the edit plan action, user can only set their plan during the beginning
 - [ ] Design evidence submit feature when user move task to done
@@ -35,6 +37,11 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 ## Update Log
 
 ### 2026-03-09
+- Added PWA manifest (`public/manifest.json`) with standalone display, mars-dark theme colors, and 192/512/maskable icons for mobile installability
+- Added minimal no-op service worker (`public/sw.js`) to satisfy Chrome's PWA install criteria
+- Updated root layout metadata: manifest link, viewport export, apple-touch-icon, appleWebApp config
+- Registered service worker from ThemeProvider on mount
+- Generated placeholder PWA icons (gradient "M" on dark background) in `public/icons/`
 - Created shared mockup theme system (`mockup-theme.css`) with light/dark CSS variables, applied to all kanban and auth mockups with interactive toggle button
 - Converted all hardcoded colors in kanban mockup `styles.css` and 6 HTML mockup files to theme variables — full dark mode support across board, empty, plan-form, task-modal, ai-chat, and review-changes
 - Created mobile kanban mockup (`mockup-mobile/mockup-board.html`): 375×812 phone frames showing drag-and-drop flow (normal state, long press pickup, drag over target), stats dashboard with linear progress bars, compact task cards with risk top strips
@@ -240,3 +247,4 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - [x] Backlog drawer (collapsed + expanded) in v2 board design
 - [x] Template categories in v2 plan form design
 - [x] Custom daisyUI themes (mars-dark, mars-light) applied to app
+- [x] PWA manifest, service worker, and icons for mobile installability (Add to Home Screen)

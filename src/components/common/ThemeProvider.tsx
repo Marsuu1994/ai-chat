@@ -16,6 +16,11 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
     applyTheme();
 
+    // Register service worker for PWA installability
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js");
+    }
+
     // Re-check every minute so the theme switches at 6am/6pm
     const interval = setInterval(applyTheme, 60_000);
     return () => clearInterval(interval);

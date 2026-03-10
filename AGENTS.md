@@ -24,6 +24,10 @@ A Next.js application with multiple features: AI Chat and Kanban Period Planner.
 ## Project Structure
 
 ```text
+public/
+├── manifest.json                  # PWA web app manifest
+├── sw.js                          # Minimal service worker (PWA install criteria)
+└── icons/                         # PWA icons (192, 512, maskable, apple-touch)
 prisma/
 ├── schema.prisma                  # Database schema
 └── migrations/                    # Database migrations

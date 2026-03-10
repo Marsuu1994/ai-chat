@@ -52,7 +52,7 @@ export const AppSidebar = ({ user }: AppSidebarProps) => {
 
   return (
     <aside
-      className={`flex flex-col flex-shrink-0 border-r border-base-200 bg-base-100 transition-all duration-200 ${
+      className={`hidden md:flex flex-col flex-shrink-0 border-r border-base-200 bg-base-100 transition-all duration-200 ${
         collapsed ? "w-16" : "w-60"
       }`}
     >

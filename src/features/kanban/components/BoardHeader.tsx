@@ -11,17 +11,17 @@ export default function BoardHeader({ periodKey, planId }: BoardHeaderProps) {
   const dateRange = getWeekDateRange(periodKey);
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-b border-base-content/10">
-      <div className="flex items-center gap-3">
-        <h1 className="text-xl font-bold">
-          <span className="text-success">Kanban</span> Planner
+    <div className="flex items-center justify-between px-4 py-2 md:py-3 border-b border-base-content/10">
+      <div className="flex items-center justify-between flex-1 md:flex-initial md:justify-start gap-3">
+        <h1 className="text-lg md:text-xl font-bold">
+          <span className="text-primary md:text-success">Kanban</span> Planner
         </h1>
-        <span className="bg-success/15 text-success text-xs font-medium px-3 py-1 rounded-full font-semibold">
+        <span className="bg-primary/15 text-primary md:bg-success/15 md:text-success text-xs font-medium px-3 py-1 rounded-full font-semibold">
           {dateRange}
         </span>
       </div>
 
-      <Link href={`/kanban/plans/${planId}`} className="btn btn-ghost btn-sm text-sm gap-1 border border-base-content/15">
+      <Link href={`/kanban/plans/${planId}`} className="hidden md:inline-flex btn btn-ghost btn-sm text-sm gap-1 border border-base-content/15">
         <PencilSquareIcon className="w-4 h-4" />
         Edit Plan
       </Link>

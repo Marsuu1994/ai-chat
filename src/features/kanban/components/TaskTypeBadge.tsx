@@ -15,7 +15,7 @@ export default function TaskTypeBadge({ type }: TaskTypeBadgeProps) {
 
   return (
     <span
-      className={`text-[11px] font-semibold px-2 py-0.5 rounded ${config.className}`}
+      className={`text-[8px] md:text-[11px] font-semibold px-1.5 py-px md:px-2 md:py-0.5 rounded ${config.className}`}
     >
       {config.label}
     </span>
