@@ -5,11 +5,256 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kanban v2 — Priority Matrix</title>
   <link rel="stylesheet" href="./styles.css">
+  <style>
+    /* ════════════════════════════════════════════
+       Matrix-Specific Styles (v2 dark theme)
+       ════════════════════════════════════════════ */
+
+    /* ── Matrix page container ── */
+    .matrix-page {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden;
+    }
+
+    /* ── Page title bar ── */
+    .page-title-bar {
+      padding: var(--sp-lg) var(--sp-xl) var(--sp-md);
+      border-bottom: 1px solid var(--border);
+      background: var(--b2); flex-shrink: 0;
+      display: flex; align-items: center; gap: var(--sp-md);
+    }
+    .page-title-icon {
+      width: 36px; height: 36px; border-radius: var(--r-lg);
+      display: flex; align-items: center; justify-content: center;
+      background: var(--secondary-10); flex-shrink: 0;
+    }
+    .page-title-icon svg { width: 18px; height: 18px; color: var(--secondary); }
+    .page-title-text { display: flex; flex-direction: column; gap: 1px; }
+    .page-title-name {
+      font-family: var(--font-display); font-size: 1rem;
+      font-weight: 700; color: var(--bc);
+    }
+    .page-title-desc { font-size: 0.72rem; color: var(--bc-dim); }
+    .page-title-count {
+      margin-left: auto; font-family: var(--font-mono);
+      font-size: 0.68rem; font-weight: 500; color: var(--bc-secondary);
+      display: flex; align-items: center; gap: var(--sp-xs);
+    }
+    .page-title-count-num { font-weight: 700; color: var(--bc); }
+
+    /* ── Hint bar ── */
+    .matrix-hint-bar {
+      padding: var(--sp-sm) var(--sp-xl); font-size: 0.72rem;
+      color: var(--bc-dim); border-bottom: 1px solid var(--border-subtle);
+      background: var(--b3); display: flex; align-items: center;
+      gap: var(--sp-xs); flex-shrink: 0;
+      font-family: var(--font-body);
+    }
+    .matrix-hint-bar svg {
+      width: 14px; height: 14px; flex-shrink: 0; color: var(--primary);
+    }
+    .matrix-hint-bar strong { color: var(--primary); }
+
+    /* ── Axis + grid wrapper ── */
+    .matrix-layout {
+      flex: 1; display: flex; overflow: hidden; min-height: 0;
+    }
+
+    /* ── Y axis ── */
+    .axis-y {
+      width: 28px; flex-shrink: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: space-around; padding: 20px 0;
+      background: var(--b3); border-right: 1px solid var(--border-subtle);
+    }
+    .axis-y-label {
+      writing-mode: vertical-rl; text-orientation: mixed;
+      font-family: var(--font-mono); font-size: 0.58rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--bc-dim); transform: rotate(180deg);
+    }
+
+    /* ── X axis ── */
+    .axis-x {
+      height: 26px; flex-shrink: 0; display: flex; align-items: center;
+      justify-content: space-around; background: var(--b3);
+      border-top: 1px solid var(--border-subtle); margin-left: 28px;
+    }
+    .axis-x-label {
+      font-family: var(--font-mono); font-size: 0.58rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--bc-dim); flex: 1; text-align: center;
+    }
+
+    /* ── 2x2 Grid ── */
+    .matrix-grid {
+      flex: 1; display: grid; grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr; overflow: hidden;
+    }
+
+    /* ── Quadrant ── */
+    .quadrant {
+      display: flex; flex-direction: column; overflow: hidden;
+      border: 0.5px solid var(--border);
+    }
+    .quadrant-header {
+      padding: 14px 20px 8px 20px; flex-shrink: 0;
+      display: flex; align-items: center; gap: var(--sp-sm);
+      border-top: 3px solid transparent;
+    }
+    .quadrant-icon { font-size: 10px; flex-shrink: 0; }
+    .quadrant-label {
+      font-family: var(--font-display); font-size: 0.82rem;
+      font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.04em; color: var(--bc);
+    }
+    .quadrant-sublabel {
+      font-family: var(--font-body); font-size: 0.7rem;
+      color: var(--bc-dim); font-weight: 400;
+    }
+    .quadrant-count {
+      font-family: var(--font-mono); font-size: 0.68rem;
+      font-weight: 600; color: var(--bc-dim); margin-left: auto;
+    }
+    .quadrant-body {
+      flex: 1; padding: 6px 16px 16px 16px; display: flex;
+      flex-direction: column; gap: 6px; overflow-y: auto;
+    }
+
+    /* Quadrant accent colors */
+    .q-do-first .quadrant-header { border-top-color: var(--error); }
+    .q-do-first { background: var(--error-10); }
+    .q-schedule .quadrant-header { border-top-color: var(--primary); }
+    .q-schedule { background: var(--primary-10); }
+    .q-squeeze .quadrant-header { border-top-color: var(--warning); }
+    .q-squeeze { background: var(--warning-10); }
+    .q-later .quadrant-header { border-top-color: var(--bc-dim); }
+    .q-later { background: rgba(255, 255, 255, 0.01); }
+
+    /* ── Matrix card ── */
+    .mx-card {
+      background: var(--b1); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 10px 12px; cursor: grab;
+      display: flex; align-items: center; gap: var(--sp-sm);
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+      position: relative;
+    }
+    .mx-card:hover {
+      border-color: var(--bc-dim);
+      transform: translateY(-1px);
+      box-shadow: var(--card-shadow);
+    }
+    .mx-card-title {
+      font-size: 0.78rem; font-weight: 500; color: var(--bc);
+      flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .mx-card-pts {
+      font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700;
+      color: var(--warning); display: flex; align-items: center;
+      gap: 2px; flex-shrink: 0;
+    }
+    .mx-card-pts svg { width: 11px; height: 11px; }
+    .mx-card-send {
+      width: 22px; height: 22px; border-radius: var(--r-sm); border: none;
+      background: transparent; cursor: pointer; display: none;
+      align-items: center; justify-content: center; color: var(--bc-dim);
+      flex-shrink: 0; padding: 0; transition: all 0.15s;
+    }
+    .mx-card:hover .mx-card-send { display: flex; }
+    .mx-card-send:hover {
+      background: var(--primary-10); color: var(--primary);
+    }
+    .mx-card-send svg { width: 14px; height: 14px; }
+    .mx-card-drag {
+      width: 14px; height: 14px; color: var(--border); flex-shrink: 0;
+    }
+    .mx-card:hover .mx-card-drag { color: var(--bc-dim); }
+
+    /* Card on-board state */
+    .mx-card.on-board { opacity: 0.55; }
+    .mx-card.on-board .mx-card-title { color: var(--bc-secondary); }
+    .on-board-tag {
+      font-family: var(--font-mono); font-size: 0.55rem; font-weight: 600;
+      color: var(--primary); background: var(--primary-10);
+      border: 1px solid var(--primary-20);
+      padding: 2px 6px; border-radius: var(--r-sm);
+      flex-shrink: 0; white-space: nowrap; text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Card active/selected state (send screen) */
+    .mx-card.active-send {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-20), var(--primary-glow);
+    }
+
+    /* ── Send action popover ── */
+    .send-popover {
+      position: absolute; top: 100%; right: 0;
+      margin-top: 6px; background: var(--b2);
+      border: 1px solid var(--border); border-radius: var(--r-lg);
+      padding: 10px 12px; z-index: 50;
+      box-shadow: var(--card-shadow-lg);
+      display: flex; flex-direction: column; gap: 6px;
+      min-width: 180px;
+    }
+    .send-popover::before {
+      content: ''; position: absolute; top: -6px; right: 20px;
+      width: 10px; height: 10px; background: var(--b2);
+      border-left: 1px solid var(--border);
+      border-top: 1px solid var(--border); rotate: 45deg;
+    }
+    .send-popover-title {
+      font-family: var(--font-mono); font-size: 0.6rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--bc-dim); margin-bottom: 2px;
+    }
+    .send-popover-btn {
+      display: flex; align-items: center; gap: var(--sp-sm);
+      padding: var(--sp-sm) 10px; border-radius: var(--r-md);
+      border: 1px solid var(--border); background: var(--b1);
+      cursor: pointer; font-family: var(--font-body);
+      font-size: 0.75rem; font-weight: 500; color: var(--bc);
+      transition: all 0.15s;
+    }
+    .send-popover-btn:hover {
+      border-color: var(--primary); background: var(--primary-10);
+    }
+    .send-popover-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .send-popover-btn .col-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+
+    /* ── Quadrant add button ── */
+    .mx-add-btn {
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+      width: 100%; padding: var(--sp-sm); border-radius: var(--r-md);
+      border: 1.5px dashed var(--border); background: transparent;
+      color: var(--bc-dim); font-family: var(--font-body);
+      font-size: 0.72rem; font-weight: 500; cursor: pointer;
+      transition: border-color 0.15s, color 0.15s; margin-top: auto;
+    }
+    .mx-add-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .mx-add-btn svg { width: 13px; height: 13px; }
+
+    /* ── Dragging state highlight (Screen 2) ── */
+    .mx-card.dragging {
+      opacity: 0.85;
+      border-color: var(--primary);
+      box-shadow: var(--primary-glow);
+      transform: rotate(-1.5deg) scale(1.03);
+      cursor: grabbing;
+    }
+    .quadrant.drop-target {
+      outline: 2px dashed var(--primary);
+      outline-offset: -2px;
+      background: var(--primary-10);
+    }
+  </style>
 </head>
 <body class="scan-line">
 
   <nav class="screen-nav">
-    <a href="#matrix-view">Eisenhower Matrix</a>
+    <a href="#matrix-view">Matrix View</a>
+    <a href="#matrix-send">Send to Board</a>
   </nav>
 
 
@@ -49,187 +294,362 @@
           </div>
         </header>
 
-        <!-- Axis Labels (top) -->
-        <div style="display: flex; padding: var(--sp-md) var(--sp-xl) 0; justify-content: center;">
-          <div style="display: flex; align-items: center; gap: var(--sp-sm);">
-            <span class="label" style="color: var(--text-dim);">&#8593; Urgent</span>
+        <div class="matrix-page">
+          <!-- Page identity -->
+          <div class="page-title-bar">
+            <div class="page-title-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="page-title-text">
+              <span class="page-title-name">My Priorities</span>
+              <span class="page-title-desc">One-off things you want to do &mdash; not tied to your weekly plan</span>
+            </div>
+            <div class="page-title-count">
+              <span class="page-title-count-num">8</span> total &middot;
+              <span class="page-title-count-num">3</span> tracking this week
+            </div>
           </div>
-        </div>
 
-        <div class="matrix-container">
-          <div class="matrix-grid">
-            <!-- Q1: Do First (Urgent + Important) -->
-            <div class="matrix-quadrant quad-do-first">
-              <div class="quad-header">
-                <div>
-                  <div class="quad-title">Do First</div>
-                  <div class="quad-subtitle">Urgent + Important</div>
-                </div>
-                <span class="col-count" style="border-color: rgba(255, 23, 68, 0.2); color: var(--danger);">3</span>
-              </div>
+          <div class="matrix-hint-bar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Drag between quadrants to reprioritize &middot; click <strong>&rarr;</strong> to track this week
+          </div>
 
-              <div class="task-card risk-danger" style="padding: var(--sp-sm) var(--sp-md);">
-                <div class="card-top">
-                  <span class="card-title" style="font-size: 0.78rem;">Submit kanban PR</span>
-                </div>
-                <div class="card-footer">
-                  <div class="card-badges">
-                    <span class="badge badge-weekly">Weekly</span>
-                    <span class="badge badge-risk-danger">&#8252; urgent</span>
-                  </div>
-                  <span class="card-points"><span class="star">&#9733;</span> 8</span>
-                </div>
-              </div>
-
-              <div class="task-card risk-danger" style="padding: var(--sp-sm) var(--sp-md);">
-                <div class="card-top">
-                  <span class="card-title" style="font-size: 0.78rem;">Review Anki flashcards</span>
-                </div>
-                <div class="card-footer">
-                  <div class="card-badges">
-                    <span class="badge badge-daily">Daily</span>
-                    <span class="rollover-tag">&#8617; Mon</span>
-                  </div>
-                  <span class="card-points"><span class="star">&#9733;</span> 1</span>
-                </div>
-              </div>
-
-              <div class="task-card risk-warning" style="padding: var(--sp-sm) var(--sp-md);">
-                <div class="card-top">
-                  <span class="card-title" style="font-size: 0.78rem;">Fix auth middleware bug</span>
-                </div>
-                <div class="card-footer">
-                  <div class="card-badges">
-                    <span class="badge badge-adhoc">Ad-hoc</span>
-                    <span class="badge badge-risk-warning">&#9888; at risk</span>
-                  </div>
-                  <span class="card-points"><span class="star">&#9733;</span> 3</span>
-                </div>
-              </div>
+          <div class="matrix-layout">
+            <!-- Y axis -->
+            <div class="axis-y">
+              <span class="axis-y-label">Important</span>
+              <span class="axis-y-label">Not Important</span>
             </div>
 
-            <!-- Q2: Schedule (Not Urgent + Important) -->
-            <div class="matrix-quadrant quad-schedule">
-              <div class="quad-header">
-                <div>
-                  <div class="quad-title">Schedule</div>
-                  <div class="quad-subtitle">Important, Not Urgent</div>
+            <!-- 2x2 Grid -->
+            <div class="matrix-grid">
+              <!-- Q1: Do First (Urgent + Important) -->
+              <div class="quadrant q-do-first">
+                <div class="quadrant-header">
+                  <span class="quadrant-icon" style="color:var(--error)">&#9679;</span>
+                  <span class="quadrant-label">Do First</span>
+                  <span class="quadrant-sublabel">&mdash; Urgent &amp; Important</span>
+                  <span class="quadrant-count">2</span>
                 </div>
-                <span class="col-count" style="border-color: rgba(0, 229, 255, 0.2); color: var(--primary);">4</span>
-              </div>
-
-              <div class="task-card" style="padding: var(--sp-sm) var(--sp-md);">
-                <div class="card-top">
-                  <span class="card-title" style="font-size: 0.78rem;">Solve 3 LeetCode problems</span>
-                </div>
-                <div class="card-footer">
-                  <div class="card-badges"><span class="badge badge-daily">Daily</span></div>
-                  <span class="card-points"><span class="star">&#9733;</span> 3</span>
-                </div>
-              </div>
-
-              <div class="task-card" style="padding: var(--sp-sm) var(--sp-md);">
-                <div class="card-top">
-                  <span class="card-title" style="font-size: 0.78rem;">Write blog post draft</span>
-                </div>
-                <div class="card-footer">
-                  <div class="card-badges"><span class="badge badge-weekly">Weekly</span></div>
-                  <span class="card-points"><span class="star">&#9733;</span> 5</span>
-                </div>
-              </div>
-
-              <div class="task-card" style="padding: var(--sp-sm) var(--sp-md);">
-                <div class="card-top">
-                  <span class="card-title" style="font-size: 0.78rem;">Complete system design chapter</span>
-                </div>
-                <div class="card-footer">
-                  <div class="card-badges"><span class="badge badge-weekly">Weekly</span></div>
-                  <span class="card-points"><span class="star">&#9733;</span> 5</span>
-                </div>
-              </div>
-
-              <div class="task-card" style="padding: var(--sp-sm) var(--sp-md);">
-                <div class="card-top">
-                  <span class="card-title" style="font-size: 0.78rem;">Workout — Push day</span>
-                </div>
-                <div class="card-footer">
-                  <div class="card-badges"><span class="badge badge-daily">Daily</span></div>
-                  <span class="card-points"><span class="star">&#9733;</span> 2</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Q3: Delegate (Urgent + Not Important) -->
-            <div class="matrix-quadrant quad-delegate">
-              <div class="quad-header">
-                <div>
-                  <div class="quad-title">Delegate</div>
-                  <div class="quad-subtitle">Urgent, Not Important</div>
-                </div>
-                <span class="col-count" style="border-color: rgba(255, 179, 0, 0.2); color: var(--warning);">2</span>
-              </div>
-
-              <div class="task-card risk-warning" style="padding: var(--sp-sm) var(--sp-md);">
-                <div class="card-top">
-                  <span class="card-title" style="font-size: 0.78rem;">Read 30 pages</span>
-                </div>
-                <div class="card-footer">
-                  <div class="card-badges">
-                    <span class="badge badge-daily">Daily</span>
-                    <span class="badge badge-risk-warning">&#9888; at risk</span>
+                <div class="quadrant-body">
+                  <div class="mx-card on-board">
+                    <span class="mx-card-title">Shop birthday gift</span>
+                    <span class="on-board-tag">This Week</span>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
                   </div>
-                  <span class="card-points"><span class="star">&#9733;</span> 2</span>
-                </div>
-              </div>
-
-              <div class="task-card risk-warning" style="padding: var(--sp-sm) var(--sp-md);">
-                <div class="card-top">
-                  <span class="card-title" style="font-size: 0.78rem;">Record YouTube video</span>
-                </div>
-                <div class="card-footer">
-                  <div class="card-badges">
-                    <span class="badge badge-weekly">Weekly</span>
-                    <span class="badge badge-risk-warning">&#9888; at risk</span>
+                  <div class="mx-card">
+                    <span class="mx-card-title">Call dentist</span>
+                    <span class="mx-card-pts"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>2</span>
+                    <button class="mx-card-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
                   </div>
-                  <span class="card-points"><span class="star">&#9733;</span> 8</span>
+                  <button class="mx-add-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+                    Add
+                  </button>
                 </div>
               </div>
-            </div>
 
-            <!-- Q4: Eliminate (Not Urgent + Not Important) -->
-            <div class="matrix-quadrant quad-eliminate">
-              <div class="quad-header">
-                <div>
-                  <div class="quad-title">Eliminate</div>
-                  <div class="quad-subtitle">Neither Urgent Nor Important</div>
+              <!-- Q2: Schedule (Important + Not Urgent) -->
+              <div class="quadrant q-schedule">
+                <div class="quadrant-header">
+                  <span class="quadrant-icon" style="color:var(--primary)">&#9679;</span>
+                  <span class="quadrant-label">Schedule</span>
+                  <span class="quadrant-sublabel">&mdash; Important</span>
+                  <span class="quadrant-count">3</span>
                 </div>
-                <span class="col-count">1</span>
+                <div class="quadrant-body">
+                  <div class="mx-card on-board">
+                    <span class="mx-card-title">File tax report</span>
+                    <span class="on-board-tag">This Week</span>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                  </div>
+                  <div class="mx-card">
+                    <span class="mx-card-title">Find gym coach</span>
+                    <span class="mx-card-pts"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>3</span>
+                    <button class="mx-card-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                  </div>
+                  <div class="mx-card">
+                    <span class="mx-card-title">Learn Python basics</span>
+                    <span class="mx-card-pts"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>5</span>
+                    <button class="mx-card-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                  </div>
+                  <button class="mx-add-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+                    Add
+                  </button>
+                </div>
               </div>
 
-              <div class="task-card" style="padding: var(--sp-sm) var(--sp-md); opacity: 0.6;">
-                <div class="card-top">
-                  <span class="card-title" style="font-size: 0.78rem;">Update portfolio site</span>
+              <!-- Q3: Squeeze In (Urgent + Not Important) -->
+              <div class="quadrant q-squeeze">
+                <div class="quadrant-header">
+                  <span class="quadrant-icon" style="color:var(--warning)">&#9679;</span>
+                  <span class="quadrant-label">Squeeze In</span>
+                  <span class="quadrant-sublabel">&mdash; Urgent</span>
+                  <span class="quadrant-count">1</span>
                 </div>
-                <div class="card-footer">
-                  <div class="card-badges"><span class="badge badge-adhoc">Ad-hoc</span></div>
-                  <span class="card-points"><span class="star">&#9733;</span> 2</span>
+                <div class="quadrant-body">
+                  <div class="mx-card">
+                    <span class="mx-card-title">Reply to landlord</span>
+                    <span class="mx-card-pts"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>1</span>
+                    <button class="mx-card-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                  </div>
+                  <button class="mx-add-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              <!-- Q4: Maybe Later (Not Urgent + Not Important) -->
+              <div class="quadrant q-later">
+                <div class="quadrant-header">
+                  <span class="quadrant-icon" style="color:var(--bc-dim)">&#9679;</span>
+                  <span class="quadrant-label">Maybe Later</span>
+                  <span class="quadrant-count">2</span>
+                </div>
+                <div class="quadrant-body">
+                  <div class="mx-card">
+                    <span class="mx-card-title">Explore new recipe</span>
+                    <span class="mx-card-pts"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>2</span>
+                    <button class="mx-card-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                  </div>
+                  <div class="mx-card">
+                    <span class="mx-card-title">Try pottery class</span>
+                    <span class="mx-card-pts"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>2</span>
+                    <button class="mx-card-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                  </div>
+                  <button class="mx-add-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+                    Add
+                  </button>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Axis Labels -->
-          <div class="matrix-axis-labels" style="margin-top: var(--sp-sm);">
-            <span class="axis-label">&#8592; Not Important</span>
-            <span class="axis-label" style="color: var(--text-dim);">&#8595; Not Urgent</span>
-            <span class="axis-label">Important &#8594;</span>
+          <!-- X axis -->
+          <div class="axis-x">
+            <span class="axis-x-label">Urgent</span>
+            <span class="axis-x-label">Not Urgent</span>
           </div>
         </div>
       </div>
     </div>
 
-    <p style="padding: var(--sp-md) var(--sp-xl); color: var(--text-dim); font-size: 0.75rem;">
-      <em>Tasks are auto-assigned to quadrants based on risk level (urgency) and points (importance). Users can drag tasks between quadrants to override. The matrix provides an alternative view to the board columns — both views share the same underlying task data.</em>
+    <p style="padding: var(--sp-md) var(--sp-xl); color: var(--bc-dim); font-size: 0.7rem; font-family: var(--font-body);">
+      <em>Tasks are organized in an Eisenhower matrix. Users can drag between quadrants to reprioritize, and click the arrow to track a task on this week's board. Cards already on the board appear dimmed with a "This Week" tag.</em>
+    </p>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SCREEN 2 — SEND TO BOARD INTERACTION
+       ═══════════════════════════════════════════════════════ -->
+  <section class="screen-section" id="matrix-send">
+    <div class="screen-label">Screen 2 / Priorities — Send to Board Popover</div>
+
+    <div class="app-shell" style="height: 780px;">
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="logo-icon">M</div>
+          <div class="logo-text">MARS</div>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="#">Chat</a>
+          <a href="#" class="active">Kanban</a>
+        </nav>
+      </aside>
+
+      <div class="main">
+        <header class="header">
+          <div class="header-left">
+            <div class="header-title">
+              <h1>Mission Control</h1>
+              <span class="period-badge">WK 09 &middot; Feb 24 – Mar 02</span>
+            </div>
+            <nav class="tab-nav">
+              <button>Board</button>
+              <button class="active">Priorities</button>
+              <button>Templates</button>
+            </nav>
+          </div>
+          <div class="header-right">
+            <button class="btn btn-sm">Edit Plan</button>
+          </div>
+        </header>
+
+        <div class="matrix-page">
+          <!-- Page identity -->
+          <div class="page-title-bar">
+            <div class="page-title-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="page-title-text">
+              <span class="page-title-name">My Priorities</span>
+              <span class="page-title-desc">One-off things you want to do &mdash; not tied to your weekly plan</span>
+            </div>
+            <div class="page-title-count">
+              <span class="page-title-count-num">8</span> total &middot;
+              <span class="page-title-count-num">3</span> tracking this week
+            </div>
+          </div>
+
+          <div class="matrix-hint-bar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Drag between quadrants to reprioritize &middot; click <strong>&rarr;</strong> to track this week
+          </div>
+
+          <div class="matrix-layout">
+            <div class="axis-y">
+              <span class="axis-y-label">Important</span>
+              <span class="axis-y-label">Not Important</span>
+            </div>
+
+            <div class="matrix-grid">
+              <!-- Q1: Do First — with active send on "Call dentist" -->
+              <div class="quadrant q-do-first">
+                <div class="quadrant-header">
+                  <span class="quadrant-icon" style="color:var(--error)">&#9679;</span>
+                  <span class="quadrant-label">Do First</span>
+                  <span class="quadrant-sublabel">&mdash; Urgent &amp; Important</span>
+                  <span class="quadrant-count">2</span>
+                </div>
+                <div class="quadrant-body">
+                  <div class="mx-card on-board">
+                    <span class="mx-card-title">Shop birthday gift</span>
+                    <span class="on-board-tag">This Week</span>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                  </div>
+                  <!-- Active card with send popover -->
+                  <div class="mx-card active-send" style="z-index:60">
+                    <span class="mx-card-title">Call dentist</span>
+                    <span class="mx-card-pts"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>2</span>
+                    <button class="mx-card-send" style="display:flex;background:var(--primary-10);color:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                    <!-- Popover -->
+                    <div class="send-popover">
+                      <div class="send-popover-title">Track this week</div>
+                      <button class="send-popover-btn">
+                        <span class="col-dot" style="background:var(--primary)"></span>
+                        <span>Todo</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;color:var(--bc-dim)"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </button>
+                      <button class="send-popover-btn">
+                        <span class="col-dot" style="background:var(--warning)"></span>
+                        <span>In Progress</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;color:var(--bc-dim)"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                  <button class="mx-add-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              <!-- Q2: Schedule -->
+              <div class="quadrant q-schedule">
+                <div class="quadrant-header">
+                  <span class="quadrant-icon" style="color:var(--primary)">&#9679;</span>
+                  <span class="quadrant-label">Schedule</span>
+                  <span class="quadrant-sublabel">&mdash; Important</span>
+                  <span class="quadrant-count">3</span>
+                </div>
+                <div class="quadrant-body">
+                  <div class="mx-card on-board">
+                    <span class="mx-card-title">File tax report</span>
+                    <span class="on-board-tag">This Week</span>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                  </div>
+                  <div class="mx-card">
+                    <span class="mx-card-title">Find gym coach</span>
+                    <span class="mx-card-pts"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>3</span>
+                    <button class="mx-card-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                  </div>
+                  <div class="mx-card">
+                    <span class="mx-card-title">Learn Python basics</span>
+                    <span class="mx-card-pts"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>5</span>
+                    <button class="mx-card-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                  </div>
+                  <button class="mx-add-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              <!-- Q3: Squeeze In -->
+              <div class="quadrant q-squeeze">
+                <div class="quadrant-header">
+                  <span class="quadrant-icon" style="color:var(--warning)">&#9679;</span>
+                  <span class="quadrant-label">Squeeze In</span>
+                  <span class="quadrant-sublabel">&mdash; Urgent</span>
+                  <span class="quadrant-count">1</span>
+                </div>
+                <div class="quadrant-body">
+                  <div class="mx-card">
+                    <span class="mx-card-title">Reply to landlord</span>
+                    <span class="mx-card-pts"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>1</span>
+                    <button class="mx-card-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                  </div>
+                  <button class="mx-add-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              <!-- Q4: Maybe Later -->
+              <div class="quadrant q-later">
+                <div class="quadrant-header">
+                  <span class="quadrant-icon" style="color:var(--bc-dim)">&#9679;</span>
+                  <span class="quadrant-label">Maybe Later</span>
+                  <span class="quadrant-count">2</span>
+                </div>
+                <div class="quadrant-body">
+                  <div class="mx-card">
+                    <span class="mx-card-title">Explore new recipe</span>
+                    <span class="mx-card-pts"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>2</span>
+                    <button class="mx-card-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                  </div>
+                  <div class="mx-card">
+                    <span class="mx-card-title">Try pottery class</span>
+                    <span class="mx-card-pts"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>2</span>
+                    <button class="mx-card-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <svg class="mx-card-drag" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>
+                  </div>
+                  <button class="mx-add-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14" stroke-linecap="round"/></svg>
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="axis-x">
+            <span class="axis-x-label">Urgent</span>
+            <span class="axis-x-label">Not Urgent</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p style="padding: var(--sp-md) var(--sp-xl); color: var(--bc-dim); font-size: 0.7rem; font-family: var(--font-body);">
+      <em>Clicking the arrow button on "Call dentist" opens a popover to choose which board column (Todo or In Progress) to track the task in. The card gains a cyan glow border to indicate active selection.</em>
     </p>
   </section>
 

@@ -8,7 +8,7 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 
 **AI Assisted Plan Creation**: Full design complete — flows, API actions, mockups. Chat-based wizard where AI generates draft task templates via structured JSON output (`response_format: json_schema`). Two server actions: `getWelcomeMessageAction` (plain text LLM welcome) and `generateDraftPlanAction` (structured draft with template cards). `Chat.metadata` serves as working clipboard for latest draft and stats snapshot. `MessageType` enum (`TEXT`, `DRAFT_PLAN`) distinguishes plain messages from structured drafts. Static suggestion chips for welcome screen. Post-approval reuses existing `createPlanAction`. Mockups: `mockup-empty.html` (new/returning user), `mockup-plan-form.html` (AI entry point), `mockup-ai-chat.html` (6-screen flow: welcome, generating, draft, revision, approval).
 
-**v2 UI Redesign**: Complete mockup-v2 design system under `design/mockup-v2/` with 11 flow mockups and shared `styles.css` — "Techno Mission Control" aesthetic featuring cyan primary, violet secondary, amber warning palette. Covers all existing flows (board with collapsed/expanded backlog drawer, empty state, plan form with category groups, task modal, review changes, Eisenhower priority matrix) plus new flows (AI generate task via chat, end-of-period mission debrief summary, vacation/break mode, dedicated template library page). Light and dark theme variants with side-by-side comparison mockup. Custom daisyUI themes (`mars-dark`, `mars-light`) defined in `globals.css` via `@plugin "daisyui/theme"` and applied app-wide (`mars-dark` as default).
+**v2 UI Redesign**: Complete mockup-v2 design system under `design/mockup-v2/` with 11 flow mockups and shared `styles.css` — "Techno Mission Control" aesthetic featuring cyan primary, violet secondary, amber warning palette. Covers all existing flows (board with collapsed/expanded backlog drawer, empty state, plan form with collapsible category groups and search, task modal with category combobox, review changes, Eisenhower priority matrix) plus new flows (AI Plan Assistant 6-screen chat flow, end-of-period mission debrief summary, vacation/break mode, dedicated template library page). Light and dark theme variants with side-by-side comparison mockup. v2 flows are synced with active mockup content (AI chat, Eisenhower matrix, plan form groups, task modal categories). Custom daisyUI themes (`mars-dark`, `mars-light`) defined in `globals.css` via `@plugin "daisyui/theme"` and applied app-wide (`mars-dark` as default).
 
 ## Backlog
 ### High Priority
@@ -30,6 +30,11 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - [ ] Implement light/dark theme toggle UI
 
 ## Update Log
+
+### 2026-03-09
+- Synced AppSidebar into all active kanban mockups: updated `styles.css` with sidebar component styles (gradient logo, nav items, user section with avatar, sign-out button) and replaced sidebar HTML in 5 mockup files (board, empty, plan-form, task-modal, review-changes) with two variants (full nav vs kanban-only)
+- Redesigned mockup-v2 flows using active mockup content while preserving v2 design tokens: replaced AI generate with 6-screen AI Plan Assistant chat flow, replaced priorities with Eisenhower Matrix, updated plan form with collapsible groups/search/tabs, updated task modal with category combobox
+- Fixed `future-work/mockup-priorities-v2.html` stylesheet path (`./styles.css` → `../styles.css`)
 
 ### 2026-03-08
 - Fixed timezone bug causing false end-of-period sync: `getISOWeekKey()` used UTC methods while `getTodayDate()` used local time, producing mismatched week keys near week boundaries
@@ -168,6 +173,9 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - UI mockups created (board, empty state, create plan, create/edit template)
 
 ## Done
+- [x] Sync AppSidebar component into active kanban mockups (styles + HTML in 5 files)
+- [x] Redesign mockup-v2 flows with active mockup content (AI chat, Eisenhower matrix, plan form groups, task modal categories)
+- [x] Fix future-work mockup-priorities-v2.html stylesheet path
 - [x] AI assisted plan creation flow design — flows, API actions (getWelcomeMessageAction, generateDraftPlanAction), Chat/Message schema extensions, 3 mockup files (empty, plan form, AI chat modal)
 - [x] Reorganize api.md by logical domain and update fetchBoard pseudocode to match Codex DB-aggregate optimization
 - [x] Plan Mode toggle (NORMAL / EXTREME) — schema, services, board sync, plan form UI, review modal, mockups
