@@ -179,10 +179,15 @@ body {
   margin-top: auto; /* push footer to bottom */
 }
 .m-card-points {
-  font-size: 9px; font-weight: 700; color: var(--m-orange);
-  margin-left: auto; display: flex; align-items: center; gap: 2px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 3px;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.03em;
+  height: 16px; padding: 0 5px;
+  border-radius: 3px;
+  background: var(--m-purple-bg); color: var(--m-purple);
+  margin-left: auto;
 }
-.m-card-points svg { width: 9px; height: 9px; }
+.m-card-points .sz-dot { opacity: 0.4; }
+.m-card-points .sz-pts { font-weight: 600; opacity: 0.7; }
 .m-rollover-tag { font-size: 8px; color: var(--m-orange); font-weight: 500; display: flex; align-items: center; gap: 1px; }
 
 /* Done cards */
@@ -212,7 +217,6 @@ body {
 }
 .floating-card .m-badge { font-size: 9px; padding: 2px 7px; }
 .floating-card .m-card-points { font-size: 10px; }
-.floating-card .m-card-points svg { width: 10px; height: 10px; }
 
 /* Annotation tag (e.g. "Long press to pick up") */
 .drag-annotation {
@@ -354,27 +358,27 @@ body {
           <div class="m-card">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Solve 3 LeetCode problems</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>10</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
           </div>
           <div class="m-card risk-warning">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Practice mock interview</div>
-      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>8</span></div>
+      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
           </div>
           <div class="m-card risk-danger">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Write journal entry</div>
-      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>3</span></div>
+      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
           </div>
           <div class="m-card risk-warning">
             <span class="m-badge m-badge-weekly">Weekly</span>
       <div class="m-card-title">Review system design notes and prepare slides</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>12</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
           </div>
           <div class="m-card">
             <span class="m-badge m-badge-adhoc">Ad-hoc</span>
       <div class="m-card-title">File tax report</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>5</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span></div>
           </div>
         </div>
       </div>
@@ -388,22 +392,22 @@ body {
           <div class="m-card">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Morning jog 5km</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>4</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
           </div>
           <div class="m-card risk-warning">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Meditate 10 min</div>
-      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>3</span></div>
+      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
           </div>
           <div class="m-card risk-warning">
             <span class="m-badge m-badge-weekly">Weekly</span>
       <div class="m-card-title">Go to gym – Upper body</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>6</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span></div>
           </div>
           <div class="m-card risk-warning">
             <span class="m-badge m-badge-adhoc">Ad-hoc</span>
       <div class="m-card-title">Renew passport</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>2</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">S</span><span class="sz-dot">&middot;</span><span class="sz-pts">2</span></span></div>
           </div>
         </div>
       </div>
@@ -417,22 +421,22 @@ body {
           <div class="m-card done-card">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Solve 3 LeetCode problems</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>10</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
           </div>
           <div class="m-card done-card">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Morning jog 5km</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>4</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
           </div>
           <div class="m-card done-card">
             <span class="m-badge m-badge-weekly">Weekly</span>
       <div class="m-card-title">Go to gym – Push day</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>6</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span></div>
           </div>
           <div class="m-card done-card">
             <span class="m-badge m-badge-adhoc">Ad-hoc</span>
       <div class="m-card-title">Buy birthday gift</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>3</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
           </div>
         </div>
       </div>
@@ -503,12 +507,12 @@ body {
           <div class="m-card risk-warning">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Practice mock interview</div>
-      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>8</span></div>
+      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
           </div>
           <div class="m-card risk-danger">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Write journal entry</div>
-      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>3</span></div>
+      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
           </div>
         </div>
       </div>
@@ -517,7 +521,7 @@ body {
       <div class="floating-card" style="top: 62px; left: 24px;">
         <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Solve 3 LeetCode problems</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>10</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
       </div>
       <!-- Annotation -->
       <div class="drag-annotation" style="top: 52px; right: 24px;">
@@ -535,12 +539,12 @@ body {
           <div class="m-card">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Morning jog 5km</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>4</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
           </div>
           <div class="m-card risk-warning">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Meditate 10 min</div>
-      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>3</span></div>
+      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
           </div>
         </div>
       </div>
@@ -555,12 +559,12 @@ body {
           <div class="m-card done-card">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Solve 3 LeetCode problems</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>10</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
           </div>
           <div class="m-card done-card">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Morning jog 5km</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>4</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
           </div>
         </div>
       </div>
@@ -630,12 +634,12 @@ body {
           <div class="m-card risk-warning">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Practice mock interview</div>
-      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>8</span></div>
+      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
           </div>
           <div class="m-card risk-danger">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Write journal entry</div>
-      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>3</span></div>
+      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
           </div>
         </div>
       </div>
@@ -650,12 +654,12 @@ body {
           <div class="m-card">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Morning jog 5km</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>4</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
           </div>
           <div class="m-card risk-warning">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Meditate 10 min</div>
-      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>3</span></div>
+      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
           </div>
         </div>
       </div>
@@ -664,7 +668,7 @@ body {
       <div class="floating-card" style="top: 140px; left: 80px;">
         <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Solve 3 LeetCode problems</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>10</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
       </div>
 
       <!-- Done Row — dimmed -->
@@ -677,12 +681,12 @@ body {
           <div class="m-card done-card">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Solve 3 LeetCode problems</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>10</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
           </div>
           <div class="m-card done-card">
             <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Morning jog 5km</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>4</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
           </div>
         </div>
       </div>
@@ -721,7 +725,7 @@ body {
     <div class="w-card">
       <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Solve 3 LeetCode problems</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>10</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
     </div>
   </div>
 
@@ -731,7 +735,7 @@ body {
     <div class="w-card">
       <span class="m-badge m-badge-weekly">Weekly</span>
       <div class="m-card-title">Go to gym – Leg day</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>6</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span></div>
     </div>
   </div>
 
@@ -741,7 +745,7 @@ body {
     <div class="w-card">
       <span class="m-badge m-badge-adhoc">Ad-hoc</span>
       <div class="m-card-title">File tax report</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>5</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span></div>
     </div>
   </div>
 
@@ -751,7 +755,7 @@ body {
     <div class="w-card risk-warning">
       <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Practice mock interview</div>
-      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>8</span></div>
+      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
     </div>
   </div>
 
@@ -761,7 +765,7 @@ body {
     <div class="w-card risk-danger">
       <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Write journal entry</div>
-      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>3</span></div>
+      <div class="m-card-footer"><span class="m-rollover-tag">↩ Mon</span><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
     </div>
   </div>
 
@@ -771,7 +775,7 @@ body {
     <div class="w-card risk-warning">
       <span class="m-badge m-badge-weekly">Weekly</span>
       <div class="m-card-title">Go to gym – Upper body</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>6</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span></div>
     </div>
   </div>
 
@@ -781,7 +785,7 @@ body {
     <div class="w-card risk-warning">
       <span class="m-badge m-badge-weekly">Weekly</span>
       <div class="m-card-title">Review system design notes and prepare presentation slides</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>12</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
     </div>
   </div>
 
@@ -791,7 +795,7 @@ body {
     <div class="w-card done-card">
       <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Morning jog 5km</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>4</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
     </div>
   </div>
 
@@ -801,7 +805,7 @@ body {
     <div class="w-card lifted-preview">
       <span class="m-badge m-badge-daily">Daily</span>
       <div class="m-card-title">Solve 3 LeetCode problems</div>
-      <div class="m-card-footer"><span class="m-card-points"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>10</span></div>
+      <div class="m-card-footer"><span class="m-card-points"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div>
     </div>
   </div>
 </div>

@@ -45,6 +45,34 @@
 
 ---
 
+### Create Task Template Flow
+
+**Trigger:** User clicks the "New Template" button on the plan form page.
+
+**Steps:**
+
+1. Open the template modal with empty fields for title, description, and size.
+2. The size selector displays all available sizes (XS–XL) with their corresponding point values and hour estimates. Selecting L or XL shows an inline warning suggesting the user consider splitting into smaller tasks.
+3. User completes the form and clicks "Create". Validate input via Zod schema, then persist the new TaskTemplate.
+4. Revalidate the `/kanban/plans` route to reflect the new template in the plan form.
+
+---
+
+### Update Task Template Flow
+
+**Trigger:** User clicks the edit button on an existing template card within the plan form page.
+
+**Steps:**
+
+1. Open the template modal pre-populated with the current title, description, and size.
+2. User modifies any fields. The size selector behaves identically to the create flow (point labels, L/XL warning).
+3. User clicks "Save". Validate input, then persist changes to the existing TaskTemplate.
+4. Revalidate the `/kanban/plans` route to reflect the updated template.
+
+**Note:** Editing a template does not retroactively change already-generated Task instances. Only future task generation uses the updated values.
+
+---
+
 ### Create Plan Flow
 
 **Trigger:** User clicks "Create Plan" on empty board → navigates to `/kanban/plans/new`
@@ -54,7 +82,7 @@
 2. Page also preloads all non-DONE Ad-hoc tasks that doesn't associate with any plan from database.
 3. For non-Ad-hoc task templates
    1. User adds, removes, or edits templates. First-time users create templates from scratch.
-   2. For each selected template, user configures type and frequency. Points come from TaskTemplate directly and are not configurable per-plan.
+   2. For each selected template, user configures type and frequency. Size (and derived points) come from TaskTemplate directly and are not configurable per-plan.
 
 4. For non-DONE Ad-hoc tasks
    1. non-Done Ad-hoc tasks from the `PENDING_UPDATE` plan will be preselected, user can deselect it to not include it to the coming plan.
@@ -113,39 +141,46 @@
 
 ### Progress Tracking Flow
 
-**Trigger:** Computed server-side on every board page load, derived from a single DB query — no additional queries needed
+**Trigger:** Computed server-side on every board page load as part of `fetchBoard()`.
 
-**Steps:**
+**Data fetching:** Two parallel queries run after sync:
+1. `getBoardTasksByPlanId` — all non-expired tasks for the plan (used for board rendering and today's total count/points).
+2. `getBoardMetricsByPlanId` — a single raw SQL aggregate query that computes all historical counts and point sums using `FILTER` clauses. No in-memory aggregation for past data.
 
-1. Fetch all tasks for the active plan.
-2. Derive all metrics in-memory and return as part of `BoardData`.
+Future projections are then derived in-memory from the plan's current templates.
+
+**Points derivation:** Each task stores a denormalized `points` field derived from `size` via `SIZE_TO_POINTS` at creation time. All DB aggregation operates on this column directly — no runtime size-to-points conversion needed.
 
 **Metrics:**
 
-**Today Ring** — circular progress showing how many tasks are done today
-- Done count: tasks with status DONE and completed today
-- Total count: all non-expired board tasks (TODO + DOING + DONE)
+**Today Ring** — circular progress ring showing task completion for the current day.
+- Done count: `COUNT(*)` where `status = DONE` and `doneAt` is within today (from DB aggregate).
+- Total count: length of board tasks array (all non-expired tasks).
 
-**Today Points** — points earned today vs available today
-- Done points: sum of points from tasks completed today
-- Total points: sum of points from all non-expired board tasks
+**Today Points** — points earned today vs total points available on the board.
+- Done points: `SUM(points)` where `status = DONE` and `doneAt` is within today (from DB aggregate).
+- Total points: `SUM(task.points)` across all board tasks (in-memory reduction).
 
-**Week Points** — points earned this week vs projected total
-- Done points: sum of points from all DONE tasks in the plan
-- Projected total: past daily task points + future daily projection from current templates + all weekly task points
+**Week Points** — cumulative points earned this period vs projected period total.
+- Done points: `SUM(points)` where `status = DONE` across the entire plan (from DB aggregate).
+- Projected total: `dailyPastPoints + dailyFuturePoints + weeklyPoints + adhocPoints`
+  - `dailyPastPoints` (DB): `SUM(points)` where `forDate < today` — points from daily tasks already generated on previous days.
+  - `dailyFuturePoints` (in-memory): `SUM(template.points × frequency)` for all daily plan templates × remaining days. Remaining days respects plan mode: NORMAL counts only weekdays via `countWeekdaysInRange`, EXTREME counts all calendar days.
+  - `weeklyPoints` (DB): `SUM(points)` where `type = WEEKLY`.
+  - `adhocPoints` (DB): `SUM(points)` where `type = AD_HOC`.
 
-**Daily Avg** — average points earned per day since the plan started
-- weekDonePoints / number of days elapsed since Monday (1–7)
+**Daily Avg** — rolling average of points earned per elapsed day.
+- `weekDonePoints / daysElapsed`, where `daysElapsed` = days since the period's Monday (clamped 1–7).
 
-**Week Progress Bar** — percentage of projected tasks completed this week
-- Done count: all DONE tasks in the plan
-- Projected total: past daily task count + future daily projection from current templates + all weekly task count
+**Week Progress Bar** — percentage of projected task count completed this period.
+- Done count: `COUNT(*)` where `status = DONE` across the plan (from DB aggregate).
+- Projected total: same four-part decomposition as Week Points but using task counts (`dailyPastCount + dailyFutureCount + weeklyCount + adhocCount`).
 
 **Rules:**
-- Done points and done count are append-only — never decrease due to plan changes.
-- Past effort is preserved regardless of template edits.
-- Future projection always reflects the current plan's template snapshot.
-- Today is counted in the future projection only — never double-counted.
+- Done points and done counts are append-only — they never decrease due to plan edits or template changes.
+- Past effort is preserved regardless of template modifications.
+- Future projection always reflects the current plan's active template snapshot.
+- Today's tasks are counted in the future projection bucket only — never double-counted with past.
 
 ---
 
@@ -155,7 +190,7 @@
 
 **Steps:**
 
-1. User fills in title, description, points and clicks "Add to board".
+1. User fills in title, description, size and clicks "Add to board".
 2. Generate the Ad-hoc task with status matching the source column (Todo → TODO, In Progress → DOING) and link it to the current plan.
 3. UI state updates on success.
 
@@ -252,7 +287,7 @@
          "description": "Focus on medium-level DP, graph, and sliding window problems.",
          "type": "DAILY",
          "frequency": 1,
-         "points": 3
+         "size": "MEDIUM"
        }
      ],
      "followUp": "That's 5 templates totaling ~16 points/day. Want me to adjust?"

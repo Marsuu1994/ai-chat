@@ -78,13 +78,6 @@
   .fg textarea { resize: vertical; }
   .fg .sub-hint { font-size: 11px; color: #bbb; margin-top: 4px; }
 
-  /* ── Points input with star icon ── */
-  .pts-input-wrap { position: relative; }
-  .pts-input-wrap input { padding-left: 32px; }
-  .pts-input-wrap svg {
-    width: 16px; height: 16px; position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-  }
-
   /* ── Category: combobox-style input ── */
   .cat-input-wrap { position: relative; }
   .cat-input-wrap input {
@@ -202,12 +195,16 @@
           </div>
           <div class="sub-hint">Group templates for easier planning</div>
         </div>
-        <div class="fg" style="max-width: 120px">
-          <label>Points <span class="req">*</span></label>
-          <div class="pts-input-wrap">
-            <input type="number" placeholder="10" />
-            <svg viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+        <div class="fg">
+          <label>Size <span class="req">*</span></label>
+          <div class="size-pills">
+            <button class="size-pill-btn"><span class="size-pill-size">XS</span><span class="size-pill-pts">1</span></button>
+            <button class="size-pill-btn"><span class="size-pill-size">S</span><span class="size-pill-pts">2</span></button>
+            <button class="size-pill-btn active"><span class="size-pill-size">M</span><span class="size-pill-pts">3</span></button>
+            <button class="size-pill-btn"><span class="size-pill-size">L</span><span class="size-pill-pts">5</span></button>
+            <button class="size-pill-btn"><span class="size-pill-size">XL</span><span class="size-pill-pts">8</span></button>
           </div>
+          <div class="size-hint size-hint-info">~3 hours of effort</div>
         </div>
       </div>
     </div>
@@ -250,12 +247,16 @@
             <svg class="cat-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
         </div>
-        <div class="fg" style="max-width: 120px">
-          <label>Points <span class="req">*</span></label>
-          <div class="pts-input-wrap">
-            <input type="number" value="6" />
-            <svg viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+        <div class="fg">
+          <label>Size <span class="req">*</span></label>
+          <div class="size-pills">
+            <button class="size-pill-btn"><span class="size-pill-size">XS</span><span class="size-pill-pts">1</span></button>
+            <button class="size-pill-btn"><span class="size-pill-size">S</span><span class="size-pill-pts">2</span></button>
+            <button class="size-pill-btn"><span class="size-pill-size">M</span><span class="size-pill-pts">3</span></button>
+            <button class="size-pill-btn active"><span class="size-pill-size">L</span><span class="size-pill-pts">5</span></button>
+            <button class="size-pill-btn"><span class="size-pill-size">XL</span><span class="size-pill-pts">8</span></button>
           </div>
+          <div class="size-hint size-hint-warn">&#9888; Consider splitting into smaller tasks</div>
         </div>
       </div>
     </div>
@@ -328,12 +329,16 @@
             </div>
           </div>
         </div>
-        <div class="fg" style="max-width: 120px">
-          <label>Points <span class="req">*</span></label>
-          <div class="pts-input-wrap">
-            <input type="number" value="5" />
-            <svg viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+        <div class="fg">
+          <label>Size <span class="req">*</span></label>
+          <div class="size-pills">
+            <button class="size-pill-btn"><span class="size-pill-size">XS</span><span class="size-pill-pts">1</span></button>
+            <button class="size-pill-btn"><span class="size-pill-size">S</span><span class="size-pill-pts">2</span></button>
+            <button class="size-pill-btn"><span class="size-pill-size">M</span><span class="size-pill-pts">3</span></button>
+            <button class="size-pill-btn active"><span class="size-pill-size">L</span><span class="size-pill-pts">5</span></button>
+            <button class="size-pill-btn"><span class="size-pill-size">XL</span><span class="size-pill-pts">8</span></button>
           </div>
+          <div class="size-hint size-hint-warn">&#9888; Consider splitting into smaller tasks</div>
         </div>
       </div>
     </div>
@@ -373,12 +378,15 @@
         <textarea rows="3" placeholder="Optional details about this task"></textarea>
       </div>
       <div class="fg">
-        <label>Points <span class="req">*</span></label>
-        <div class="pts-input-wrap">
-          <input type="number" value="1" />
-          <svg viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+        <label>Size <span class="req">*</span></label>
+        <div class="size-pills">
+          <button class="size-pill-btn active"><span class="size-pill-size">XS</span><span class="size-pill-pts">1</span></button>
+          <button class="size-pill-btn"><span class="size-pill-size">S</span><span class="size-pill-pts">2</span></button>
+          <button class="size-pill-btn"><span class="size-pill-size">M</span><span class="size-pill-pts">3</span></button>
+          <button class="size-pill-btn"><span class="size-pill-size">L</span><span class="size-pill-pts">5</span></button>
+          <button class="size-pill-btn"><span class="size-pill-size">XL</span><span class="size-pill-pts">8</span></button>
         </div>
-        <div class="sub-hint">Points earned on completion</div>
+        <div class="size-hint size-hint-info">~1 hour of effort</div>
       </div>
     </div>
     <div class="modal-footer">

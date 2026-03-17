@@ -4,7 +4,7 @@ A drag-and-drop kanban board for planning and tracking tasks within weekly perio
 
 ## Current State
 
-Backend complete (schema, DAL, services, server actions, board sync). Full board UI with drag-and-drop — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards that can be dragged between columns. Moves use optimistic UI with server-side persistence and automatic rollback on failure. Task cards show title, description, unified type badge (`TaskTypeBadge` — supports DAILY, WEEKLY, and AD_HOC), and points with color-coded risk badges (⚠ at risk / ‼ urgent). Progress dashboard shows Today ring, stat metrics, and Week Progress Bar. Board metrics use a two-query strategy: `getBoardTasksByPlanId` for UI tasks + `getBoardMetricsByPlanId` (raw SQL aggregate with `FILTER` clauses) for pre-computed stats, fetched in parallel. End-of-period sync auto-expires undone tasks and transitions plans. Create/edit plan flows share a unified `PlanForm` with inline type/frequency config per template and a Plan Mode toggle (NORMAL = weekdays only, EXTREME = every day). AD_HOC tasks fully implemented end-to-end with plan linking. `ReviewChangesModal` shows added/removed/modified template diffs and mode changes. Architecture follows strict 3-layer pattern with `prisma.$transaction()` for all multi-step mutations. All date calculations anchored to `America/Los_Angeles` timezone via `KANBAN_TZ` constant, ensuring consistent behavior across local dev and Vercel (UTC) deployments. PWA manifest and service worker enable mobile installability ("Add to Home Screen") on both Android and iOS — standalone display with mars-dark theme colors.
+Backend complete (schema, DAL, services, server actions, board sync). Full board UI with drag-and-drop — `/kanban` displays a three-column kanban board (Todo, In Progress, Done) with task cards that can be dragged between columns. Moves use optimistic UI with server-side persistence and automatic rollback on failure. Task cards show title, description, unified type badge (`TaskTypeBadge` — supports DAILY, WEEKLY, and AD_HOC), and a purple size chip (`XL·8`, `L·5`, `M·3`, `S·2`, `XS·1`) with color-coded risk badges (⚠ at risk / ‼ urgent). Task sizing uses standardized `TaskSizes` enum (XS/S/M/L/XL) mapped to fibonacci points (1/2/3/5/8) via `SIZE_TO_POINTS`; points are denormalized on Task for efficient DB aggregation. Progress dashboard shows Today ring, stat metrics, and Week Progress Bar. Board metrics use a two-query strategy: `getBoardTasksByPlanId` for UI tasks + `getBoardMetricsByPlanId` (raw SQL aggregate with `FILTER` clauses) for pre-computed stats, fetched in parallel. End-of-period sync auto-expires undone tasks and transitions plans. Create/edit plan flows share a unified `PlanForm` with inline type/frequency config per template and a Plan Mode toggle (NORMAL = weekdays only, EXTREME = every day). AD_HOC tasks fully implemented end-to-end with plan linking. `ReviewChangesModal` shows added/removed/modified template diffs and mode changes. Architecture follows strict 3-layer pattern with `prisma.$transaction()` for all multi-step mutations. All date calculations anchored to `America/Los_Angeles` timezone via `KANBAN_TZ` constant, ensuring consistent behavior across local dev and Vercel (UTC) deployments. PWA manifest and service worker enable mobile installability ("Add to Home Screen") on both Android and iOS — standalone display with mars-dark theme colors.
 
 **AI Assisted Plan Creation**: Full design complete — flows, API actions, mockups. Chat-based wizard where AI generates draft task templates via structured JSON output (`response_format: json_schema`). Two server actions: `getWelcomeMessageAction` (plain text LLM welcome) and `generateDraftPlanAction` (structured draft with template cards). `Chat.metadata` serves as working clipboard for latest draft and stats snapshot. `MessageType` enum (`TEXT`, `DRAFT_PLAN`) distinguishes plain messages from structured drafts. Static suggestion chips for welcome screen. Post-approval reuses existing `createPlanAction`. Mockups: `mockup-empty.html` (new/returning user), `mockup-plan-form.html` (AI entry point), `mockup-ai-chat.html` (6-screen flow: welcome, generating, draft, revision, approval).
 
@@ -35,6 +35,17 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - [ ] Implement light/dark theme toggle UI
 
 ## Update Log
+
+### 2026-03-16
+- Migrated from free-form `points: Int` to standardized `size: TaskSizes` enum (XS=1, S=2, M=3, L=5, XL=8 fibonacci points) across all design docs (baseline, flows, api)
+- Task cards now display a purple size chip (`XL·8`) instead of orange star + raw points — distinct from orange/red risk badges
+- Task template and ad-hoc modals: replaced dropdown select with pill toggle buttons (XS|S|M|L|XL) spanning full width, with L/XL warning hint
+- Template list items and AI draft cards show inline purple size chips
+- Updated all mockups: board, plan form, task modal, AI chat, review changes, mobile board, and all future-work mockups
+- Added `--m-purple-bg` theme variable, `.size-chip` and `.size-pill-btn` shared CSS classes
+- Design docs: `TaskTemplate.points` replaced with `size: TaskSizes`; `Task` keeps denormalized `points` field derived from size via `SIZE_TO_POINTS` for efficient aggregation
+- Progress tracking flow rewritten to reflect actual hybrid architecture (DB aggregate + in-memory projection)
+- Create/Update Task Template flows rewritten with clearer modal interaction specs
 
 ### 2026-03-10
 - Fixed task card risk border: mobile shows top border only (`max-md:`), desktop shows left border only (`md:`) — previously desktop had both
@@ -193,6 +204,7 @@ Backend complete (schema, DAL, services, server actions, board sync). Full board
 - UI mockups created (board, empty state, create plan, create/edit template)
 
 ## Done
+- [x] Standardized task sizing: `TaskSizes` enum (XS/S/M/L/XL) with fibonacci points, purple size chips on cards, pill toggle selector in modals, all design docs and mockups updated
 - [x] Shared mockup theme system (mockup-theme.css) with light/dark toggle across all kanban and auth mockups
 - [x] Mobile kanban board mockup (drag-and-drop flow, stats dashboard, task card widgets)
 - [x] Mobile settings mockup (profile card, sign-out)

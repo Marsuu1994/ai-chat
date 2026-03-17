@@ -107,10 +107,11 @@
   .draft-card-meta { display: flex; align-items: center; gap: 6px; }
   .draft-card-desc { font-size: 12px; color: var(--m-text-secondary); line-height: 1.4; }
   .draft-card-points {
-    font-size: 11px; font-weight: 700; color: var(--m-orange);
-    display: flex; align-items: center; gap: 2px;
+    background: rgba(130,50,144,0.1); color: #823290; border-radius: 4px;
+    padding: 0 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+    min-width: 22px; height: 18px; display: inline-flex; align-items: center;
+    justify-content: center;
   }
-  .draft-card-points svg { width: 11px; height: 11px; }
   .msg-followup { font-size: 12px; color: var(--m-text-secondary); margin-top: 12px; }
 
   /* ── Draft action buttons (below bubble) ── */
@@ -391,7 +392,7 @@
                   <span class="draft-card-title">Solve 3 LeetCode problems</span>
                   <div class="draft-card-meta">
                     <span class="task-badge badge-daily">Daily</span>
-                    <span class="draft-card-points"><svg viewBox="0 0 24 24" fill="var(--m-orange)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 3</span>
+                    <span class="draft-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span>
                   </div>
                 </div>
                 <div class="draft-card-desc">Focus on medium-level DP, graph, and sliding window problems. 25 min per problem max.</div>
@@ -402,7 +403,7 @@
                   <span class="draft-card-title">Study system design chapter</span>
                   <div class="draft-card-meta">
                     <span class="task-badge badge-weekly">Weekly</span>
-                    <span class="draft-card-points"><svg viewBox="0 0 24 24" fill="var(--m-orange)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span>
+                    <span class="draft-card-points"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span>
                   </div>
                 </div>
                 <div class="draft-card-desc">Work through DDIA or System Design Interview book. One chapter per week with notes.</div>
@@ -413,7 +414,7 @@
                   <span class="draft-card-title">Mock behavioral interview</span>
                   <div class="draft-card-meta">
                     <span class="task-badge badge-weekly">Weekly</span>
-                    <span class="draft-card-points"><svg viewBox="0 0 24 24" fill="var(--m-orange)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 4</span>
+                    <span class="draft-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span>
                   </div>
                 </div>
                 <div class="draft-card-desc">Practice STAR format answers. Record yourself and review for filler words and clarity.</div>
@@ -424,7 +425,7 @@
                   <span class="draft-card-title">Gym workout (PPL rotation)</span>
                   <div class="draft-card-meta">
                     <span class="task-badge badge-daily">Daily</span>
-                    <span class="draft-card-points"><svg viewBox="0 0 24 24" fill="var(--m-orange)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 2</span>
+                    <span class="draft-card-points"><span class="sz-label">S</span><span class="sz-dot">&middot;</span><span class="sz-pts">2</span></span>
                   </div>
                 </div>
                 <div class="draft-card-desc">Push/Pull/Legs split. Track progressive overload on compound movements.</div>
@@ -435,7 +436,7 @@
                   <span class="draft-card-title">Read 30 pages of tech book</span>
                   <div class="draft-card-meta">
                     <span class="task-badge badge-daily">Daily</span>
-                    <span class="draft-card-points"><svg viewBox="0 0 24 24" fill="var(--m-orange)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 2</span>
+                    <span class="draft-card-points"><span class="sz-label">S</span><span class="sz-dot">&middot;</span><span class="sz-pts">2</span></span>
                   </div>
                 </div>
                 <div class="draft-card-desc">Consistent daily reading builds deep knowledge over time.</div>
@@ -527,7 +528,7 @@
                   <span class="draft-card-title">Solve 3 LeetCode problems</span>
                   <div class="draft-card-meta">
                     <span class="task-badge badge-daily">Daily</span>
-                    <span class="draft-card-points"><svg viewBox="0 0 24 24" fill="var(--m-orange)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 3</span>
+                    <span class="draft-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span>
                   </div>
                 </div>
                 <div class="draft-card-desc">Focus on medium-level DP, graph, and sliding window problems.</div>
@@ -538,7 +539,7 @@
                   <span class="draft-card-title">System design deep-dive</span>
                   <div class="draft-card-meta">
                     <span class="task-badge badge-weekly">Weekly &times;2</span>
-                    <span class="draft-card-points"><svg viewBox="0 0 24 24" fill="var(--m-orange)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span>
+                    <span class="draft-card-points"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span>
                   </div>
                 </div>
                 <div class="draft-card-desc">Design a full system end-to-end. Practice whiteboarding and trade-off discussions.</div>
@@ -549,7 +550,7 @@
                   <span class="draft-card-title">Mock behavioral interview</span>
                   <div class="draft-card-meta">
                     <span class="task-badge badge-weekly">Weekly</span>
-                    <span class="draft-card-points"><svg viewBox="0 0 24 24" fill="var(--m-orange)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 4</span>
+                    <span class="draft-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span>
                   </div>
                 </div>
                 <div class="draft-card-desc">Practice STAR format answers. Record and review for clarity.</div>
@@ -560,7 +561,7 @@
                   <span class="draft-card-title">Read 30 pages of tech book</span>
                   <div class="draft-card-meta">
                     <span class="task-badge badge-daily">Daily</span>
-                    <span class="draft-card-points"><svg viewBox="0 0 24 24" fill="var(--m-orange)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 2</span>
+                    <span class="draft-card-points"><span class="sz-label">S</span><span class="sz-dot">&middot;</span><span class="sz-pts">2</span></span>
                   </div>
                 </div>
                 <div class="draft-card-desc">Consistent daily reading builds deep knowledge over time.</div>
@@ -656,7 +657,7 @@
                   <span class="draft-card-title">Solve 3 LeetCode problems</span>
                   <div class="draft-card-meta">
                     <span class="task-badge badge-daily">Daily</span>
-                    <span class="draft-card-points"><svg viewBox="0 0 24 24" fill="var(--m-orange)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 3</span>
+                    <span class="draft-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span>
                   </div>
                 </div>
                 <div class="draft-card-desc">Focus on medium-level DP, graph, and sliding window problems.</div>
@@ -667,7 +668,7 @@
                   <span class="draft-card-title">System design deep-dive</span>
                   <div class="draft-card-meta">
                     <span class="task-badge badge-weekly">Weekly &times;2</span>
-                    <span class="draft-card-points"><svg viewBox="0 0 24 24" fill="var(--m-orange)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span>
+                    <span class="draft-card-points"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span>
                   </div>
                 </div>
                 <div class="draft-card-desc">Design a full system end-to-end. Practice whiteboarding and trade-off discussions.</div>
@@ -678,7 +679,7 @@
                   <span class="draft-card-title">Mock behavioral interview</span>
                   <div class="draft-card-meta">
                     <span class="task-badge badge-weekly">Weekly</span>
-                    <span class="draft-card-points"><svg viewBox="0 0 24 24" fill="var(--m-orange)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 4</span>
+                    <span class="draft-card-points"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span>
                   </div>
                 </div>
                 <div class="draft-card-desc">Practice STAR format answers. Record and review for clarity.</div>
@@ -689,7 +690,7 @@
                   <span class="draft-card-title">Read 30 pages of tech book</span>
                   <div class="draft-card-meta">
                     <span class="task-badge badge-daily">Daily</span>
-                    <span class="draft-card-points"><svg viewBox="0 0 24 24" fill="var(--m-orange)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 2</span>
+                    <span class="draft-card-points"><span class="sz-label">S</span><span class="sz-dot">&middot;</span><span class="sz-pts">2</span></span>
                   </div>
                 </div>
                 <div class="draft-card-desc">Consistent daily reading builds deep knowledge over time.</div>

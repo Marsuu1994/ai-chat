@@ -165,6 +165,43 @@ body {
 .badge-adhoc { background: var(--m-olive-bg); color: var(--m-olive); }
 .task-points { font-size: 11px; font-weight: 700; color: var(--m-orange); margin-left: auto; display: flex; align-items: center; gap: 3px; }
 .task-points svg { width: 12px; height: 12px; }
+
+/* ── Size chip (purple, used on task cards and template lists) ── */
+.size-chip {
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.03em;
+  height: 18px; padding: 0 7px;
+  border-radius: 4px; margin-left: auto;
+  background: var(--m-purple-bg); color: var(--m-purple);
+}
+.size-chip .sz-dot { opacity: 0.4; }
+.size-chip .sz-pts { font-weight: 600; opacity: 0.7; }
+.task-card.done-card .size-chip { opacity: 0.45; }
+
+/* ── Size pill toggle (used in modals for size selection) ── */
+.size-pills { display: flex; gap: 6px; width: 100%; }
+.size-pill-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 7px 12px; border-radius: 999px;
+  border: 1px solid var(--m-border); background: var(--m-surface);
+  cursor: pointer; transition: all 0.15s;
+}
+.size-pill-btn:hover { border-color: var(--m-text-muted); }
+.size-pill-btn.active {
+  background: var(--m-purple-bg); border-color: var(--m-purple);
+}
+.size-pill-size {
+  font-size: 12px; font-weight: 700; color: var(--m-text-secondary);
+  letter-spacing: 0.02em;
+}
+.size-pill-btn.active .size-pill-size { color: var(--m-purple); }
+.size-pill-pts {
+  font-size: 10px; font-weight: 500; color: var(--m-text-muted);
+}
+.size-pill-btn.active .size-pill-pts { color: var(--m-purple); opacity: 0.7; }
+.size-hint { font-size: 11px; margin-top: 6px; }
+.size-hint-info { color: var(--m-purple); }
+.size-hint-warn { color: var(--m-orange); }
 .task-card.done-card { opacity: 0.7; }
 .task-card.done-card .task-title { text-decoration: line-through; color: var(--m-text-secondary); }
 

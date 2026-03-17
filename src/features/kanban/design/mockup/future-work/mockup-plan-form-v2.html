@@ -73,6 +73,12 @@
   }
   .star-icon { width: 11px; height: 11px; display: inline; vertical-align: -1px; }
   .ck-svg { width: 12px; height: 12px; }
+  .size-chip {
+    background: rgba(130,50,144,0.1); color: #823290; border-radius: 4px;
+    padding: 0 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+    min-width: 22px; height: 18px; display: inline-flex; align-items: center;
+    justify-content: center; flex-shrink: 0;
+  }
 
   /* ── Footer ── */
   .form-foot {
@@ -359,7 +365,7 @@
           <div class="old-row">
             <div class="old-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <span class="old-name">Workout session</span>
-            <span class="old-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span>
+            <span class="size-chip" style="margin-left:0"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span>
             <span class="old-edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></span>
           </div>
           <div class="old-config"><span class="old-config-label">Type</span><span class="old-pill">DAILY</span><span class="old-pill active-weekly">WEEKLY</span><div class="old-divider"></div><span class="old-config-label">Freq</span><input class="old-freq" value="2" /><span class="old-freq-unit">/ week</span></div>
@@ -368,7 +374,7 @@
           <div class="old-row">
             <div class="old-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <span class="old-name">System Design Case Study</span>
-            <span class="old-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span>
+            <span class="size-chip" style="margin-left:0"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span>
             <span class="old-edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></span>
           </div>
           <div class="old-config"><span class="old-config-label">Type</span><span class="old-pill">DAILY</span><span class="old-pill active-weekly">WEEKLY</span><div class="old-divider"></div><span class="old-config-label">Freq</span><input class="old-freq" value="2" /><span class="old-freq-unit">/ week</span></div>
@@ -377,7 +383,7 @@
           <div class="old-row">
             <div class="old-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <span class="old-name">Solve 4 leetcode</span>
-            <span class="old-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 4</span>
+            <span class="size-chip" style="margin-left:0"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span>
             <span class="old-edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></span>
           </div>
           <div class="old-config"><span class="old-config-label">Type</span><span class="old-pill active-daily">DAILY</span><span class="old-pill">WEEKLY</span><div class="old-divider"></div><span class="old-config-label">Freq</span><input class="old-freq" value="1" /><span class="old-freq-unit">/ day</span></div>
@@ -386,7 +392,7 @@
           <div class="old-row">
             <div class="old-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <span class="old-name">Work on personal project</span>
-            <span class="old-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span>
+            <span class="size-chip" style="margin-left:0"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span>
             <span class="old-edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></span>
           </div>
           <div class="old-config"><span class="old-config-label">Type</span><span class="old-pill active-daily">DAILY</span><span class="old-pill">WEEKLY</span><div class="old-divider"></div><span class="old-config-label">Freq</span><input class="old-freq" value="1" /><span class="old-freq-unit">/ day</span></div>
@@ -395,7 +401,7 @@
           <div class="old-row">
             <div class="old-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <span class="old-name">Resume Update</span>
-            <span class="old-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span>
+            <span class="size-chip" style="margin-left:0"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span>
             <span class="old-edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></span>
           </div>
           <div class="old-config"><span class="old-config-label">Type</span><span class="old-pill">DAILY</span><span class="old-pill active-weekly">WEEKLY</span><div class="old-divider"></div><span class="old-config-label">Freq</span><input class="old-freq" value="1" /><span class="old-freq-unit">/ week</span></div>
@@ -404,16 +410,16 @@
           <div class="old-row">
             <div class="old-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <span class="old-name">Behavior Question Prep</span>
-            <span class="old-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span>
+            <span class="size-chip" style="margin-left:0"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span>
             <span class="old-edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></span>
           </div>
           <div class="old-config"><span class="old-config-label">Type</span><span class="old-pill">DAILY</span><span class="old-pill active-weekly">WEEKLY</span><div class="old-divider"></div><span class="old-config-label">Freq</span><input class="old-freq" value="2" /><span class="old-freq-unit">/ week</span></div>
         </div>
         <div class="old-item">
-          <div class="old-row"><div class="old-check"></div><span class="old-name" style="color:#888">Read</span><span class="old-pts" style="color:#ccc"><svg class="star-icon" viewBox="0 0 24 24" fill="#ddd"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 2</span></div>
+          <div class="old-row"><div class="old-check"></div><span class="old-name" style="color:#888">Read</span><span class="size-chip" style="margin-left:0;opacity:0.4"><span class="sz-label">S</span><span class="sz-dot">&middot;</span><span class="sz-pts">2</span></span></div>
         </div>
         <div class="old-item">
-          <div class="old-row"><div class="old-check"></div><span class="old-name" style="color:#888">Morning Exercise</span><span class="old-pts" style="color:#ccc"><svg class="star-icon" viewBox="0 0 24 24" fill="#ddd"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 3</span></div>
+          <div class="old-row"><div class="old-check"></div><span class="old-name" style="color:#888">Morning Exercise</span><span class="size-chip" style="margin-left:0;opacity:0.4"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div>
         </div>
       </div>
       <div class="sec-hdr" style="margin-top:24px"><span class="sec-label">Ad-hoc Tasks</span><span class="sec-count">1 task</span></div>
@@ -421,7 +427,7 @@
         <div class="old-adhoc selected">
           <div class="old-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <span class="old-name">File Tax Report</span>
-          <span class="old-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 15</span>
+          <span class="size-chip" style="margin-left:0"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span>
           <span class="old-adhoc-status">TODO</span>
         </div>
       </div>
@@ -475,13 +481,13 @@
               <div class="t-row">
                 <div class="t-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
                 <span class="t-name">Workout session</span>
-                <span class="t-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span>
+                <span class="size-chip" style="margin-left:0"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span>
                 <span class="t-edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></span>
               </div>
               <div class="t-config"><span class="t-config-label">Type</span><button class="t-pill">DAILY</button><button class="t-pill active-weekly">WEEKLY</button><div class="t-divider"></div><span class="t-config-label">Freq</span><input class="t-freq" value="2" /><span class="t-freq-unit">/ week</span></div>
             </div>
-            <div class="t-item"><div class="t-row"><div class="t-check"></div><span class="t-name">Morning Exercise</span><span class="t-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ddd"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 3</span></div></div>
-            <div class="t-item"><div class="t-row"><div class="t-check"></div><span class="t-name">Evening yoga</span><span class="t-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ddd"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 3</span></div></div>
+            <div class="t-item"><div class="t-row"><div class="t-check"></div><span class="t-name">Morning Exercise</span><span class="size-chip" style="margin-left:0;opacity:0.4"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div></div>
+            <div class="t-item"><div class="t-row"><div class="t-check"></div><span class="t-name">Evening yoga</span><span class="size-chip" style="margin-left:0;opacity:0.4"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span></div></div>
           </div>
         </div>
 
@@ -497,7 +503,7 @@
               <div class="t-row">
                 <div class="t-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
                 <span class="t-name">System Design Case Study</span>
-                <span class="t-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span>
+                <span class="size-chip" style="margin-left:0"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span>
                 <span class="t-edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></span>
               </div>
               <div class="t-config"><span class="t-config-label">Type</span><button class="t-pill">DAILY</button><button class="t-pill active-weekly">WEEKLY</button><div class="t-divider"></div><span class="t-config-label">Freq</span><input class="t-freq" value="2" /><span class="t-freq-unit">/ week</span></div>
@@ -506,7 +512,7 @@
               <div class="t-row">
                 <div class="t-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
                 <span class="t-name">Solve 4 leetcode</span>
-                <span class="t-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 4</span>
+                <span class="size-chip" style="margin-left:0"><span class="sz-label">M</span><span class="sz-dot">&middot;</span><span class="sz-pts">3</span></span>
                 <span class="t-edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></span>
               </div>
               <div class="t-config"><span class="t-config-label">Type</span><button class="t-pill active-daily">DAILY</button><button class="t-pill">WEEKLY</button><div class="t-divider"></div><span class="t-config-label">Freq</span><input class="t-freq" value="1" /><span class="t-freq-unit">/ day</span></div>
@@ -515,12 +521,12 @@
               <div class="t-row">
                 <div class="t-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
                 <span class="t-name">Behavior Question Prep</span>
-                <span class="t-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span>
+                <span class="size-chip" style="margin-left:0"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span>
                 <span class="t-edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></span>
               </div>
               <div class="t-config"><span class="t-config-label">Type</span><button class="t-pill">DAILY</button><button class="t-pill active-weekly">WEEKLY</button><div class="t-divider"></div><span class="t-config-label">Freq</span><input class="t-freq" value="2" /><span class="t-freq-unit">/ week</span></div>
             </div>
-            <div class="t-item"><div class="t-row"><div class="t-check"></div><span class="t-name">Mock interview practice</span><span class="t-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ddd"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 8</span></div></div>
+            <div class="t-item"><div class="t-row"><div class="t-check"></div><span class="t-name">Mock interview practice</span><span class="size-chip" style="margin-left:0;opacity:0.4"><span class="sz-label">XL</span><span class="sz-dot">&middot;</span><span class="sz-pts">8</span></span></div></div>
           </div>
         </div>
 
@@ -532,9 +538,9 @@
             <span class="group-meta"><b>2</b> of 3 selected</span>
           </div>
           <div class="group-body">
-            <div class="t-item selected"><div class="t-row"><div class="t-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="t-name">Work on personal project</span><span class="t-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span></div><div class="t-config"><span class="t-config-label">Type</span><button class="t-pill active-daily">DAILY</button><button class="t-pill">WEEKLY</button><div class="t-divider"></div><span class="t-config-label">Freq</span><input class="t-freq" value="1" /><span class="t-freq-unit">/ day</span></div></div>
-            <div class="t-item selected"><div class="t-row"><div class="t-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="t-name">Resume Update</span><span class="t-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span></div><div class="t-config"><span class="t-config-label">Type</span><button class="t-pill">DAILY</button><button class="t-pill active-weekly">WEEKLY</button><div class="t-divider"></div><span class="t-config-label">Freq</span><input class="t-freq" value="1" /><span class="t-freq-unit">/ week</span></div></div>
-            <div class="t-item"><div class="t-row"><div class="t-check"></div><span class="t-name">Read</span><span class="t-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ddd"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 2</span></div></div>
+            <div class="t-item selected"><div class="t-row"><div class="t-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="t-name">Work on personal project</span><span class="size-chip" style="margin-left:0"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span></div><div class="t-config"><span class="t-config-label">Type</span><button class="t-pill active-daily">DAILY</button><button class="t-pill">WEEKLY</button><div class="t-divider"></div><span class="t-config-label">Freq</span><input class="t-freq" value="1" /><span class="t-freq-unit">/ day</span></div></div>
+            <div class="t-item selected"><div class="t-row"><div class="t-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="t-name">Resume Update</span><span class="size-chip" style="margin-left:0"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span></div><div class="t-config"><span class="t-config-label">Type</span><button class="t-pill">DAILY</button><button class="t-pill active-weekly">WEEKLY</button><div class="t-divider"></div><span class="t-config-label">Freq</span><input class="t-freq" value="1" /><span class="t-freq-unit">/ week</span></div></div>
+            <div class="t-item"><div class="t-row"><div class="t-check"></div><span class="t-name">Read</span><span class="size-chip" style="margin-left:0;opacity:0.4"><span class="sz-label">S</span><span class="sz-dot">&middot;</span><span class="sz-pts">2</span></span></div></div>
           </div>
         </div>
       </div>
@@ -589,7 +595,7 @@
             <div class="t-check"><svg class="ck-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <span class="t-name"><span class="match-hl">Work</span> on personal project</span>
             <span class="cat-tag">Personal Dev</span>
-            <span class="t-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ee8134"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span>
+            <span class="size-chip" style="margin-left:0"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span>
             <span class="t-edit" style="opacity:1;color:#999"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg></span>
           </div>
           <div class="t-config">
@@ -609,7 +615,7 @@
             <div class="t-check"></div>
             <span class="t-name"><span class="match-hl">Work</span>out session</span>
             <span class="cat-tag">Fitness</span>
-            <span class="t-pts"><svg class="star-icon" viewBox="0 0 24 24" fill="#ddd"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg> 5</span>
+            <span class="size-chip" style="margin-left:0;opacity:0.4"><span class="sz-label">L</span><span class="sz-dot">&middot;</span><span class="sz-pts">5</span></span>
           </div>
         </div>
       </div>

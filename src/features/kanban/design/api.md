@@ -76,7 +76,7 @@ remainingDays = plan.mode == NORMAL
 
 // pt.type is on PlanTemplate (not pt.template.type) — type lives at the plan-template level
 currentDailyTemplates = plan.planTemplates.filter(pt => pt.type == DAILY)
-dailyFuturePoints = currentDailyTemplates.sum(pt => pt.template.points * pt.frequency) * remainingDays
+dailyFuturePoints = currentDailyTemplates.sum(pt => sizeToPoints(pt.template.size) * pt.frequency) * remainingDays
 dailyFutureCount  = currentDailyTemplates.sum(pt => pt.frequency) * remainingDays
 
 weeklyPoints = boardMetrics.weeklyPoints                  // from DB
@@ -177,10 +177,9 @@ Steps:
 ```
 Input {
   title:        string
-  description?: string
-  points:       number    // positive integer
+  description:  string
+  size:         TaskSizes    // EXTRA_SMALL | SMALL | MEDIUM | LARGE | EXTRA_LARGE
 }
-// type and frequency removed — these are configured per-plan in PlanTemplate
 
 Steps:
 1. Validate input with Zod
@@ -195,9 +194,8 @@ Steps:
 Input {
   title?:       string
   description?: string
-  points?:      number
+  size?:        TaskSizes
 }
-// type and frequency removed — not stored on TaskTemplate
 
 Steps:
 1. Validate input with Zod (at least one field required)
@@ -233,21 +231,24 @@ Steps:
 Input {
   title:        string
   description?: string
-  points:       number    // positive integer, default 1
-  status?:      TaskStatus // TODO (default) or DOING — matches source column
+  size:         TaskSizes    // EXTRA_SMALL | SMALL | MEDIUM | LARGE | EXTRA_LARGE
+  status?:      TaskStatus   // TODO (default) or DOING — matches source column
 }
 
 Steps:
 1. Validate input with Zod
 2. Get active plan for user (must exist — button only visible on board)
-3. Create Task record:
+3. Derive points from size via SIZE_TO_POINTS mapping
+4. Create Task record:
    - planId = activePlan.id
    - templateId = null
    - type = AD_HOC
+   - size = input.size
+   - points = sizeToPoints(input.size)
    - status = input.status ?? TODO
    - forDate = null, periodKey = null
    - instanceIndex = 1
-4. revalidatePath('/kanban')
+5. revalidatePath('/kanban')
 ```
 
 ---
@@ -313,6 +314,7 @@ Steps:
    - Include last rejected draftTemplates from Chat.metadata (if any)
 7. Call LLM with structured output (response_format: json_schema):
    - Schema: { message: string, draftTemplates: DraftTemplate[], followUp: string }
+   - DraftTemplate: { templateId: string|null, title, description, type, frequency, size: TaskSizes }
 8. Persist full structured JSON as assistant Message content with type = DRAFT_PLAN
 9. Overwrite Chat.metadata.draftTemplates with response.draftTemplates (working clipboard)
 10. Return the full structured response
@@ -350,8 +352,8 @@ deletePlanTemplatesByPlanId(planId, tx?)                    // bulk delete all l
 ```
 getTaskTemplates()                                         // all non-archived templates
 getTaskTemplateById(id)                                    // single template by ID
-createTaskTemplate(data: { title, description, points })   // create new template
-updateTaskTemplate(id, data: { title?, description?, points? })  // update template fields
+createTaskTemplate(data: { title, description, size })      // create new template
+updateTaskTemplate(id, data: { title?, description?, size? })    // update template fields
 ```
 
 ### tasks.ts
@@ -369,8 +371,8 @@ taskExists(taskId)                                          // existence check
 getNonDoneAdhocTasks()                                      // all non-DONE AD_HOC tasks (any planId)
 
 // Mutations
-createTask(data)                                           // single task instance
-createManyTasks(data[], tx?)                                // batch create with skipDuplicates
+createTask(data: { ..., size, points })                    // single task instance; points derived from size via SIZE_TO_POINTS
+createManyTasks(data: { ..., size, points }[], tx?)        // batch create with skipDuplicates; points derived from size
 updateTaskStatus(taskId, status)                            // auto-sets/clears doneAt
 
 // Expiry
