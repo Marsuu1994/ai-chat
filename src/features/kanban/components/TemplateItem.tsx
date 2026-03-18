@@ -1,9 +1,10 @@
 "use client";
 
 import { CheckIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
-import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid";
 import { TaskType } from "@/features/kanban/utils/enums";
 import type { TaskTemplateItem } from "@/lib/db/taskTemplates";
+import { sizeToPoints } from "@/features/kanban/utils/enums";
+import { SizeChip } from "./SizeChip";
 
 interface TemplateItemConfig {
   type: TaskType;
@@ -40,12 +41,12 @@ export default function TemplateItem({
       }}
       className={`group rounded-lg border p-3 cursor-pointer transition-colors ${
         isSelected
-          ? "border-success/50 bg-success/10"
+          ? "border-info/50 bg-info/5"
           : "border-base-content/10 bg-base-200"
       }`}
     >
       {/* Top row: checkbox + content + edit button */}
-      <div className="flex items-start gap-3">
+      <div className="flex items-center gap-3">
         {/* Checkbox */}
         <div
           className={`flex size-[18px] shrink-0 items-center justify-center rounded border-2 transition-colors mt-0.5 ${
@@ -63,10 +64,7 @@ export default function TemplateItem({
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
             <span className="font-medium text-sm">{template.title}</span>
-            <div className="flex items-center gap-1 shrink-0">
-              <StarIconSolid className="size-3 text-warning" />
-              <span className="text-xs text-base-content/60">{template.points}</span>
-            </div>
+            <SizeChip size={template.size} points={sizeToPoints(template.size)} className="shrink-0" />
           </div>
         </div>
 

@@ -1,9 +1,9 @@
 "use client";
 
 import { Draggable } from "@hello-pangea/dnd";
-import { StarIcon } from "@heroicons/react/24/solid";
 import type { TaskItem } from "@/lib/db/tasks";
 import { TaskStatus, TaskType } from "../utils/enums";
+import { SizeChip } from "./SizeChip";
 import { formatShortDate, normalizeForDate } from "../utils/dateUtils";
 import type { RiskLevel } from "../utils/taskUtils";
 import TaskTypeBadge from "./TaskTypeBadge";
@@ -78,7 +78,7 @@ export default function TaskCard({
             </h3>
 
             {task.description && (
-              <p className="hidden md:block text-xs text-base-content/60">
+              <p className="hidden md:block text-xs text-base-content/60 line-clamp-2 break-all">
                 {task.description}
               </p>
             )}
@@ -100,10 +100,7 @@ export default function TaskCard({
                 <span className="badge badge-error badge-sm">‼ urgent</span>
               )}
 
-              <span className="flex gap-0.5 text-xs ml-auto">
-                <StarIcon className="size-4 text-warning" />
-                <span className="text-base-content/70 font-bold">{`${task.points} ${task.points === 1 ? "pt" : "pts"}`}</span>
-              </span>
+              <SizeChip size={task.size} points={task.points} className="ml-auto" />
             </div>
 
             {/* Mobile footer */}
@@ -113,10 +110,7 @@ export default function TaskCard({
                   ↩ {formatShortDate(new Date(task.forDate!))}
                 </span>
               )}
-              <span className="flex gap-0.5 text-[9px] ml-auto items-center">
-                <StarIcon className="size-3 text-warning" />
-                <span className="text-base-content/70 font-bold">{task.points}</span>
-              </span>
+              <SizeChip size={task.size} points={task.points} className="ml-auto text-[8px]" />
             </div>
           </div>
         </div>

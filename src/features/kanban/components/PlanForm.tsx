@@ -4,9 +4,10 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CheckIcon, MoonIcon, BoltIcon } from "@heroicons/react/24/outline";
-import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid";
-import { TaskType, TaskStatus, PeriodType, PlanMode } from "@/features/kanban/utils/enums";
+import { TaskType, TaskStatus, PeriodType, PlanMode, TaskSize } from "@/features/kanban/utils/enums";
+import { SizeChip } from "./SizeChip";
 import type { TaskTemplateItem } from "@/lib/db/taskTemplates";
+import { sizeToPoints } from "@/features/kanban/utils/enums";
 import {
   createPlanAction,
   updatePlanAction,
@@ -31,6 +32,7 @@ export interface AdhocTaskItem {
   id: string;
   planId: string | null;
   title: string;
+  size: TaskSize;
   points: number;
   status: string;
 }
@@ -131,13 +133,15 @@ export default function PlanForm({
       initialPlanTemplates.map((pt) => [pt.templateId, pt])
     );
     const templateTitleMap = new Map(templates.map((t) => [t.id, t.title]));
-    const templatePointsMap = new Map(templates.map((t) => [t.id, t.points]));
+    const templateSizeMap = new Map(templates.map((t) => [t.id, t.size]));
+    const templatePointsMap = new Map(templates.map((t) => [t.id, sizeToPoints(t.size)]));
 
     const added = Array.from(selectedTemplates.entries())
       .filter(([id]) => !initialMap.has(id))
       .map(([id, cfg]) => ({
         templateId: id,
         title: templateTitleMap.get(id) ?? "",
+        size: (templateSizeMap.get(id) ?? "MEDIUM") as TaskSize,
         points: templatePointsMap.get(id) ?? 0,
         type: cfg.type,
         frequency: cfg.frequency,
@@ -148,6 +152,7 @@ export default function PlanForm({
       .map((pt) => ({
         templateId: pt.templateId,
         title: templateTitleMap.get(pt.templateId) ?? "",
+        size: (templateSizeMap.get(pt.templateId) ?? "MEDIUM") as TaskSize,
         points: templatePointsMap.get(pt.templateId) ?? 0,
         type: pt.type,
         frequency: pt.frequency,
@@ -434,10 +439,7 @@ export default function PlanForm({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-sm">{task.title}</span>
-                        <div className="flex items-center gap-1 shrink-0">
-                          <StarIconSolid className="size-3 text-warning" />
-                          <span className="text-xs text-base-content/60">{task.points}</span>
-                        </div>
+                        <SizeChip size={task.size as TaskSize} points={task.points} className="shrink-0" />
                       </div>
                     </div>
 

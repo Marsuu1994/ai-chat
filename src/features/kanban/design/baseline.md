@@ -11,10 +11,10 @@ A tool to plan and track tasks within defined periods (e.g., weekly). It visuali
 1. **Kanban board** — Three columns (Todo, Doing, Done) displaying task instances for the active plan. Tasks are ordered by type (daily first, then weekly) and creation time within each column.
 2. **Drag and drop** — User can move tasks between columns: Todo -> Doing -> Done. Optimistic UI update + backend persistence.
 3. **Plan creation** — User creates a weekly plan by selecting task templates. First-time users create new templates; returning users can load templates from their last plan.
-4. **Task templates** — Reusable blueprints with title, description ,and sizes. Type and frequency are configured per-plan in PlanTemplate.
+4. **Task templates** — Reusable blueprints with title, description, and size (`TaskSize` enum: XS/S/M/L/XL). Type and frequency are configured per-plan in PlanTemplate.
 5. **Auto-generation** — After plan creation, generate all necessary task instances. Daily tasks are regenerated each day.
 6. **Daily status recompute** — On first load each day, expire unfinished daily tasks older than yesterday and generate today's daily tasks. Idempotent. Yesterday's unfinished tasks carry over for one extra day with a distinct "rolled over" visual treatment.
-7. **Points tracking** — Each task carries a size that corresponds to a specific point. Essential stats are displayed on board.
+7. **Standardized sizing** — Tasks use a `TaskSize` enum (XS=1pt, S=2pt, M=3pt, L=5pt, XL=8pt) mapped to fibonacci points via `SIZE_TO_POINTS`. Points are denormalized on Task at creation time for efficient DB aggregation. Task cards display a green size chip (`M·3`). Template/ad-hoc modals use a full-width pill toggle selector (XS|S|M|L|XL) with effort hint text and L/XL split warning. Progress dashboard aggregates use the denormalized `points` column directly.
 8. **Daily task rollover** — Unfinished daily tasks from yesterday roll over to the board for one extra day, shown with a "↩ Mon, Feb 23" date badge. Tasks older than yesterday are expired.
 9. **Risk level visualization** — Tasks display color-coded risk badges (warning / danger) based on task type, time of day, days elapsed in the period, and completion progress.
 
@@ -51,12 +51,12 @@ A tool to plan and track tasks within defined periods (e.g., weekly). It visuali
 ## Entities
 
 - **Plan** — A time-boxed container (e.g., one week) that groups task templates, their generated task instances, and/or Ad-hoc tasks. Only one plan can be active at a time. After the period ends, it becomes `PENDING_UPDATE` and serves as a template for the next plan.
-- **TaskTemplate** — A reusable blueprint defining what kind of task to generate (title, description, size). Shared across plans. Editing a template does not affect already-generated Task instances. Size of a template is a standarized measurement of effort put on the task, and different sizes are corresponding to different points that represent estimated hour to spend on each tasks. Points are using fibonacci sequences.
-  - XS(EXTRA_SMALL): 1 point, represents one hour of work
-  - S(SMALL): 2 points, represents two hours of work
-  - M(MEDIUM): 3 points, represents three hours of work
-  - L(LARGE): 5 points, represents five hours of work. UI shows a visual warning suggesting the user consider splitting into smaller tasks, but does not prevent selection.
-  - XL(EXTRA_LARGE): 8 points, represents eight hours of work. UI shows a visual warning suggesting the user consider splitting into smaller tasks, but does not prevent selection.
+- **TaskTemplate** — A reusable blueprint defining what kind of task to generate (title, description, size). Shared across plans. Editing a template does not affect already-generated Task instances. Size is a standardized measurement of effort using the `TaskSize` enum, mapped to fibonacci points via `SIZE_TO_POINTS`:
+  - XS (EXTRA_SMALL): 1 point, ~1 hour of effort
+  - S (SMALL): 2 points, ~2 hours of effort
+  - M (MEDIUM): 3 points, ~3 hours of effort
+  - L (LARGE): 5 points, ~5 hours of effort. UI shows a warning hint suggesting the user consider splitting into smaller tasks, but does not prevent selection.
+  - XL (EXTRA_LARGE): 8 points, ~8 hours of effort. UI shows a warning hint suggesting the user consider splitting into smaller tasks, but does not prevent selection.
 
 - **PlanTemplate** — Join table linking a plan to its selected task templates, also indicates the type(daily, weekly) and frequency of generation.
 - **Task** — A concrete instance generated from a template or user defined Ad-hoc tasks. This is what appears on the board and gets dragged between columns.
@@ -115,13 +115,13 @@ model TaskTemplate {
   userId      String
   title       String
   description String       // Detailed description used for LLM prompt for task generation
-  size      	TaskSizes
+  size      	TaskSize
   isArchived  Boolean      @default(false)  // Future: soft-delete
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
 
-enum TaskSizes {
+enum TaskSize {
 	EXTRA_SMALL    // 1 point
 	SMALL					 // 2 points
 	MEDIUM				 // 3 points
@@ -172,7 +172,7 @@ model Task {
   title         String
   description   String?
   type          TaskType
-  size        	TaskSizes
+  size        	TaskSize
   points        Int          // Derived from size at creation time via SIZE_TO_POINTS mapping. Denormalized for efficient aggregation queries.
   status        TaskStatus
   forDate       DateTime?    // Set for daily tasks (the date this task is for)
@@ -287,3 +287,5 @@ UI rendering: the latest `DRAFT_PLAN` message renders expanded with template car
 
 * Uses **Server Actions** for mutations and **direct DAL calls from Server Components** for data fetching. No REST API routes. Inputs are validated at the boundary with **Zod** schemas.
 * Ad-hoc tasks are not associated with any TaskTemplate.  They are optionally associated with a plan (planId = null means unassigned backlog).
+* **Size system** — `TaskSize` enum (EXTRA_SMALL → EXTRA_LARGE) replaces free-form integer points. Points are derived from size via `SIZE_TO_POINTS` constant and denormalized on the Task record at creation time. This keeps the raw SQL `SUM(points)` aggregation unchanged while the user-facing input is now a constrained enum. `TaskTemplate` stores only `size` (no `points` column); `Task` stores both `size` and `points`.
+* **Size UI** — Task cards and template items display a shared `SizeChip` component (green chip: `M·3`). Template and ad-hoc creation modals use a full-width pill toggle selector with effort description text ("~3 hours of effort") and a warning hint for L/XL sizes. Client-safe enums (`TaskSize`, `SIZE_TO_POINTS`, `SIZE_LABELS`, `SIZE_EFFORT`) live in `features/kanban/utils/enums.ts` for use in `"use client"` components; server-side code uses `features/kanban/utils/sizeUtils.ts`.

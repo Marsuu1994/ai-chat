@@ -70,6 +70,14 @@ enum TaskStatus {
   EXPIRED
 }
 
+enum TaskSize {
+  EXTRA_SMALL
+  SMALL
+  MEDIUM
+  LARGE
+  EXTRA_LARGE
+}
+
 model Plan {
   id          String         @id @default(uuid()) @db.Uuid
   userId      String?        @map("user_id") @db.Uuid
@@ -94,7 +102,7 @@ model TaskTemplate {
   userId      String?  @map("user_id") @db.Uuid
   title       String
   description String
-  points      Int
+  size        TaskSize
   isArchived  Boolean  @default(false) @map("is_archived")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
@@ -129,6 +137,7 @@ model Task {
   type          TaskType
   title         String
   description   String?
+  size          TaskSize
   points        Int
   status        TaskStatus
   forDate       DateTime?   @map("for_date") @db.Date

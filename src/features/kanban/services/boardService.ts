@@ -16,6 +16,7 @@ import type { PlanWithTemplates } from "@/lib/db/plans";
 import type { TaskItem } from "@/lib/db/tasks";
 import { PlanMode, TaskType, TaskStatus, PlanStatus } from "@/generated/prisma/client";
 import { getTodayDate, getYesterdayDate, getISOWeekKey, getMondayFromPeriodKey, getSundayFromPeriodKey, isWeekend, countWeekdaysInRange } from "../utils/dateUtils";
+import { sizeToPoints } from "../utils/sizeUtils";
 
 export type BoardData = {
   plan: PlanWithTemplates;
@@ -56,7 +57,8 @@ export async function runDailySync(planId: string, today: Date): Promise<void> {
           type: TaskType.DAILY,
           title: pt.template.title,
           description: pt.template.description,
-          points: pt.template.points,
+          size: pt.template.size,
+          points: sizeToPoints(pt.template.size),
           status: TaskStatus.TODO,
           forDate: today,
           instanceIndex: i,
@@ -147,7 +149,7 @@ export async function fetchBoard(): Promise<BoardData | null> {
   );
   const dailyFuturePoints =
     currentDailyTemplates.reduce(
-      (s, pt) => s + pt.template.points * pt.frequency,
+      (s, pt) => s + sizeToPoints(pt.template.size) * pt.frequency,
       0
     ) * remainingDays;
   const dailyFutureCount =

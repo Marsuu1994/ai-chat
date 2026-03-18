@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Prisma, TaskStatus, TaskType } from "@/generated/prisma/client";
+import { Prisma, TaskSize, TaskStatus, TaskType } from "@/generated/prisma/client";
 
 export type TaskItem = {
   id: string;
@@ -8,6 +8,7 @@ export type TaskItem = {
   type: TaskType;
   title: string;
   description: string | null;
+  size: TaskSize;
   points: number;
   status: TaskStatus;
   forDate: Date | null;
@@ -38,6 +39,7 @@ const taskSelect = {
   type: true,
   title: true,
   description: true,
+  size: true,
   points: true,
   status: true,
   forDate: true,
@@ -187,6 +189,7 @@ export async function createTask(data: {
   type: TaskType;
   title: string;
   description?: string;
+  size: TaskSize;
   points: number;
   status: TaskStatus;
   forDate?: Date;
@@ -209,6 +212,7 @@ export async function createManyTasks(
     type: TaskType;
     title: string;
     description?: string;
+    size: TaskSize;
     points: number;
     status: TaskStatus;
     forDate?: Date;

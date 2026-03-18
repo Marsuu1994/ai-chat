@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PeriodType, PlanMode, TaskType, TaskStatus } from "@/generated/prisma/client";
+import { PeriodType, PlanMode, TaskSize, TaskType, TaskStatus } from "@/generated/prisma/client";
 
 // ── Plan Schemas ───────────────────────────────────────────────────────
 
@@ -38,7 +38,7 @@ export type UpdatePlanInput = z.infer<typeof updatePlanSchema>;
 export const createTemplateSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
-  points: z.number().int().positive("Points must be a positive integer"),
+  size: z.nativeEnum(TaskSize),
 });
 export type CreateTemplateInput = z.infer<typeof createTemplateSchema>;
 
@@ -46,7 +46,7 @@ export const updateTemplateSchema = z
   .object({
     title: z.string().min(1).optional(),
     description: z.string().min(1).optional(),
-    points: z.number().int().positive().optional(),
+    size: z.nativeEnum(TaskSize).optional(),
   })
   .refine((data) => Object.values(data).some((v) => v !== undefined), {
     message: "At least one field must be provided",
@@ -69,7 +69,7 @@ export type UpdateTaskStatusInput = z.infer<typeof updateTaskStatusSchema>;
 export const createAdhocTaskSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
-  points: z.number().int().positive("Points must be a positive integer"),
+  size: z.nativeEnum(TaskSize),
   status: z.enum([TaskStatus.TODO, TaskStatus.DOING]).optional(),
 });
 export type CreateAdhocTaskInput = z.infer<typeof createAdhocTaskSchema>;

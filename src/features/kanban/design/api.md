@@ -178,7 +178,7 @@ Steps:
 Input {
   title:        string
   description:  string
-  size:         TaskSizes    // EXTRA_SMALL | SMALL | MEDIUM | LARGE | EXTRA_LARGE
+  size:         TaskSize    // EXTRA_SMALL | SMALL | MEDIUM | LARGE | EXTRA_LARGE
 }
 
 Steps:
@@ -194,7 +194,7 @@ Steps:
 Input {
   title?:       string
   description?: string
-  size?:        TaskSizes
+  size?:        TaskSize
 }
 
 Steps:
@@ -231,7 +231,7 @@ Steps:
 Input {
   title:        string
   description?: string
-  size:         TaskSizes    // EXTRA_SMALL | SMALL | MEDIUM | LARGE | EXTRA_LARGE
+  size:         TaskSize    // EXTRA_SMALL | SMALL | MEDIUM | LARGE | EXTRA_LARGE
   status?:      TaskStatus   // TODO (default) or DOING — matches source column
 }
 
@@ -314,7 +314,7 @@ Steps:
    - Include last rejected draftTemplates from Chat.metadata (if any)
 7. Call LLM with structured output (response_format: json_schema):
    - Schema: { message: string, draftTemplates: DraftTemplate[], followUp: string }
-   - DraftTemplate: { templateId: string|null, title, description, type, frequency, size: TaskSizes }
+   - DraftTemplate: { templateId: string|null, title, description, type, frequency, size: TaskSize }
 8. Persist full structured JSON as assistant Message content with type = DRAFT_PLAN
 9. Overwrite Chat.metadata.draftTemplates with response.draftTemplates (working clipboard)
 10. Return the full structured response

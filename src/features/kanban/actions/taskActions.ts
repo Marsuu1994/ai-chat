@@ -5,6 +5,7 @@ import { updateTaskStatusSchema, createAdhocTaskSchema } from "../schemas";
 import { updateTaskStatus, createTask } from "@/lib/db/tasks";
 import { getActivePlan } from "@/lib/db/plans";
 import { TaskType, TaskStatus } from "@/generated/prisma/client";
+import { sizeToPoints } from "../utils/sizeUtils";
 
 export async function updateTaskStatusAction(taskId: string, input: unknown) {
   const parsed = updateTaskStatusSchema.safeParse(input);
@@ -30,7 +31,8 @@ export async function createAdhocTaskAction(input: unknown) {
     type: TaskType.AD_HOC,
     title: parsed.data.title,
     description: parsed.data.description,
-    points: parsed.data.points,
+    size: parsed.data.size,
+    points: sizeToPoints(parsed.data.size),
     status: parsed.data.status ?? TaskStatus.TODO,
     instanceIndex: 1,
   });

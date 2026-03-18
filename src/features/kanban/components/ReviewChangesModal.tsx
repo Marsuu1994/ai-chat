@@ -10,12 +10,14 @@ import {
   PlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid";
 import { TaskType, PlanMode } from "@/features/kanban/utils/enums";
+import type { TaskSize } from "@/features/kanban/utils/enums";
+import { SizeChip } from "./SizeChip";
 
 interface AddedTemplate {
   templateId: string;
   title: string;
+  size: TaskSize;
   points: number;
   type: TaskType;
   frequency: number;
@@ -24,6 +26,7 @@ interface AddedTemplate {
 interface RemovedTemplate {
   templateId: string;
   title: string;
+  size: TaskSize;
   points: number;
   type: TaskType;
   frequency: number;
@@ -41,6 +44,7 @@ interface ModifiedTemplate {
 export interface AdhocTaskChange {
   id: string;
   title: string;
+  size: TaskSize;
   points: number;
 }
 
@@ -147,9 +151,8 @@ export function ReviewChangesModal({
                       <div className="text-sm font-medium text-base-content">
                         {t.title}
                       </div>
-                      <div className="flex items-center gap-1 text-xs text-base-content/50 mt-0.5">
-                        <StarIconSolid className="size-2.5 text-warning" />
-                        <span>{t.points} pts</span>
+                      <div className="flex items-center gap-1.5 text-xs text-base-content/50 mt-0.5">
+                        <SizeChip size={t.size} points={t.points} />
                         <span className="mx-0.5">&middot;</span>
                         <span>{typeLabel(t.type)}</span>
                         <span className="mx-0.5">&middot;</span>
@@ -188,9 +191,8 @@ export function ReviewChangesModal({
                       <div className="text-sm font-medium text-base-content">
                         {t.title}
                       </div>
-                      <div className="flex items-center gap-1 text-xs text-base-content/50 mt-0.5">
-                        <StarIconSolid className="size-2.5 text-warning" />
-                        <span>{t.points} pts</span>
+                      <div className="flex items-center gap-1.5 text-xs text-base-content/50 mt-0.5">
+                        <SizeChip size={t.size} points={t.points} />
                         <span className="mx-0.5">&middot;</span>
                         <span>{typeLabel(t.type)}</span>
                         <span className="mx-0.5">&middot;</span>
@@ -289,9 +291,8 @@ export function ReviewChangesModal({
                           <div className="text-sm font-medium text-base-content">
                             {t.title}
                           </div>
-                          <div className="flex items-center gap-1 text-xs text-base-content/50 mt-0.5">
-                            <StarIconSolid className="size-2.5 text-warning" />
-                            <span>{t.points} pts</span>
+                          <div className="flex items-center gap-1.5 text-xs text-base-content/50 mt-0.5">
+                            <SizeChip size={t.size} points={t.points} />
                           </div>
                           <div className="text-[11px] italic text-info mt-1">
                             Will appear on the board
@@ -320,9 +321,8 @@ export function ReviewChangesModal({
                           <div className="text-sm font-medium text-base-content">
                             {t.title}
                           </div>
-                          <div className="flex items-center gap-1 text-xs text-base-content/50 mt-0.5">
-                            <StarIconSolid className="size-2.5 text-warning" />
-                            <span>{t.points} pts</span>
+                          <div className="flex items-center gap-1.5 text-xs text-base-content/50 mt-0.5">
+                            <SizeChip size={t.size} points={t.points} />
                           </div>
                           <div className="text-[11px] italic text-error mt-1">
                             Will be moved to unassigned pool

@@ -21,6 +21,7 @@ import {
 import { Prisma, PlanMode, TaskType, TaskStatus, PlanStatus } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { getTodayDate, getISOWeekKey, isWeekend } from "../utils/dateUtils";
+import { sizeToPoints } from "../utils/sizeUtils";
 import type { PlanItem } from "@/lib/db/plans";
 import type { z } from "zod";
 import type { createPlanSchema, updatePlanSchema } from "../schemas";
@@ -51,7 +52,7 @@ async function generateTasksForTemplates(
     const db = tx ?? prisma;
     const template = await db.taskTemplate.findUnique({
       where: { id: templateId },
-      select: { title: true, description: true, points: true },
+      select: { title: true, description: true, size: true },
     });
     if (!template) continue;
 
@@ -64,7 +65,8 @@ async function generateTasksForTemplates(
             type,
             title: template.title,
             description: template.description ?? undefined,
-            points: template.points,
+            size: template.size,
+            points: sizeToPoints(template.size),
             status: TaskStatus.TODO,
             periodKey,
             instanceIndex: i,
@@ -80,7 +82,8 @@ async function generateTasksForTemplates(
             type,
             title: template.title,
             description: template.description ?? undefined,
-            points: template.points,
+            size: template.size,
+            points: sizeToPoints(template.size),
             status: TaskStatus.TODO,
             forDate: today,
             instanceIndex: i,

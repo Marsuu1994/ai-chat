@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid";
 import { BoltIcon } from "@heroicons/react/24/outline";
 import type { TaskTemplateItem } from "@/lib/db/taskTemplates";
+import { TaskSize, SIZE_LABELS, SIZE_EFFORT, sizeToPoints } from "@/features/kanban/utils/enums";
 import {
   createTaskTemplateAction,
   updateTaskTemplateAction,
@@ -11,7 +11,6 @@ import {
 import { createAdhocTaskAction } from "@/features/kanban/actions/taskActions";
 import TaskModalHeader from "./TaskModalHeader";
 import TaskModalFooter from "./TaskModalFooter";
-import IconNumberField from "./IconNumberField";
 
 type ModalMode = "create" | "edit" | "adhoc";
 
@@ -37,7 +36,7 @@ export default function TaskModal({
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [points, setPoints] = useState(3);
+  const [size, setSize] = useState<TaskSize>(TaskSize.MEDIUM);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,7 +45,7 @@ export default function TaskModal({
     if (isOpen) {
       setTitle(mode === "adhoc" ? "" : (template?.title ?? ""));
       setDescription(mode === "adhoc" ? "" : (template?.description ?? ""));
-      setPoints(mode === "adhoc" ? 1 : (template?.points ?? 3));
+      setSize(mode === "adhoc" ? TaskSize.EXTRA_SMALL : ((template?.size as TaskSize) ?? TaskSize.MEDIUM));
       setError(null);
       setIsSubmitting(false);
     }
@@ -72,17 +71,17 @@ export default function TaskModal({
     let result;
     switch (mode) {
       case "create":
-        result = await createTaskTemplateAction({ title, description, points });
+        result = await createTaskTemplateAction({ title, description, size });
         break;
       case "edit":
         result = await updateTaskTemplateAction(template!.id, {
           title,
           description,
-          points,
+          size,
         });
         break;
       case "adhoc":
-        result = await createAdhocTaskAction({ title, description, points, status: initialStatus });
+        result = await createAdhocTaskAction({ title, description, size, status: initialStatus });
         break;
     }
 
@@ -155,16 +154,37 @@ export default function TaskModal({
             />
           </div>
 
-          {/* Points */}
-          <IconNumberField
-            label="Points"
-            value={points}
-            onChange={setPoints}
-            icon={<StarIconSolid className="size-4 text-warning" />}
-            placeholder={isAdhoc ? "1" : "10"}
-            helperText="Points earned when completed"
-            required
-          />
+          {/* Size */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-xs font-medium">
+                Size <span className="text-error">*</span>
+              </span>
+            </label>
+            <div className="flex gap-1.5 w-full">
+              {Object.values(TaskSize).map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setSize(s)}
+                  className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-full border text-xs font-bold transition-colors ${
+                    size === s
+                      ? "bg-secondary/10 border-secondary text-secondary"
+                      : "bg-base-200 border-base-300 text-base-content/50 hover:border-base-content/30"
+                  }`}
+                >
+                  <span>{SIZE_LABELS[s]}</span>
+                  <span className={`text-[10px] font-semibold ${size === s ? "opacity-70" : "opacity-50"}`}>
+                    {sizeToPoints(s)}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-secondary mt-1.5">{SIZE_EFFORT[size]}</p>
+            {(size === TaskSize.LARGE || size === TaskSize.EXTRA_LARGE) && (
+              <p className="text-xs text-warning mt-0.5">Consider splitting into smaller tasks</p>
+            )}
+          </div>
 
           <TaskModalFooter
             mode={mode}
